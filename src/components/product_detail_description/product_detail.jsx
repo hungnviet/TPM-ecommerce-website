@@ -162,7 +162,6 @@ export default function Product_detail_description({ user_id, product_id }) {
     if (response.ok) {
       const result = await response.json();
       console.log(result.message);
-      router.push(`/homepage/${encodeURIComponent(user_id)}/cart`);
     } else {
       console.error("Error:", response.statusText);
     }
