@@ -58,6 +58,13 @@ export default function NavbarSeller({ user_id_encode, seller_id_encode }) {
       );
     }
   }
+  function onClickSetting() {
+    if (activeMode !== "setting") {
+      setActiveMode("setting");
+      //navigate to profile
+      router.push(`/seller_mode/${user_id_encode}/${seller_id_encode}/setting`);
+    }
+  }
   return (
     <div className="Navbar_user_left_container">
       <div className="left_section_navbar_container">
@@ -158,6 +165,22 @@ export default function NavbarSeller({ user_id_encode, seller_id_encode }) {
             alt="icon"
           />
           Upload product
+        </button>
+        <button
+          className={
+            activeMode === "setting" ? "Navbar_user_active_button" : ""
+          }
+          onClick={onClickSetting}
+        >
+          <Image
+            src={
+              activeMode === "setting" ? "/setting_active.png" : "/setting.png"
+            }
+            width={20}
+            height={20}
+            alt="icon"
+          />
+          Setting
         </button>
       </div>
     </div>

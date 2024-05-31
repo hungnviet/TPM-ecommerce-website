@@ -272,21 +272,61 @@
 }
 
 .shipping_selection button {
-  padding: 10px 15px;
-  margin-bottom: 10px;
-  background-color: #007bff;
-  color: white;
+  background-color: transparent;
   border: none;
-  border-radius: 5px;
+  color: #3a86ff;
   cursor: pointer;
-  transition: background-color 0.3s;
+  font-size: 16px;
 }
 
-.shipping_selection button:hover {
-  background-color: #0056b3;
+.shipment_status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 0.9rem;
+}
+
+.shipment_status strong {
+  color: #333; /* Bold text for shipment type */
+  margin-right: 8px;
+}
+
+.shipment_status_price {
+  margin-right: 5px;
+  color: black;
+}
+
+.shipment_note {
+  color: #666; /* Gray text for notes */
+  font-size: 10px;
 }
 
 .shipping_selection .shipment_status {
   font-size: 14px;
   color: #333;
+}
+.payment_methods {
+  display: flex;
+  border: 1px solid #ccc; /* Example border, adjust as necessary */
+  overflow: hidden;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.payment_method {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  border-right: 1px solid #ccc;
+  background-color: #f9f9f9;
+}
+
+.payment_method:last-child {
+  border-right: none;
+}
+
+.payment_method.selected {
+  border: 3px solid #679436;
+  color: #679436;
 }

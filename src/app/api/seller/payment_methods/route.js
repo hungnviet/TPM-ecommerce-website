@@ -43,3 +43,18 @@ export async function POST(req) {
       });
   });
 }
+export async function DELETE(req) {
+  const data = await req.json();
+  const { seller_ID, method_ID } = data;
+  const sql =
+    "DELETE FROM PAYMENT_METHOD_OF_SELLER WHERE Seller_ID = ? AND Method_ID = ?";
+
+  return new Promise((resolve, reject) => {
+    db.query(sql, [seller_ID, method_ID], (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(NextResponse.json({ message: "Payment method removed" }));
+    });
+  });
+}

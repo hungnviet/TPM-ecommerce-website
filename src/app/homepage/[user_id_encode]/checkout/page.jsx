@@ -16,6 +16,7 @@ export default function CheckoutPage({ params }) {
   const [showShipmentModal, setShowShipmentModal] = useState(false);
   const [selectedShipment, setSelectedShipment] = useState({});
   const [currentShopIndex, setCurrentShopIndex] = useState(null);
+  const [currentShippingOptions, setCurrentShippingOptions] = useState([]);
 
   const [user_information, setUserInformation] = useState({
     user_name: "",
@@ -25,16 +26,24 @@ export default function CheckoutPage({ params }) {
 
   /// use userID to get the data that user have checkout
   const [cart, setCart] = useState({});
-  const handleShipmentSelect = (shipment, price) => {
-    setSelectedShipment((prevState) => ({
-      ...prevState,
-      [currentShopIndex]: { shipment, price },
-    }));
-    setShowShipmentModal(false);
-  };
   const openShipmentModal = (shopIndex) => {
     setCurrentShopIndex(shopIndex);
+    setCurrentShippingOptions(cart.shop[shopIndex].shippingmethod);
     setShowShipmentModal(true);
+  };
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(""); // Default selected payment method
+
+  const [commonPaymentMethods, setCommonPaymentMethods] = useState([]);
+
+  const handlePaymentMethodSelect = (method) => {
+    setSelectedPaymentMethod(method);
+  };
+  const handleShipmentSelect = (id, shipment, price, note) => {
+    setSelectedShipment((prevState) => ({
+      ...prevState,
+      [currentShopIndex]: { id, shipment, price, note },
+    }));
+    setShowShipmentModal(false);
   };
 
   useEffect(() => {
@@ -50,6 +59,18 @@ export default function CheckoutPage({ params }) {
             `/api/user/information?user_id=${encodeURIComponent(sellerId)}`
           );
           const shopData = await shopResponse.json();
+          const shippingmethod = await fetch(
+            `/api/user/shipping_company_of_seller?seller_id=${encodeURIComponent(
+              sellerId
+            )}`
+          );
+          const paymentmethod = await fetch(
+            `/api/user/payment_method_of_seller?seller_id=${encodeURIComponent(
+              sellerId
+            )}`
+          );
+          const paymentdata = await paymentmethod.json();
+          const shippingdata = await shippingmethod.json();
           return {
             sellerId: sellerId,
             Shop_name: shopData.user.Shop_name,
@@ -59,10 +80,13 @@ export default function CheckoutPage({ params }) {
               check: false,
               total: item.Quantity * parseFloat(item.Option_price),
             })),
+            shippingmethod: shippingdata,
+            paymentmethod: paymentdata,
           };
         });
         const cartShops = await Promise.all(cartShopsPromises);
         setCart({ shop: cartShops });
+        console.log(cartShops);
       } else {
         console.error("Error:", response.statusText);
       }
@@ -115,12 +139,34 @@ export default function CheckoutPage({ params }) {
       }
     }
 
-    window.addEventListener("beforeunload", handleUnload);
+    // window.addEventListener("beforeunload", handleUnload);
 
-    return () => {
-      window.removeEventListener("beforeunload", handleUnload);
-    };
-  }, [user_id, cart]);
+    // return () => {
+    //   window.removeEventListener("beforeunload", handleUnload);
+    // };
+  }, [user_id]);
+  useEffect(() => {
+    // Only proceed if there are shops in the cart
+    if (cart.shop && cart.shop.length > 0) {
+      // Extract all payment methods arrays
+      const allPaymentMethods = cart.shop.map((shop) => shop.paymentmethod);
+
+      // Calculate the intersection
+      const commonPaymentMethods = allPaymentMethods.reduce(
+        (commonMethods, methods) => {
+          return commonMethods.filter((commonMethod) =>
+            methods.some(
+              (method) => method.Method_name === commonMethod.Method_name
+            )
+          );
+        }
+      );
+
+      // Update the state to store common payment methods
+      setCommonPaymentMethods(commonPaymentMethods); // Ensure you have a useState for this
+    }
+  }, [cart.shop]); // Dependency on cart.shop to recalculate when shops are updated
+
   async function handleBack() {
     for (let shop of cart.shop) {
       for (let product of shop.product) {
@@ -168,6 +214,19 @@ export default function CheckoutPage({ params }) {
   };
   const totalPrice = calculateTotalPrice();
   async function handle_checkout() {
+    if (!selectedPaymentMethod) {
+      alert("Vui lòng chọn phương thức thanh toán.");
+      return;
+    }
+
+    // Check if all shops have a selected shipping method
+    const allShopsHaveShipping = cart.shop.every(
+      (_, index) => selectedShipment[index]
+    );
+    if (!allShopsHaveShipping) {
+      alert("Vui lòng chọn phương thức vận chuyển cho tất cả các cửa hàng.");
+      return;
+    }
     let new_cart = { ...cart };
 
     for (let shop of new_cart.shop) {
@@ -188,11 +247,13 @@ export default function CheckoutPage({ params }) {
           Seller_ID: shop.sellerId, // Seller_ID is obtained from the first checked product
           Customer_ID: user_id, // Replace with actual Customer_ID
           Address: address, // Replace with actual Address
-          Shipping_company: shop.delivery_company, // Replace with actual Shipping_company
           Total_quantity: Product_list.length,
           Product_list,
           Customer_name: user_information.user_name,
           Customer_phone_number: user_information.user_phone,
+          Note: note,
+          Shipping_company_ID: selectedShipment[0].id,
+          Payment_method_id: selectedPaymentMethod,
         };
 
         // Make API request to server
@@ -369,7 +430,20 @@ export default function CheckoutPage({ params }) {
                     Chọn vận chuyển
                   </button>
                   <p className="shipment_status">
-                    {selectedShipment[index]?.shipment || "Chưa chọn"}
+                    {selectedShipment[index] ? (
+                      <>
+                        <strong>{selectedShipment[index].shipment}</strong>
+                        <span className="shipment_status_price">
+                          ₫{selectedShipment[index].price.toLocaleString()}
+                        </span>
+                        <span className="shipment_note">
+                          {selectedShipment[index].note}
+                        </span>{" "}
+                        {/* Make sure it's .note */}
+                      </>
+                    ) : (
+                      "Chưa chọn"
+                    )}
                   </p>
                 </div>
               </div>
@@ -379,27 +453,23 @@ export default function CheckoutPage({ params }) {
                   <div className="modal-content">
                     <h3>Chọn đơn vị vận chuyển</h3>
                     <ul>
-                      <li onClick={() => handleShipmentSelect("Nhanh", 37300)}>
-                        <strong>Nhanh</strong> - ₫37,300
-                        <div>
-                          Đảm bảo nhận hàng từ 2 Tháng 6 - 4 Tháng 6
-                          <br />
-                          Nhận Voucher trị giá ₫15.000 nếu đơn hàng được giao
-                          đến bạn sau ngày 4 Tháng 6 2024.
-                        </div>
-                      </li>
-                      <li
-                        onClick={() =>
-                          handleShipmentSelect("Hàng Công Kênh", 0)
-                        }
-                      >
-                        <strong>Hàng Công Kênh</strong> - Miễn phí
-                        <div>Dưới gói hàng kích thước tối thiểu</div>
-                      </li>
-                      <li onClick={() => handleShipmentSelect("Hòa Tốc", 0)}>
-                        <strong>Hòa Tốc</strong> - Miễn phí
-                        <div>Nằm ngoài khu vực hỗ trợ giao hàng</div>
-                      </li>
+                      {currentShippingOptions.map((option) => (
+                        <li
+                          key={option.Company_ID}
+                          onClick={() =>
+                            handleShipmentSelect(
+                              option.Company_ID,
+                              option.Company_name,
+                              parseInt(option.Price),
+                              option.Note
+                            )
+                          }
+                        >
+                          <strong>{option.Company_name}</strong> - ₫
+                          {option.Price.toLocaleString()}
+                          <div>{option.Note}</div>
+                        </li>
+                      ))}
                     </ul>
                     <button onClick={() => setShowShipmentModal(false)}>
                       Đóng
@@ -410,12 +480,37 @@ export default function CheckoutPage({ params }) {
 
               <div>
                 <p>
-                  Tổng cộng: {shop.product.reduce((a, b) => a + b.total, 0)} 円
+                  Tổng cộng:{" "}
+                  {shop.product.reduce((a, b) => a + b.total, 0) +
+                    (selectedShipment[index]
+                      ? selectedShipment[index].price
+                      : 0)}{" "}
+                  円
                 </p>
               </div>
             </div>
           );
         })}
+      <div className="checkout_information_payment">
+        <p>Phương thức thanh toán</p>
+        <div className="payment_methods">
+          {commonPaymentMethods.length > 0 ? (
+            commonPaymentMethods.map((method) => (
+              <div
+                key={method.Method_ID}
+                className={`payment_method ${
+                  selectedPaymentMethod === method.Method_ID ? "selected" : ""
+                }`}
+                onClick={() => handlePaymentMethodSelect(method.Method_ID)}
+              >
+                {method.Method_name}
+              </div>
+            ))
+          ) : (
+            <p>No common payment methods available</p>
+          )}
+        </div>
+      </div>
       <div className="checkout_final_step">
         <div>
           <p>Tong tien hang: </p> <p>{totalPrice} 円</p>

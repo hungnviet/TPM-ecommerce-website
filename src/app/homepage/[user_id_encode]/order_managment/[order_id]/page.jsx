@@ -21,6 +21,7 @@ export default function CheckoutPage({ params }) {
   const [iscomplete, setIsComplete] = useState("");
   const [activeCommentId, setActiveCommentId] = useState(null);
   const Order_ID = pathParts[pathParts.length - 1];
+  const [note, setNote] = useState("");
   const [user_information, setUserInformation] = useState({
     user_name: "",
     user_phone: "",
@@ -129,12 +130,14 @@ export default function CheckoutPage({ params }) {
     fetch(`/api/user/order?order_id=${Order_ID}`)
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         setUserInformation({
           user_name: data.body.order.Customer_name,
           user_phone: data.body.order.Customer_phone_number,
         });
         setIsComplete(data.body.order.Status);
         const orderData = data.body.order;
+        setNote(data.body.order.Note);
         setAddress(data.body.order.Address);
         const orderItems = data.body.order_items;
         const productPromises = orderItems.map((item) =>
@@ -309,6 +312,16 @@ export default function CheckoutPage({ params }) {
       <div className="checkout_final_step">
         <div>
           <p>Tong tien hang: </p> <p>{totalPrice} 円</p>
+        </div>
+        <p>Ghi chu</p>
+        <div
+          style={{
+            border: "1px solid black",
+            width: "400px",
+            padding: "10px 20px",
+          }}
+        >
+          {note}
         </div>
       </div>
     </div>

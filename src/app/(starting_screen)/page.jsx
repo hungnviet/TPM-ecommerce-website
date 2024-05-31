@@ -24,9 +24,7 @@ export default function Home() {
         }
         cognitoUser.getUserAttributes(function (err, attributes) {
           if (err) {
-            // Handle error
           } else {
-            // Do something with attributes
             const sub = attributes.find(
               (attribute) => attribute.Name === "sub"
             ).Value;
@@ -37,6 +35,7 @@ export default function Home() {
       });
     } else {
       setIsSignedIn(false);
+      router.push("/homepage/guess");
     }
   }, []);
 

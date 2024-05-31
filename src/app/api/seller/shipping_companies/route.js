@@ -43,3 +43,19 @@ export async function POST(req) {
       });
   });
 }
+
+export async function DELETE(req) {
+  const data = await req.json();
+  const { seller_ID, company_ID } = data;
+  const sql =
+    "DELETE FROM SHIPPING_COMPANY_OF_SELLER WHERE Seller_ID = ? AND Company_ID = ?";
+
+  return new Promise((resolve, reject) => {
+    db.query(sql, [seller_ID, company_ID], (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(NextResponse.json({ message: "Shipping company removed" }));
+    });
+  });
+}

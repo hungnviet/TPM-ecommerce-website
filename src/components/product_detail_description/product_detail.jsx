@@ -14,6 +14,9 @@ export default function Product_detail_description({ user_id, product_id }) {
   const [seller, setSeller] = useState({});
   const [liked, setLiked] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
   const [comments, setComment] = useState({
     date: "",
     content: "",
@@ -139,17 +142,16 @@ export default function Product_detail_description({ user_id, product_id }) {
     return <div>Loading...</div>;
   }
   async function handleAddToCart() {
-    if (user_id == "guest") {
+    if (user_id === "guest") {
       router.push("/sign_in");
       return;
     }
     const data = {
-      product_id: product_id,
-      user_id: user_id,
+      product_id,
+      user_id,
       option_number: index_option,
-      quantity: quantity,
+      quantity,
     };
-    console.log(data);
 
     const response = await fetch("/api/user/cart", {
       method: "POST",
@@ -162,9 +164,39 @@ export default function Product_detail_description({ user_id, product_id }) {
     if (response.ok) {
       const result = await response.json();
       console.log(result.message);
+      setModalMessage("Item added to cart successfully!");
+      setShowModal(true);
     } else {
       console.error("Error:", response.statusText);
+      setModalMessage("Failed to add item to cart. Please try again.");
+      setShowModal(true);
     }
+  }
+  function Modal({ show, message, onClose }) {
+    if (!show) {
+      return null;
+    }
+
+    return (
+      <div className="modal">
+        <div className="modal_content">
+          <p>{message}</p>
+          <div className="modal_actions">
+            <button className="btn_continue" onClick={onClose}>
+              Continue Shopping
+            </button>
+            <button
+              className="btn_to_cart"
+              onClick={() =>
+                router.push(`/homepage/${encodeURIComponent(user_id)}/cart`)
+              }
+            >
+              Go to My Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   function visitShop() {
@@ -352,6 +384,11 @@ export default function Product_detail_description({ user_id, product_id }) {
             </div>
           ))}
       </div>
+      <Modal
+        show={showModal}
+        message={modalMessage}
+        onClose={() => setShowModal(false)}
+      />
     </div>
   ) : (
     <div>Loading...</div>
