@@ -206,7 +206,7 @@ export default function Page({ params }) {
             Shop Name: <span>{shop.shopname}</span>
           </h2>
           <p>
-            Shop's address: <span>{shop.address}</span>
+            Shop&apos;s address <span>{shop.address}</span>
           </p>
         </div>
       </div>
