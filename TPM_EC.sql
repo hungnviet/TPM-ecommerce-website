@@ -105,10 +105,13 @@ CREATE TABLE ORDER_TABLE(
         Ship_code varchar(255),
         Order_date DATE,
         Expected_delivery_date DATE,
-        Shipping_company varchar(255),
+        Shipping_company_ID int,
+        Payment_method_id int,
         Status Enum('Waiting confirmation','Packiging','Shipping','Complete','Reject'),
         foreign key (Seller_ID) references USER(User_ID),
         foreign key (Customer_ID) references USER(User_ID)
+        foreign key (Shipping_company_ID) references SHIPPING_COMPANY(Company_ID)
+        foreign key (Payment_method_id) references PAYMENT_METHOD(Method_ID)
 );
 
 CREATE TABLE ORDER_ITEM(
@@ -122,12 +125,36 @@ CREATE TABLE ORDER_ITEM(
 );
 
 
-
-CREATE TABLE SHIPPING_COMPANY (
-		Seller_ID varchar(255),
-        Company_name varchar(255) ,
-        foreign key (Seller_ID) references USER(User_ID)
+CREATE TABLE SHIPPING_COMPANY(
+    Company_ID int AUTO_INCREMENT,
+    Company_name varchar(255),
+    Price decimal(10, 2),
+    Note text,
+    PRIMARY KEY (Company_ID)
 );
+
+CREATE TABLE PAYMENT_METHOD(
+    Method_ID int AUTO_INCREMENT,
+    Method_name varchar(255),
+    Note text,
+    PRIMARY KEY (Method_ID)
+);
+
+create table SHIPPING_COMPANY_OF_SELLER(
+	Company_ID int,
+    Seller_ID varchar(255),
+    primary key (Seller_ID,Company_ID),
+    foreign key (Company_ID) references SHIPPING_COMPANY(Company_ID),
+    foreign key (Seller_ID) references USER(User_ID)
+);
+
+create table PAYMENT_METHOD_OF_SELLER(
+	Method_ID int,
+    Seller_ID varchar(255),
+    primary key (Seller_ID,Method_ID),
+    foreign key (Method_ID) references PAYMENT_METHOD(Method_ID),
+    foreign key (Seller_ID) references USER(User_ID)
+)
 
 CREATE TABLE CATEGORY(
         Category_ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -565,3 +592,22 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE Get_shipping_company_of_seller(IN p_sellerID VARCHAR(255))
+BEGIN
+    SELECT SC.Company_ID, SC.Company_name, SC.Price, SC.Note
+    FROM SHIPPING_COMPANY AS SC
+    INNER JOIN SHIPPING_COMPANY_OF_SELLER AS SCOS ON SC.Company_ID = SCOS.Company_ID
+    WHERE SCOS.Seller_ID = p_sellerID;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE Get_payment_method_of_seller(IN p_sellerID VARCHAR(255))
+BEGIN
+    SELECT MT.Method_ID, MT.Method_name, MT.Note
+    FROM PAYMENT_METHOD AS MT
+    INNER JOIN PAYMENT_METHOD_OF_SELLER AS MTOS ON MT.Method_ID = MTOS.Method_ID
+    WHERE MTOS.Seller_ID = p_sellerID;
+END //
