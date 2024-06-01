@@ -85,9 +85,7 @@ export default function Product_cart({ product, userID }) {
           <div className="seller_img_product_cart">
             <Image src={product.Shop_image} fill="true" alt="Seller Image" />
           </div>
-          <p>
-            {product.FName} {product.LName}
-          </p>
+          <p>{product.Shop_name}</p>
         </div>
         <div className="product_in4_in_cart">
           <p className="product_name_cart">{product.Product_title}</p>

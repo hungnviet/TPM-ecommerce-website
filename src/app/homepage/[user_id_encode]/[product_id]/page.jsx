@@ -20,7 +20,9 @@ export default function Page({ params }) {
   }
 
   async function getRelatedProduct() {
-    const res = await fetch(`/api/user/category?category_id=${category}`);
+    const res = await fetch(
+      `/api/user/category?category_id=${category}&user_id=${user_id}`
+    );
     const data = await res.json();
     setRelatedProduct(data);
   }
