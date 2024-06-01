@@ -33,10 +33,10 @@ export default function Product_cart({ product, userID }) {
       .then((response) => response.json())
       .then((data) => {
         console.log(data.message);
-        setIsLiked(true);
+        setIsLiked(!isLiked);
 
         // Call the PUT function after the POST request is successful
-        fetch(`/api/user/product?product_id=${product_id}`, {
+        fetch(`/api/user/product?product_id=${productID}`, {
           method: "PUT",
         })
           .then((response) => response.json())
@@ -75,10 +75,6 @@ export default function Product_cart({ product, userID }) {
       });
   }
 
-  useEffect(() => {
-    console.log("product_id: ", product);
-  }, []);
-
   return (
     <div className="product_cart_container">
       <div className="product_cart_image_container">
@@ -90,8 +86,7 @@ export default function Product_cart({ product, userID }) {
             <Image src={product.Shop_image} fill="true" alt="Seller Image" />
           </div>
           <p>
-            {product.First_Image}
-            {product.LName}
+            {product.FName} {product.LName}
           </p>
         </div>
         <div className="product_in4_in_cart">
@@ -130,7 +125,7 @@ export default function Product_cart({ product, userID }) {
         </button>
       </div>
       <div className="btn_like_product_cart_homepage_container">
-        {product.isLiked ? (
+        {isLiked ? (
           <button onClick={unlikedProduct}>
             <Image
               src="/heart_liked.png"

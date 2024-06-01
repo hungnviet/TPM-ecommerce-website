@@ -59,7 +59,7 @@ export default function Page({ params }) {
     return () => clearInterval(timer); // Clean up on component unmount
   }, []);
   useEffect(() => {
-    fetch(`/api/user/products?user_id=${user_id}`, {
+    fetch(`/api/user/productForHomePage?user_id=${user_id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

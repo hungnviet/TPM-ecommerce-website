@@ -21,21 +21,7 @@ export default function Page({ params }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        const transformedData = data.products.map((item) => ({
-          productImg: item.firstImage,
-          sellerImg: item.shopImage,
-          sellerName: item.shopName,
-          productName: item.title,
-          location: "北海道日高地方",
-          price: item.firstOptionPrice,
-          unit: "1袋1kg",
-          product_id: item.productId,
-          category_id: item.categoryId,
-          isDiscount: false,
-          percentage: 0,
-          totalLikes: item.totalLikes,
-        }));
-        setProducts(transformedData);
+        setProducts(data);
       })
       .catch((error) => console.error("Error:", error));
   }, []);
