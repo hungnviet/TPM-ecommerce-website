@@ -17,25 +17,6 @@ export default function Product_cart({ product, userID }) {
   }
 
   //fetch data for check like
-  useEffect(() => {
-    if (product.product_id && userID) {
-      fetch(
-        `/api/user/checkLike?product_id=${product.product_id}&user_id=${userID}`
-      )
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error(res.statusText);
-          }
-          return res.json();
-        })
-        .then((data) => {
-          setIsLiked(data.isLiked);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    }
-  }, []);
 
   //like product
   async function handleLikeProduct() {
