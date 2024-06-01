@@ -4,16 +4,15 @@ import "./product_cart.css";
 import { useEffect, useState } from "react";
 export default function Product_cart({ product, userID }) {
   const router = useRouter();
-  const [isLiked, setIsLiked] = useState(false);
-  const productID = product.product_id;
-
+  const productID = product.Product_ID;
+  const [isLiked, setIsLiked] = useState(product.isLiked);
   function show_details() {
     router.push(
-      `/homepage/${encodeURIComponent(userID)}/${product.product_id}`
+      `/homepage/${encodeURIComponent(userID)}/${product.Product_ID}`
     );
   }
   function add_to_cart() {
-    console.log(`user_id: ${userID}, product_id: ${product.product_id}`);
+    console.log(`user_id: ${userID}, product_id: ${product.Product_ID}`);
   }
 
   //fetch data for check like
@@ -76,20 +75,27 @@ export default function Product_cart({ product, userID }) {
       });
   }
 
+  useEffect(() => {
+    console.log("product_id: ", product);
+  }, []);
+
   return (
     <div className="product_cart_container">
       <div className="product_cart_image_container">
-        <Image src={product.productImg} fill="true" alt="product image" />
+        <Image src={product.First_Image} fill="true" alt="product image" />
       </div>
       <div className="product_cart_info_container">
         <div className="seller_in4_product_cart">
           <div className="seller_img_product_cart">
-            <Image src={product.sellerImg} fill="true" alt="Seller Image" />
+            <Image src={product.Shop_image} fill="true" alt="Seller Image" />
           </div>
-          <p>{product.sellerName}</p>
+          <p>
+            {product.First_Image}
+            {product.LName}
+          </p>
         </div>
         <div className="product_in4_in_cart">
-          <p className="product_name_cart">{product.productName}</p>
+          <p className="product_name_cart">{product.Product_title}</p>
           {/* <div className="location_product_cart">
             <Image
               src={"/location_icon.png"}
@@ -101,18 +107,18 @@ export default function Product_cart({ product, userID }) {
           </div> */}
           <div className="price_container_cart">
             <div>
-              <p>{product.unit}</p>
+              <p>{product.First_Option_Name}</p>
             </div>
             <div>
-              <p>{product.price}</p>
+              <p>{product.First_Option_Price}</p>
             </div>
           </div>
         </div>
-        {product.isDiscount && (
+        {/* {product.isDiscount && (
           <div className="discount_container_cart">
             <p>{product.percentage}% OFF</p>
           </div>
-        )}
+        )} */}
       </div>
 
       <div className="overlay_cart_product">
@@ -124,7 +130,7 @@ export default function Product_cart({ product, userID }) {
         </button>
       </div>
       <div className="btn_like_product_cart_homepage_container">
-        {isLiked ? (
+        {product.isLiked ? (
           <button onClick={unlikedProduct}>
             <Image
               src="/heart_liked.png"

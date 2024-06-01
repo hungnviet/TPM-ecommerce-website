@@ -71,23 +71,7 @@ export default function Page({ params }) {
       .then((data) => {
         // transform the data into the format you need
         console.log(data);
-
-        const transformedData = data.map((item) => ({
-          productImg: item.First_Image,
-          sellerImg: item.Shop_image,
-          sellerName: item.Shop_name,
-          productName: item.Product_title,
-          location: "北海道日高地方",
-          price: item.First_Option_Price,
-          unit: "1袋1kg",
-          product_id: item.Product_ID,
-          category_id: item.Category_ID,
-          isDiscount: false,
-          percentage: 0,
-          totalLikes: item.totalLike,
-        }));
-
-        setBestSellerProducts(transformedData);
+        setBestSellerProducts(data);
       })
       .catch((error) => console.error("Error:", error));
   }, []);
@@ -182,7 +166,7 @@ export default function Page({ params }) {
           <div className="big_best_seller_container">
             <div className="product_list" ref={productBestSellerListRef}>
               {bestSellerProducts
-                .filter((product) => product.category_id === i + 1)
+                .filter((product) => product.Category_ID === i + 1)
                 .slice(0, 10)
                 .map((product, index) => (
                   <Product_cart

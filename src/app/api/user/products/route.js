@@ -7,7 +7,7 @@ export async function GET(req) {
   const url = new URL(req.url);
   const searchParams = new URLSearchParams(url.searchParams);
   const user_id = searchParams.get("user_id");
-  const sql = `call Get_All_Products_For_User()`; //just get the title the first image and the first price of the product and the product id
+  const sql = `call Get_All_Products_For_User('${user_id}')`; //just get the title the first image and the first price of the product and the product id
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {
       if (err) {
