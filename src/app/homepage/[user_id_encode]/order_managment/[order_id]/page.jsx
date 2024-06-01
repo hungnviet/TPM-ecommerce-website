@@ -1,6 +1,6 @@
 "use client";
 import "../../checkout/checkout.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, React } from "react";
 import Image from "next/image";
 import AWS from "aws-sdk";
 AWS.config.update({
@@ -15,7 +15,7 @@ export default function CheckoutPage({ params }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [orderDetails, setOrderDetails] = useState(null);
   const [comment, setComment] = useState("");
-  const path = window.location.pathname;
+  const path = typeof window !== "undefined" ? window.location.pathname : "";
   const pathParts = path.split("/");
   const [address, setAddress] = useState("");
   const [iscomplete, setIsComplete] = useState("");
@@ -27,6 +27,7 @@ export default function CheckoutPage({ params }) {
     user_phone: "",
     user_address: [],
   });
+  const [isLoading, setIsLoading] = useState(true);
   const handleImageChange = (e) => {
     const newSelectedFiles = Array.from(e.target.files);
     setSelectedFiles((prevFiles) => [...prevFiles, ...newSelectedFiles]);
@@ -131,30 +132,45 @@ export default function CheckoutPage({ params }) {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        setUserInformation({
-          user_name: data.body.order.Customer_name,
-          user_phone: data.body.order.Customer_phone_number,
-        });
-        setIsComplete(data.body.order.Status);
-        const orderData = data.body.order;
-        setNote(data.body.order.Note);
-        setAddress(data.body.order.Address);
-        const orderItems = data.body.order_items;
-        const productPromises = orderItems.map((item) =>
-          fetch(`/api/user/product?product_id=${item.Product_ID}`).then(
-            (response) => response.json()
-          )
-        );
-        return Promise.all(productPromises).then((productData) => {
-          const enrichedOrderData = orderItems.map((item, index) => ({
-            ...item,
-            productDetails: productData[index],
-          }));
-          setOrderDetails({
-            ...orderData,
-            orderItems: enrichedOrderData,
+        if (!data || !data.body || !data.body.order) {
+          setUserInformation({
+            user_name: "loading",
+            user_phone: "loading",
           });
-        });
+          setIsComplete("loading");
+          setNote("loading");
+          setAddress("loading");
+          setOrderDetails("loading");
+        } else {
+          setUserInformation({
+            user_name: data.body.order.Customer_name || "loading",
+            user_phone: data.body.order.Customer_phone_number || "loading",
+          });
+          setIsComplete(data.body.order.Status || "loading");
+          setNote(data.body.order.Note || "loading");
+          setAddress(data.body.order.Address || "loading");
+
+          const orderData = data.body.order;
+          const orderItems = data.body.order_items || [];
+
+          const productPromises = orderItems.map((item) =>
+            fetch(`/api/user/product?product_id=${item.Product_ID}`).then(
+              (response) => response.json()
+            )
+          );
+
+          return Promise.all(productPromises).then((productData) => {
+            const enrichedOrderData = orderItems.map((item, index) => ({
+              ...item,
+              productDetails: productData[index] || "loading",
+            }));
+
+            setOrderDetails({
+              ...orderData,
+              orderItems: enrichedOrderData,
+            });
+          });
+        }
       })
       .catch((error) => console.error(error));
   }, [Order_ID]);
