@@ -39,7 +39,6 @@ export default function Page({ params }) {
         Status: status,
         Order_ID: orderId,
         Expected_delivery_date: null,
-        Shipping_company: null,
       }),
     });
 

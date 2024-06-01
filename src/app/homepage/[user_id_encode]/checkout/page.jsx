@@ -139,11 +139,11 @@ export default function CheckoutPage({ params }) {
       }
     }
 
-    // window.addEventListener("beforeunload", handleUnload);
+    window.addEventListener("beforeunload", handleUnload);
 
-    // return () => {
-    //   window.removeEventListener("beforeunload", handleUnload);
-    // };
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
   }, [user_id]);
   useEffect(() => {
     // Only proceed if there are shops in the cart

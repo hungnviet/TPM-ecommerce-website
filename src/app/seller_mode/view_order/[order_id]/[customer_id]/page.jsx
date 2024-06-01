@@ -35,6 +35,8 @@ export default function CheckoutPage({ params }) {
           user_phone: data.body.order.Customer_phone_number,
         });
         const orderData = data.body.order;
+        setNote(data.body.order.Note);
+
         setSellerID(data.body.order.Seller_ID);
         setAddress(data.body.order.Address);
         const orderItems = data.body.order_items;

@@ -19,8 +19,8 @@ export async function GET(req) {
 
 export async function PUT(req) {
   const data = await req.json();
-  const { Status, Expected_delivery_date, Shipping_company, Order_ID } = data;
-  const sql = `UPDATE ORDER_TABLE SET Status = '${Status}', Expected_delivery_date = '${Expected_delivery_date}', Shipping_company = '${Shipping_company}' WHERE Order_id = ${Order_ID}`;
+  const { Status, Expected_delivery_date, Order_ID } = data;
+  const sql = `UPDATE ORDER_TABLE SET Status = '${Status}', Expected_delivery_date = '${Expected_delivery_date}' WHERE Order_id = ${Order_ID}`;
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {
       if (err) {
