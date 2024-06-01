@@ -2,10 +2,12 @@
 import "./page.css";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Knock } from "@knocklabs/node";
 
 export default function Page({ params }) {
   const [orderWatingConfirm, setOrderWatingConfirm] = useState([]);
   const route = useRouter();
+  const knockClient = new Knock(process.env.NEXT_PUBLIC_KNOCK_SECRET);
 
   const { user_id_encode, seller_id_encode } = params;
 
@@ -29,7 +31,7 @@ export default function Page({ params }) {
   useEffect(() => {
     fetchOrders();
   }, [seller_id_encode]);
-  async function updateOrderStatus(orderId, status) {
+  async function updateOrderStatus(orderId, status, customerid) {
     const response = await fetch(`/api/seller/order`, {
       method: "PUT",
       headers: {
@@ -45,6 +47,10 @@ export default function Page({ params }) {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+    await knockClient.workflows.trigger("confirmorder", {
+      recipients: [customerid],
+      actor: seller_id_encode,
+    });
 
     // Refresh the order list after updating the status
     fetchOrders();
@@ -105,7 +111,11 @@ export default function Page({ params }) {
                   </button>
                   <button
                     onClick={() =>
-                      updateOrderStatus(order.Order_ID, "Packaging")
+                      updateOrderStatus(
+                        order.Order_ID,
+                        "Packaging",
+                        order.Customer_ID
+                      )
                     }
                   >
                     Accept

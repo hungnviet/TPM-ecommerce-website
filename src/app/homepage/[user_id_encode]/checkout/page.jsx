@@ -3,8 +3,11 @@ import "./checkout.css";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { Knock } from "@knocklabs/node";
+
 export default function CheckoutPage({ params }) {
   const route = useRouter();
+  const knockClient = new Knock(process.env.NEXT_PUBLIC_KNOCK_SECRET);
 
   const user_id_encode = params.user_id_encode;
   const user_id = decodeURIComponent(user_id_encode);
@@ -268,6 +271,11 @@ export default function CheckoutPage({ params }) {
         if (!response.ok) {
           alert("Checkout failed");
           return;
+        } else {
+          await knockClient.workflows.trigger("buyproduct", {
+            recipients: [shop.sellerId],
+            actor: user_id,
+          });
         }
         for (let product of Product_list) {
           const deleteResponse = await fetch("/api/user/cart", {
@@ -290,6 +298,7 @@ export default function CheckoutPage({ params }) {
     }
 
     alert("Order has been placed");
+
     route.push(`/homepage/${encodeURIComponent(user_id)}/order_managment`);
   }
   return (

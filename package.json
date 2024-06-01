@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@knocklabs/node": "^0.6.11",
+    "@knocklabs/react": "^0.2.23",
     "amazon-cognito-identity-js": "^6.3.12",
     "aws-amplify": "^6.0.27",
     "aws-sdk": "^2.1594.0",

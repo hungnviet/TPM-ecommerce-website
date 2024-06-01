@@ -8,15 +8,39 @@ export default function Page({ params }) {
   const user_id = decodeURIComponent(user_id_encode);
   const [orders, setOrders] = useState([]);
   const [shopNames, setShopNames] = useState({});
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [shippingCompanies, setShippingCompanies] = useState([]);
 
   useEffect(() => {
-    fetch(`/api/user/orders?customer_id=${encodeURIComponent(user_id)}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setOrders(data);
-        data.forEach((order) => fetchUserInformation(order.Seller_ID));
-      })
-      .catch((error) => console.error(error));
+    function fetchorder() {
+      fetch(`/api/user/orders?customer_id=${encodeURIComponent(user_id)}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setOrders(data);
+          data.forEach((order) => fetchUserInformation(order.Seller_ID));
+        })
+        .catch((error) => console.error(error));
+    }
+    function fetchPaymentMethods() {
+      fetch(`/api/seller/payment_methods`)
+        .then((response) => response.json())
+        .then((data) => {
+          setPaymentMethods(data);
+        })
+        .catch((error) => console.error(error));
+    }
+    function fetchShippingcompany() {
+      fetch(`/api/seller/shipping_companies`)
+        .then((response) => response.json())
+        .then((data) => {
+          setShippingCompanies(data);
+          console.log(data);
+        })
+        .catch((error) => console.error(error));
+    }
+    fetchorder();
+    fetchPaymentMethods();
+    fetchShippingcompany();
   }, []);
   async function fetchUserInformation(Seller_ID) {
     const response = await fetch(
@@ -43,6 +67,8 @@ export default function Page({ params }) {
           <div>Total Price</div>
           <div>Quantity of items</div>
           <div>Status</div>
+          <div>Payment method</div>
+          <div>Shipping company</div>
           <div>Actions</div>
         </div>
         {orders.map((item, index) => (
@@ -52,6 +78,12 @@ export default function Page({ params }) {
             <div>{item.Total_price}</div>
             <div>{item.Total_quantity}</div>
             <div>{item.Status}</div>
+            <div>
+              {paymentMethods[item.Payment_method_id]?.Method_name}
+            </div>{" "}
+            <div>
+              {shippingCompanies[item.Shipping_company_ID]?.Company_name}
+            </div>{" "}
             <div>
               <button
                 onClick={() => {

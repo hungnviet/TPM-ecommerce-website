@@ -2,8 +2,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import "./product_cart.css";
 import { useEffect, useState } from "react";
+import { Knock } from "@knocklabs/node";
 export default function Product_cart({ product, userID }) {
   const router = useRouter();
+  const knockClient = new Knock(process.env.NEXT_PUBLIC_KNOCK_SECRET);
   const productID = product.Product_ID;
   const [isLiked, setIsLiked] = useState(product.isLiked);
   function show_details() {
@@ -46,6 +48,15 @@ export default function Product_cart({ product, userID }) {
       .catch((error) => {
         console.error("Error:", error);
       });
+    await knockClient.workflows.trigger("likeproduct", {
+      recipients: [product.Seller_ID],
+      actor: userID,
+      data: {
+        product: {
+          title: product.Product_title,
+        },
+      },
+    });
   }
 
   //dislike product
@@ -63,7 +74,7 @@ export default function Product_cart({ product, userID }) {
         setIsLiked(false);
 
         // Call the PUT request after the DELETE request is successful
-        fetch(`/api/user/product?product_id=${product_id}`, {
+        fetch(`/api/user/product?product_id=${productID}`, {
           method: "PUT",
         })
           .then((response) => response.json())

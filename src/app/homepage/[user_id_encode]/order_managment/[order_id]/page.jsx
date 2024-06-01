@@ -147,7 +147,7 @@ export default function CheckoutPage({ params }) {
             user_phone: data.body.order.Customer_phone_number || "loading",
           });
           setIsComplete(data.body.order.Status || "loading");
-          setNote(data.body.order.Note || "loading");
+          setNote(data.body.order.Note || "");
           setAddress(data.body.order.Address || "loading");
 
           const orderData = data.body.order;

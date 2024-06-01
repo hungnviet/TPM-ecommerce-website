@@ -55,7 +55,7 @@
   align-items: center;
   display: flex;
 }
-.right_section_navbar_container div {
+.right_section_navbar_container > div:not(.notificationknock) {
   display: flex;
   flex-direction: row;
   column-gap: 5px;
@@ -147,4 +147,34 @@
 
 .navbar_user_container button:hover::after {
   width: 100%;
+}
+/* navbar_user.css - Add your custom styles here */
+
+/* Customizing the notification button */
+.knock-notification-icon-button {
+  background-color: #007bff; /* Blue background */
+  border: none; /* Remove border */
+  border-radius: 50%; /* Circular button */
+  padding: 8px; /* Padding around the icon */
+  cursor: pointer;
+}
+
+/* Customizing the notification popover */
+.knock-feed-popover {
+  border: 1px solid #ccc; /* Add a border around the popover */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add shadow for 3D effect */
+  width: 320px; /* Set a specific width */
+  background-color: white; /* Background color */
+}
+
+/* Styling for individual notification items */
+.knock-notification-item {
+  padding: 10px; /* More padding for each item */
+  border-bottom: 1px solid #eee; /* Separator between items */
+  cursor: pointer;
+  transition: background-color 0.2s; /* Smooth background color transition on hover */
+}
+
+.knock-notification-item:hover {
+  background-color: #f8f9fa; /* Light grey background on hover */
 }
