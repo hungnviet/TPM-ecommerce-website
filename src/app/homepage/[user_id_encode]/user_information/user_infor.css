@@ -56,6 +56,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 .user_infor_each_value button {
   height: 30px;
@@ -78,4 +79,43 @@
   border-bottom: 1px solid #dad7cd;
   cursor: pointer;
   color: #3a86ff;
+}
+.add_address_user_info_input {
+  width: 90%;
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid #dad7cd;
+}
+.form_add_address_user_info {
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  width: 100%;
+}
+.form_add_address_user_info button {
+  height: 40px;
+  width: 100px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #3a86ff;
+  color: white;
+  border: none;
+}
+.form_input_change_name {
+  width: 90%;
+}
+.form_input_change_name input {
+  width: 100%;
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid #dad7cd;
+}
+.btn_save_change_name {
+  height: 40px;
+  width: 100px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #3a86ff;
+  color: white;
+  border: none;
 }

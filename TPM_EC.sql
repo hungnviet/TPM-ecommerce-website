@@ -161,6 +161,78 @@ CREATE TABLE CATEGORY(
         Category_name varchar(255)
 );
 
+CREATE TABLE REGIONS(
+    Region_id INT AUTO_INCREMENT PRIMARY KEY,
+    Region_name VARCHAR(255) NOT NULL
+);
+
+-- Creating a table for provinces in Japan, linked to regions
+CREATE TABLE PROVINCES(
+    Province_id INT AUTO_INCREMENT PRIMARY KEY,
+    Province_name VARCHAR(255) NOT NULL,
+    Region_id INT,
+    FOREIGN KEY (Region_id) REFERENCES REGIONS(Region_id)
+);
+
+INSERT INTO REGIONS (Region_name) VALUES
+('Hokkaido'),
+('Tohoku'),
+('Kanto'),
+('Chubu'),
+('Kinki (Kansai)'),
+('Chugoku'),
+('Shikoku'),
+('Kyushu (including Okinawa)');
+
+INSERT INTO PROVINCES (Province_name, Region_id) VALUES
+('Hokkaido', 1),
+('Aomori', 2),
+('Iwate', 2),
+('Miyagi', 2),
+('Akita', 2),
+('Yamagata', 2),
+('Fukushima', 2),
+('Ibaraki', 3),
+('Tochigi', 3),
+('Gunma', 3),
+('Saitama', 3),
+('Chiba', 3),
+('Tokyo', 3),
+('Kanagawa', 3),
+('Niigata', 4),
+('Toyama', 4),
+('Ishikawa', 4),
+('Fukui', 4),
+('Yamanashi', 4),
+('Nagano', 4),
+('Gifu', 4),
+('Shizuoka', 4),
+('Aichi', 4),
+('Mie', 5),
+('Shiga', 5),
+('Kyoto', 5),
+('Osaka', 5),
+('Hyogo', 5),
+('Nara', 5),
+('Wakayama', 5),
+('Tottori', 6),
+('Shimane', 6),
+('Okayama', 6),
+('Hiroshima', 6),
+('Yamaguchi', 6),
+('Tokushima', 7),
+('Kagawa', 7),
+('Ehime', 7),
+('Kochi', 7),
+('Fukuoka', 8),
+('Saga', 8),
+('Nagasaki', 8),
+('Kumamoto', 8),
+('Oita', 8),
+('Miyazaki', 8),
+('Kagoshima', 8),
+('Okinawa', 8);
+
 ALTER TABLE PRODUCT ADD FULLTEXT (Product_title,Product_description)
 ## PROCEDURE FOR USER
 

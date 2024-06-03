@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import "./user_infor.css";
 import Image from "next/image";
 import { CognitoUserPool, CognitoUser } from "amazon-cognito-identity-js";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/bootstrap.css";
 const poolData = {
   UserPoolId: process.env.NEXT_PUBLIC_AWS_Userpool_ID, // Your User Pool ID
   ClientId: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID, // Your Client ID
@@ -28,6 +30,7 @@ export default function Page({ params }) {
   const [newTelephone, setNewTelephone] = useState(user.telephone);
   const [isAddNewAddress, setIsAddNewAddress] = useState(false);
   const [newAddressValue, setNewAddressValue] = useState("");
+  const [isPhoneValid, setIsPhoneValid] = useState(true);
   useEffect(() => {
     fetch(`/api/user/information?user_id=${user_id}`)
       .then((response) => response.json())
@@ -41,16 +44,60 @@ export default function Page({ params }) {
       })
       .catch((err) => console.log(err));
   }, []);
-  function editName() {
-    setIsChangeName(false);
-    setUser({ ...user, user_name: newName });
+  async function editName() {
+    await setIsChangeName(false);
+
     ///make request to server
+    const response = await fetch("/api/user/userName", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_id: user_id,
+        FName: newName.substring(0, newName.lastIndexOf(" ")),
+        LName: newName.substring(newName.lastIndexOf(" ") + 1),
+      }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      await setUser({ ...user, user_name: newName });
+      console.log(data);
+    } else {
+      console.log("Error:", response.statusText);
+    }
   }
-  function editPhone() {
-    setIsChangeTelephone(false);
-    setUser({ ...user, telephone: newTelephone });
-    ///make request to server
+  const handleChangePhoneNumber = (value) => {
+    const formattedPhoneNumber = value.startsWith("+") ? value : `+${value}`;
+    setNewTelephone(formattedPhoneNumber);
+    setIsPhoneValid(validatePhoneNumber(formattedPhoneNumber));
+  };
+
+  async function saveNewPhoneNumber() {
+    await setIsChangeTelephone(false);
+    const response = await fetch("/api/user/userPhoneNumber", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_id: user_id,
+        phoneNumber: newTelephone,
+      }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      setUser({ ...user, telephone: newTelephone });
+    } else {
+      console.log("Error:", response.statusText);
+    }
   }
+
+  const validatePhoneNumber = (phoneNumber) => {
+    const phoneNumberPattern = /^\+\d{1,3}(\d{9,11})$/;
+    return phoneNumberPattern.test(phoneNumber);
+  };
   function editAddress() {
     const user_in4 = { ...user };
     user_in4.address[addressIndex] = newAddress;
@@ -101,7 +148,7 @@ export default function Page({ params }) {
           <div className="user_infor_page_value">
             <div className="user_infor_each_value">
               {isChangeName ? (
-                <form onSubmit={editName}>
+                <form onSubmit={editName} className="form_input_change_name">
                   <input
                     type="text"
                     value={newName}
@@ -114,14 +161,20 @@ export default function Page({ params }) {
                 user.user_name
               )}
               <div>
-                <button onClick={(e) => setIsChangeName(true)}>
-                  <Image
-                    src="/edit_user_in4.png"
-                    width={20}
-                    height={20}
-                    alt="edit icon"
-                  />
-                </button>
+                {isChangeName ? (
+                  <button onClick={editName}>
+                    <Image src="/save.png" fill="true" alt="edit icon" />
+                  </button>
+                ) : (
+                  <button onClick={(e) => setIsChangeName(true)}>
+                    <Image
+                      src="/edit_user_in4.png"
+                      width={20}
+                      height={20}
+                      alt="edit icon"
+                    />
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -135,31 +188,36 @@ export default function Page({ params }) {
           <div className="user_infor_page_value">
             <div className="user_infor_each_value">
               {isChangeTelephone ? (
-                <form onSubmit={editPhone}>
-                  <input
-                    type="text"
-                    value={newTelephone}
-                    onChange={(e) => {
-                      setNewTelephone(e.target.value);
-                    }}
-                  />
-                </form>
+                <PhoneInput
+                  country={"jp"}
+                  enableSearch={true}
+                  value={newTelephone}
+                  onChange={(phone) => handleChangePhoneNumber(phone)}
+                />
               ) : (
                 user.telephone
               )}
               <div>
-                <button onClick={() => setIsChangeTelephone(true)}>
-                  <Image
-                    src="/edit_user_in4.png"
-                    width={20}
-                    height={20}
-                    alt="edit icon"
-                  />
-                </button>
+                {isChangeTelephone ? (
+                  <button onClick={saveNewPhoneNumber}>
+                    {" "}
+                    <Image src="/save.png" fill="true" alt="edit icon" />
+                  </button>
+                ) : (
+                  <button onClick={() => setIsChangeTelephone(true)}>
+                    <Image
+                      src="/edit_user_in4.png"
+                      width={20}
+                      height={20}
+                      alt="edit icon"
+                    />
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
+
         <div className="user_infor_page_information">
           <div className="user_infor_page_label">Address</div>
           <div className="user_infor_page_value">
@@ -180,18 +238,6 @@ export default function Page({ params }) {
                     address
                   )}
                   <div>
-                    <button
-                      onClick={() => {
-                        setAddressIndex(index);
-                      }}
-                    >
-                      <Image
-                        src="/edit_user_in4.png"
-                        width={20}
-                        height={20}
-                        alt="edit icon"
-                      />
-                    </button>
                     <button onClick={() => deleteAddress(index)}>
                       <Image
                         src="/delete_user_in4.png"
@@ -233,11 +279,13 @@ export default function Page({ params }) {
                       console.error("Error:", error);
                     });
                 }}
+                className="form_add_address_user_info"
               >
                 <input
                   type="text"
                   value={newAddressValue}
                   onChange={(e) => setNewAddressValue(e.target.value)}
+                  className="add_address_user_info_input"
                 />
                 <button type="submit">Add</button>
               </form>
