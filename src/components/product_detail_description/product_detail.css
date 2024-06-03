@@ -287,3 +287,13 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+.share {
+  border: none;
+  border-radius: 5px;
+  background-color: #202020;
+  color: white;
+  padding: 15px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}

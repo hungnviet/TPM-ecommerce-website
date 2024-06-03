@@ -15,11 +15,13 @@ export default function CheckoutPage({ params }) {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
 
   const [address, setAddress] = useState("");
-  const [note, setNote] = useState("");
+  const [notes, setNotes] = useState({});
   const [showShipmentModal, setShowShipmentModal] = useState(false);
   const [selectedShipment, setSelectedShipment] = useState({});
   const [currentShopIndex, setCurrentShopIndex] = useState(null);
   const [currentShippingOptions, setCurrentShippingOptions] = useState([]);
+  const [currentPayment, setCurrentPayment] = useState([]);
+  const [showPaymentModal, setshowPaymentModal] = useState(false);
 
   const [user_information, setUserInformation] = useState({
     user_name: "",
@@ -34,12 +36,19 @@ export default function CheckoutPage({ params }) {
     setCurrentShippingOptions(cart.shop[shopIndex].shippingmethod);
     setShowShipmentModal(true);
   };
+  const openPaymentModal = (shopIndex) => {
+    setCurrentShopIndex(shopIndex);
+    setCurrentPayment(cart.shop[shopIndex].paymentmethod);
+    setshowPaymentModal(true);
+  };
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(""); // Default selected payment method
 
-  const [commonPaymentMethods, setCommonPaymentMethods] = useState([]);
-
-  const handlePaymentMethodSelect = (method) => {
-    setSelectedPaymentMethod(method);
+  const handlePaymentMethodSelect = (id, payment, note) => {
+    setSelectedPaymentMethod((prevState) => ({
+      ...prevState,
+      [currentShopIndex]: { id, payment, note },
+    }));
+    setshowPaymentModal(false);
   };
   const handleShipmentSelect = (id, shipment, price, note) => {
     setSelectedShipment((prevState) => ({
@@ -47,6 +56,12 @@ export default function CheckoutPage({ params }) {
       [currentShopIndex]: { id, shipment, price, note },
     }));
     setShowShipmentModal(false);
+  };
+  const handleNoteChange = (index, value) => {
+    setNotes((prev) => ({
+      ...prev,
+      [index]: value,
+    }));
   };
 
   useEffect(() => {
@@ -148,27 +163,6 @@ export default function CheckoutPage({ params }) {
       window.removeEventListener("beforeunload", handleUnload);
     };
   }, [user_id]);
-  useEffect(() => {
-    // Only proceed if there are shops in the cart
-    if (cart.shop && cart.shop.length > 0) {
-      // Extract all payment methods arrays
-      const allPaymentMethods = cart.shop.map((shop) => shop.paymentmethod);
-
-      // Calculate the intersection
-      const commonPaymentMethods = allPaymentMethods.reduce(
-        (commonMethods, methods) => {
-          return commonMethods.filter((commonMethod) =>
-            methods.some(
-              (method) => method.Method_name === commonMethod.Method_name
-            )
-          );
-        }
-      );
-
-      // Update the state to store common payment methods
-      setCommonPaymentMethods(commonPaymentMethods); // Ensure you have a useState for this
-    }
-  }, [cart.shop]); // Dependency on cart.shop to recalculate when shops are updated
 
   async function handleBack() {
     for (let shop of cart.shop) {
@@ -246,6 +240,7 @@ export default function CheckoutPage({ params }) {
       });
 
       if (Product_list.length > 0) {
+        const shopIndex = cart.shop.indexOf(shop);
         const data = {
           Seller_ID: shop.sellerId, // Seller_ID is obtained from the first checked product
           Customer_ID: user_id, // Replace with actual Customer_ID
@@ -254,9 +249,9 @@ export default function CheckoutPage({ params }) {
           Product_list,
           Customer_name: user_information.user_name,
           Customer_phone_number: user_information.user_phone,
-          Note: note,
-          Shipping_company_ID: selectedShipment[0].id,
-          Payment_method_id: selectedPaymentMethod,
+          Note: notes[shopIndex],
+          Shipping_company_ID: selectedShipment[shopIndex].id,
+          Payment_method_id: selectedPaymentMethod[shopIndex].id,
         };
 
         // Make API request to server
@@ -429,33 +424,57 @@ export default function CheckoutPage({ params }) {
                   <textarea
                     placeholder="lời nhắn cho người bán"
                     maxLength="200"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
+                    value={notes[index]}
+                    onChange={(e) => handleNoteChange(index, e.target.value)}
                   ></textarea>
                 </div>
-                <div className="shipping_selection">
-                  <p>Đơn vị vận chuyển</p>
-                  <button onClick={() => openShipmentModal(index)}>
-                    Chọn vận chuyển
-                  </button>
-                  <p className="shipment_status">
-                    {selectedShipment[index] ? (
-                      <>
-                        <strong>{selectedShipment[index].shipment}</strong>
-                        <span className="shipment_status_price">
-                          ₫{selectedShipment[index].price.toLocaleString()}
-                        </span>
-                        <span className="shipment_note">
-                          {selectedShipment[index].note}
-                        </span>{" "}
-                        {/* Make sure it's .note */}
-                      </>
-                    ) : (
-                      "Chưa chọn"
-                    )}
-                  </p>
+                <div style={{ display: "flext", flexDirection: "column" }}>
+                  <div className="shipping_selection">
+                    <p>Đơn vị vận chuyển</p>
+                    <button onClick={() => openShipmentModal(index)}>
+                      Chọn vận chuyển
+                    </button>
+                    <p className="shipment_status">
+                      {selectedShipment[index] ? (
+                        <>
+                          <strong>{selectedShipment[index].shipment}</strong>
+                          <span className="shipment_status_price">
+                            ₫{selectedShipment[index].price.toLocaleString()}
+                          </span>
+                          <span className="shipment_note">
+                            {selectedShipment[index].note}
+                          </span>{" "}
+                          {/* Make sure it's .note */}
+                        </>
+                      ) : (
+                        "Chưa chọn"
+                      )}
+                    </p>
+                  </div>
+                  <div className="shipping_selection">
+                    <p>Phương thức thanh toán</p>
+                    <button onClick={() => openPaymentModal(index)}>
+                      Chọn phương thức
+                    </button>
+                    <p className="shipment_status">
+                      {selectedPaymentMethod[index] ? (
+                        <>
+                          <strong>
+                            {selectedPaymentMethod[index].payment}
+                          </strong>
+                          <span className="shipment_note">
+                            {selectedPaymentMethod[index].note}
+                          </span>{" "}
+                          {/* Make sure it's .note */}
+                        </>
+                      ) : (
+                        "Chưa chọn"
+                      )}
+                    </p>
+                  </div>
                 </div>
               </div>
+
               {/* Shipping modal */}
               {showShipmentModal && (
                 <div className="modal">
@@ -486,6 +505,33 @@ export default function CheckoutPage({ params }) {
                   </div>
                 </div>
               )}
+              {showPaymentModal && (
+                <div className="modal">
+                  <div className="modal-content">
+                    <h3>Chọn đơn vị vận chuyển</h3>
+                    <ul>
+                      {currentPayment.map((option) => (
+                        <li
+                          key={option.Company_ID}
+                          onClick={() =>
+                            handlePaymentMethodSelect(
+                              option.Method_ID,
+                              option.Method_name,
+                              option.Note
+                            )
+                          }
+                        >
+                          <strong>{option.Method_name}</strong>
+                          <div>{option.Note}</div>
+                        </li>
+                      ))}
+                    </ul>
+                    <button onClick={() => setShowPaymentModal(false)}>
+                      Đóng
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <div>
                 <p>
@@ -502,23 +548,6 @@ export default function CheckoutPage({ params }) {
         })}
       <div className="checkout_information_payment">
         <p>Phương thức thanh toán</p>
-        <div className="payment_methods">
-          {commonPaymentMethods.length > 0 ? (
-            commonPaymentMethods.map((method) => (
-              <div
-                key={method.Method_ID}
-                className={`payment_method ${
-                  selectedPaymentMethod === method.Method_ID ? "selected" : ""
-                }`}
-                onClick={() => handlePaymentMethodSelect(method.Method_ID)}
-              >
-                {method.Method_name}
-              </div>
-            ))
-          ) : (
-            <p>No common payment methods available</p>
-          )}
-        </div>
       </div>
       <div className="checkout_final_step">
         <div>

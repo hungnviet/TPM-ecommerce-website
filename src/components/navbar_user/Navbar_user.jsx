@@ -172,7 +172,7 @@ export default function NavbarUser({ userID }) {
               />
             </form>
           </div>
-          {!cognitoUser && (
+          {(!cognitoUser || userID === "guest") && (
             <div className="right_section_navbar_container2">
               <div>
                 <button onClick={() => router.push("/sign_in")}>
@@ -186,7 +186,7 @@ export default function NavbarUser({ userID }) {
               </div>
             </div>
           )}
-          {cognitoUser && (
+          {cognitoUser && userID != "guest" && (
             <div className="right_section_navbar_container">
               <div>
                 <button

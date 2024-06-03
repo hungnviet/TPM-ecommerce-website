@@ -3,6 +3,8 @@ import "./product_detail.css";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import ShareOnSocial from "react-share-on-social";
+
 export default function Product_detail_description({ user_id, product_id }) {
   const router = useRouter();
   const [product, setProduct] = useState(null);
@@ -16,6 +18,16 @@ export default function Product_detail_description({ user_id, product_id }) {
   const [selectedTitle, setSelectedTitle] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const style = {
+    copyContainer: {
+      width: "0%",
+      backgroundcolor: "white",
+    },
+    title: {
+      color: "aquamarine",
+      fontStyle: "italic",
+    },
+  };
 
   const [comments, setComment] = useState({
     date: "",
@@ -348,6 +360,17 @@ export default function Product_detail_description({ user_id, product_id }) {
             ))}
           </tbody>
         </table>
+      </div>
+      <div>
+        <ShareOnSocial
+          textToShare={product.Product_title}
+          link={window.location.href}
+          linkTitle={product.Product_title}
+          linkMetaDesc={product.Product_description}
+          noReferer
+        >
+          <button className="share">Share this product ↗</button>
+        </ShareOnSocial>
       </div>
       <div className="comments_container">
         <h2>みんなの投稿</h2>
