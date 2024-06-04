@@ -1,0 +1,28 @@
+.listProductOfRegionContainer {
+  position: relative;
+  width: 100%;
+  margin-top: 70px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.productListInRegion {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.infor_of_region {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 20px;
+  width: 90%;
+}
+.infor_of_region h4,
+p {
+  margin: 0px;
+}

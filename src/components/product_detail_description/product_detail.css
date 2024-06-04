@@ -297,3 +297,16 @@
   font-weight: bold;
   transition: 0.3s;
 }
+
+.origin_container_product_detail {
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+}
+.origin_container_product_detail div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  column-gap: 5px;
+}

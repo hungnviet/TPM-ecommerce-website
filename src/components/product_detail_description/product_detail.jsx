@@ -4,6 +4,68 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ShareOnSocial from "react-share-on-social";
+import Link from "next/link";
+
+const regions = [
+  { region_id: 1, region_name: "Hokkaido" },
+  { region_id: 2, region_name: "Tohoku" },
+  { region_id: 3, region_name: "Kanto" },
+  { region_id: 4, region_name: "Chubu" },
+  { region_id: 5, region_name: "Kinki (Kansai)" },
+  { region_id: 6, region_name: "Chugoku" },
+  { region_id: 7, region_name: "Shikoku" },
+  { region_id: 8, region_name: "Kyushu (including Okinawa)" },
+];
+
+const provinces = [
+  { province_id: 1, province_name: "Hokkaido" },
+  { province_id: 2, province_name: "Aomori" },
+  { province_id: 3, province_name: "Iwate" },
+  { province_id: 4, province_name: "Miyagi" },
+  { province_id: 5, province_name: "Akita" },
+  { province_id: 6, province_name: "Yamagata" },
+  { province_id: 7, province_name: "Fukushima" },
+  { province_id: 8, province_name: "Ibaraki" },
+  { province_id: 9, province_name: "Tochigi" },
+  { province_id: 10, province_name: "Gunma" },
+  { province_id: 11, province_name: "Saitama" },
+  { province_id: 12, province_name: "Chiba" },
+  { province_id: 13, province_name: "Tokyo" },
+  { province_id: 14, province_name: "Kanagawa" },
+  { province_id: 15, province_name: "Niigata" },
+  { province_id: 16, province_name: "Toyama" },
+  { province_id: 17, province_name: "Ishikawa" },
+  { province_id: 18, province_name: "Fukui" },
+  { province_id: 19, province_name: "Yamanashi" },
+  { province_id: 20, province_name: "Nagano" },
+  { province_id: 21, province_name: "Gifu" },
+  { province_id: 22, province_name: "Shizuoka" },
+  { province_id: 23, province_name: "Aichi" },
+  { province_id: 24, province_name: "Mie" },
+  { province_id: 25, province_name: "Shiga" },
+  { province_id: 26, province_name: "Kyoto" },
+  { province_id: 27, province_name: "Osaka" },
+  { province_id: 28, province_name: "Hyogo" },
+  { province_id: 29, province_name: "Nara" },
+  { province_id: 30, province_name: "Wakayama" },
+  { province_id: 31, province_name: "Tottori" },
+  { province_id: 32, province_name: "Shimane" },
+  { province_id: 33, province_name: "Okayama" },
+  { province_id: 34, province_name: "Hiroshima" },
+  { province_id: 35, province_name: "Yamaguchi" },
+  { province_id: 36, province_name: "Tokushima" },
+  { province_id: 37, province_name: "Kagawa" },
+  { province_id: 38, province_name: "Ehime" },
+  { province_id: 39, province_name: "Kochi" },
+  { province_id: 40, province_name: "Fukuoka" },
+  { province_id: 41, province_name: "Saga" },
+  { province_id: 42, province_name: "Nagasaki" },
+  { province_id: 43, province_name: "Kumamoto" },
+  { province_id: 44, province_name: "Oita" },
+  { province_id: 45, province_name: "Miyazaki" },
+  { province_id: 46, province_name: "Kagoshima" },
+  { province_id: 47, province_name: "Okinawa" },
+];
 
 export default function Product_detail_description({ user_id, product_id }) {
   const router = useRouter();
@@ -48,6 +110,7 @@ export default function Product_detail_description({ user_id, product_id }) {
     "加工食品",
     "花・観葉植物",
   ];
+
   useEffect(() => {
     fetch(`/api/user/product?product_id=${product_id}&user_id=${user_id}`)
       .then((response) => response.json())
@@ -251,6 +314,23 @@ export default function Product_detail_description({ user_id, product_id }) {
             >
               <p>{categories[product.Category_ID - 1]}</p>
             </button>
+          </div>
+          <div className="origin_container_product_detail">
+            <p>起源</p>
+            <div>
+              <p>地域:</p>
+              <Link href={`/homepage/${user_id}/region/${product.region_id}`}>
+                {regions[product.region_id - 1].region_name}{" "}
+              </Link>
+            </div>
+            <div>
+              <p>意識的な :</p>
+              <Link
+                href={`/homepage/${user_id}/province/${product.province_id}`}
+              >
+                {provinces[product.province_id - 1].province_name}{" "}
+              </Link>
+            </div>
           </div>
         </div>
       </div>
