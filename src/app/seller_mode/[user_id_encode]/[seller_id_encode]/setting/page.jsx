@@ -2,7 +2,23 @@
 import { useState, useEffect } from "react";
 import "./setting.css";
 import Image from "next/image";
+function Modal({ isOpen, onClose, onSave, children }) {
+  if (!isOpen) return null;
 
+  return (
+    <div className="modal">
+      <div className="modal-content">
+        {children}
+        <button onClick={onSave} className="save-button">
+          Save
+        </button>
+        <button onClick={onClose} className="close-button">
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
 export default function Page({ params }) {
   const { user_id_encode } = params;
   const [shop, setShop] = useState({
@@ -20,32 +36,24 @@ export default function Page({ params }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpen2, setModalOpen2] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(null);
-  function Modal({ isOpen, onClose, onSave, children }) {
-    if (!isOpen) return null;
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editShop, setEditShop] = useState({
+    shopname: "",
+    img: "",
+    address: "",
+  });
 
-    return (
-      <div className="modal">
-        <div className="modal-content">
-          {children}
-          <button onClick={onSave} className="save-button">
-            Save
-          </button>
-          <button onClick={onClose} className="close-button">
-            Close
-          </button>
-        </div>
-      </div>
-    );
-  }
   useEffect(() => {
     fetch(`/api/user/information?user_id=${user_id_encode}`)
       .then((response) => response.json())
       .then((data) => {
-        setShop({
+        const shopData = {
           shopname: data.user.Shop_name,
           img: data.user.Shop_image,
           address: data.address[0].Address,
-        });
+        };
+        setShop(shopData);
+        setEditShop(shopData);
       })
       .catch((err) => console.log(err));
   }, [user_id_encode]);
@@ -76,6 +84,37 @@ export default function Page({ params }) {
     fetchMethods();
     fetchAllMethods();
   }, [user_id_encode]);
+  const handleEditShopInfo = () => {
+    setEditModalOpen(true);
+  };
+
+  const handleEditModalClose = () => {
+    setEditShop(shop); // reset the form inputs
+    setEditModalOpen(false);
+  };
+
+  const handleEditShopSave = () => {
+    setShop(editShop); // update the main state
+    updateUserInformation();
+    console.log("Save shop info");
+    setEditModalOpen(false);
+  };
+  async function updateUserInformation() {
+    const response = await fetch(`/api/seller/information`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        shopName: editShop.shopname,
+        User_ID: user_id_encode,
+        shopImg: editShop.img,
+      }),
+    });
+    if (!response.ok) {
+      console.log("Failed to update shop information");
+    }
+  }
 
   function handleDeleteMethod(type, id) {
     // Placeholder function for deleting a method
@@ -211,6 +250,58 @@ export default function Page({ params }) {
         </div>
       </div>
       <div className="setting">
+        <button className="methodbutton" onClick={handleEditShopInfo}>
+          Edit Shop Information
+        </button>
+
+        <Modal
+          isOpen={editModalOpen}
+          onClose={handleEditModalClose}
+          onSave={handleEditShopSave}
+        >
+          <div>
+            <label htmlFor="shopName">Shop Name:</label>
+            <input
+              type="text"
+              id="shopName"
+              value={editShop.shopname}
+              onChange={(e) =>
+                setEditShop((prevShop) => ({
+                  ...prevShop,
+                  shopname: e.target.value,
+                }))
+              }
+            />
+          </div>
+          <div>
+            <label htmlFor="shopAddress">Address:</label>
+            <input
+              type="text"
+              id="shopAddress"
+              value={editShop.address}
+              onChange={(e) =>
+                setEditShop((prevShop) => ({
+                  ...prevShop,
+                  address: e.target.value,
+                }))
+              }
+            />
+          </div>
+          <div>
+            <label htmlFor="shopImage">Image URL:</label>
+            <input
+              type="text"
+              id="shopImage"
+              value={editShop.img}
+              onChange={(e) =>
+                setEditShop((prevShop) => ({
+                  ...prevShop,
+                  img: e.target.value,
+                }))
+              }
+            />
+          </div>
+        </Modal>
         <button
           className="methodbutton"
           onClick={() => setShowPaymentMethods(!showPaymentMethods)}

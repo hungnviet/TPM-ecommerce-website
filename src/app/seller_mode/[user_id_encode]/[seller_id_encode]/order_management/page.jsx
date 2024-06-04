@@ -2,15 +2,20 @@
 import "./order_management.css";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { Knock } from "@knocklabs/node";
+
 export default function Page({ params }) {
   const route = useRouter();
   const [order, setOrder] = useState([]);
+  const knockClient = new Knock(process.env.NEXT_PUBLIC_KNOCK_SECRET);
+  const [customerid, setCustomerid] = useState("");
   const [indexUpdate, setIndexUpdate] = useState(-1);
   const seller_id = params.seller_id_encode;
   async function fetchData() {
     const response = await fetch(`/api/seller/orders?seller_id=${seller_id}`);
     const data = await response.json();
     console.log(data);
+    console.log(params.seller_id_encode);
     const filteredOrders = data.filter(
       (order) => order.Status !== "Waiting confirmation"
     );
@@ -26,6 +31,7 @@ export default function Page({ params }) {
 
   async function onClick(index) {
     if (indexUpdate === index) {
+      await setCustomerid(order[index].Customer_ID);
       //save
       const data = {
         Order_ID: order[index].Order_ID,
@@ -44,6 +50,10 @@ export default function Page({ params }) {
       });
       if (response.ok) {
         alert("Update successfully");
+        await knockClient.workflows.trigger("updateproduct", {
+          recipients: [customerid],
+          actor: seller_id,
+        });
       } else {
         await fetchData();
         alert("Update failed");

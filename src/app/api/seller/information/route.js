@@ -47,3 +47,23 @@ export async function GET(req) {
     });
   });
 }
+export async function PUT(req) {
+  const data = await req.json();
+  const { shopName, User_ID, shopImg } = data;
+  const sql = `UPDATE USER SET Shop_name='${shopName}', Shop_image = '${shopImg}' WHERE User_id='${User_ID}'`;
+
+  return new Promise((resolve, reject) => {
+    db.query(sql, (err, result) => {
+      if (err) {
+        console.log(err);
+        reject(NextResponse.error(err));
+      } else {
+        resolve(
+          NextResponse.json({
+            message: "Shop Information Updated Successfully",
+          })
+        );
+      }
+    });
+  });
+}
