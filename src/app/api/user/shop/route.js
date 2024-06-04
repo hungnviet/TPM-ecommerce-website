@@ -7,7 +7,8 @@ export async function GET(req) {
   const url = new URL(req.url);
   const searchParams = new URLSearchParams(url.searchParams);
   const seller_id = searchParams.get("seller_id");
-  const sql = `call Get_all_product_of_seller_for_user('${seller_id}')`; //just get the title the first image and the first price of the product and the product id
+  const user_id = searchParams.get("user_id");
+  const sql = `call Get_all_product_of_seller_for_user('${user_id}','${seller_id}')`; //just get the title the first image and the first price of the product and the product id
   const sql2 = `select * from USER where User_ID = '${seller_id}'`;
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {

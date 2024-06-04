@@ -13,23 +13,11 @@ export default function Seller_shop({ params }) {
   const [shopInfor, setShopInfor] = useState({}); // Add state for shop name
 
   useEffect(() => {
-    fetch(`/api/user/shop?seller_id=${seller_id}`)
+    fetch(`/api/user/shop?seller_id=${seller_id}&user_id=${user_id}`)
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        const transformedData = data.products.map((item) => ({
-          productImg: item.First_Image,
-          sellerImg: "/user_icon.png", // replace with actual data if available
-          sellerName: item.Shop_name, // replace with actual data if available
-          productName: item.Product_title,
-          location: "北海道日高地方", // replace with actual data if available
-          price: item.First_Option_Price,
-          unit: "1袋1kg", // replace with actual data if available
-          product_id: item.Product_ID,
-          isDiscount: false, // replace with actual data if available
-          percentage: 0, // replace with actual data if available
-        }));
-        setProducts(transformedData);
+        setProducts(data.products);
         setShopInfor(data.shop_in4);
       })
       .catch((error) => console.error("Error:", error));

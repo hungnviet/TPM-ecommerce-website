@@ -586,22 +586,27 @@ DELIMITER ;
 call searchProduct('apple');
 
 ## procedure get all product of shop
-
 DELIMITER $$
 
-CREATE PROCEDURE Get_all_product_of_seller_for_user(IN p_seller_ID VARCHAR(255))
+CREATE PROCEDURE Get_all_product_of_seller_for_user(IN p_user_id VARCHAR(255), IN p_seller_id VARCHAR(255))
 BEGIN
     SELECT 
         p.Product_ID,
         p.Seller_ID,
         p.Product_title,
         p.Product_description,
+        p.Category_ID,
         MIN(po.Option_price) AS First_Option_Price,
-        MIN(pi.Image_url) AS First_Image
+        MIN(po.Option_name) AS First_Option_Name,
+        MIN(pi.Image_url) AS First_Image,
+        u.*,  -- This selects all columns from the USER table
+        IF(pl.Product_ID IS NULL, FALSE, TRUE) AS isLiked
     FROM PRODUCT p
     LEFT JOIN PRODUCT_OPTION po ON p.Product_ID = po.Product_ID AND po.IsValid = TRUE
     LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
-    WHERE p.Seller_ID = p_seller_ID
+    LEFT JOIN PRODUCT_LIKED pl ON p.Product_ID = pl.Product_ID AND pl.User_ID = p_user_id
+    LEFT JOIN USER u ON p.Seller_ID = u.User_ID
+    WHERE p.Seller_ID = p_seller_id
     GROUP BY p.Product_ID;
 END $$
 
