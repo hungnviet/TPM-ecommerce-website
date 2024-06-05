@@ -167,6 +167,7 @@ export default function Page({ params }) {
             <div className="product_list" ref={productBestSellerListRef}>
               {bestSellerProducts
                 .filter((product) => product.Category_ID === i + 1)
+                .sort((a, b) => b.Product_ID - a.Product_ID)
                 .slice(0, 10)
                 .map((product, index) => (
                   <Product_cart

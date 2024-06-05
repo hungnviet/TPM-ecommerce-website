@@ -316,11 +316,13 @@ CREATE PROCEDURE Add_Product(
     IN p_Seller_ID VARCHAR(255),
     IN p_Product_Title VARCHAR(255),
     IN p_Product_Description VARCHAR(255),
-    IN p_Category_ID INT
+    IN p_Category_ID INT,
+    In p_region_id INT,
+    IN p_province_id INT
 )
 BEGIN
-    INSERT INTO PRODUCT (Seller_ID, Product_title, Product_description, Category_ID)
-    VALUES (p_Seller_ID, p_Product_Title, p_Product_Description, p_Category_ID);
+    INSERT INTO PRODUCT (Seller_ID, Product_title, Product_description, Category_ID,region_id,province_id)
+    VALUES (p_Seller_ID, p_Product_Title, p_Product_Description, p_Category_ID,p_region_id,p_province_id);
 END $$
 
 DELIMITER ;

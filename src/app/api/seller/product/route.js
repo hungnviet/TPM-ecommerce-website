@@ -13,8 +13,10 @@ export async function POST(req) {
     productDescriptionList, //list description [{title,content}]
     sellerID,
     categoryID,
+    region_id,
+    province_id,
   } = data;
-  const sql1 = `call Add_Product('${sellerID}','${productTitle}','${productDescription}',${categoryID})`; /// (sellerID,productTitle,productDescription,categoryID)
+  const sql1 = `call Add_Product('${sellerID}','${productTitle}','${productDescription}',${categoryID},${region_id},${province_id})`; /// (sellerID,productTitle,productDescription,categoryID)
   const sql2 = `call Add_Product_Option(?,?,?,?,?)`; /// (productID,optionName,optionPrice,optionNumber)
   const sql4 = `call Add_Product_Detail_Description(?,?,?,?)`; /// (productID,title,content,descriptionNumber)
   const sql3 = `call Add_Product_Image(?,?)`; /// (productID,imageURL)

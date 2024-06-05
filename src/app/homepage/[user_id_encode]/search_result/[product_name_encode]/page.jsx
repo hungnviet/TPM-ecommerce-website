@@ -15,25 +15,12 @@ export default function Page({ params }) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ searchValue: product_name }),
+      body: JSON.stringify({ searchValue: product_name, user_id: user_id }),
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
-        const transformedData = data.map((item) => ({
-          productImg: item.First_Image,
-          sellerImg: item.Shop_image, // replace with actual data if available
-          sellerName: item.Shop_name, // replace with actual data if available
-          productName: item.Product_title,
-          location: "北海道日高地方", // replace with actual data if available
-          price: item.First_Option_Price,
-          unit: "1 Unit", // replace with actual data if available
-          product_id: item.Product_ID,
-          isDiscount: false, // replace with actual data if available
-          percentage: 0, // replace with actual data if available
-        }));
         set_num_of_results(data.length);
-        set_products(transformedData);
+        set_products(data);
         setIsWaiting(false);
       });
   }, []);

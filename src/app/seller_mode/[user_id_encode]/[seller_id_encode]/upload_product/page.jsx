@@ -21,6 +21,69 @@ export default function Page({ params }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isWaiting, setIsWaiting] = useState(false);
   const [imageCount, setImageCount] = useState(0);
+  const [listRegion, setListRegion] = useState([]);
+  const [listProvince, setListProvince] = useState([]);
+  const [listProvinceByRegion, setListProvinceByRegion] = useState([]);
+  const [selectedRegionIndex, setSelectedRegionIndex] = useState(0);
+  const [selectedProvinceIndex, setSelectedProvinceIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  async function fetchRegion() {
+    const response = await fetch("/api/general/regions", { method: "GET" });
+    if (response.ok) {
+      const data = await response.json();
+      setListRegion(data);
+      setSelectedRegionIndex(0); // This might be redundant if the initial state is already 0
+    } else {
+      console.error("Failed to fetch regions");
+    }
+  }
+
+  async function fetchProvince() {
+    const response = await fetch("/api/general/provinces", { method: "GET" });
+    if (response.ok) {
+      const data = await response.json();
+      setListProvince(data);
+    } else {
+      console.error("Failed to fetch provinces");
+    }
+  }
+
+  useEffect(() => {
+    async function fetchData() {
+      await fetchRegion();
+      await fetchProvince();
+      setIsLoading(false);
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading && listRegion.length > 0 && listProvince.length > 0) {
+      const filteredProvinces = listProvince.filter(
+        (province) =>
+          province.Region_id === listRegion[selectedRegionIndex].Region_id
+      );
+      setListProvinceByRegion(filteredProvinces);
+    }
+  }, [selectedRegionIndex, listProvince, listRegion, isLoading]);
+
+  function handleRegionChange(e) {
+    setSelectedRegionIndex(e.target.value);
+  }
+
+  useEffect(() => {
+    if (listProvince.length > 0 && listRegion.length > 0) {
+      setListProvinceByRegion(
+        listProvince.filter(
+          (province) =>
+            province.Region_id === listRegion[selectedRegionIndex].Region_id
+        )
+      );
+      console.log(listProvinceByRegion);
+    }
+  }, [selectedRegionIndex]);
+
   useEffect(() => {
     fetchImageCount();
   }, []);
@@ -106,6 +169,8 @@ export default function Page({ params }) {
         productDescriptionList: rows2,
         sellerID: sellerid, // replace with actual sellerID
         categoryID: selectedOption,
+        region_id: listRegion[selectedRegionIndex].Region_id,
+        province_id: listProvinceByRegion[selectedProvinceIndex].Province_id,
       };
 
       console.log(body);
@@ -122,6 +187,8 @@ export default function Page({ params }) {
           productDescriptionList: rows2,
           sellerID: sellerid, // replace with actual sellerID
           categoryID: selectedOption,
+          region_id: listRegion[selectedRegionIndex].Region_id,
+          province_id: listProvinceByRegion[selectedProvinceIndex].Province_id,
         }),
       });
 
@@ -340,6 +407,45 @@ export default function Page({ params }) {
               </tbody>
             </table>
             <button onClick={addRow2}>Add row</button>
+          </div>
+        </div>
+        <div>
+          <h3>Origin of product</h3>
+          <div className="select_region_province_for_product">
+            <div>
+              <p>Regions</p>
+              {listRegion.length > 0 ? (
+                <select
+                  onChange={handleRegionChange}
+                  value={selectedRegionIndex}
+                >
+                  {listRegion.map((region, index) => (
+                    <option key={index} value={index}>
+                      {region.Region_name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <p>loading...</p>
+              )}
+            </div>
+            <div>
+              <p>Provinces</p>
+              {listProvinceByRegion.length > 0 ? (
+                <select
+                  value={selectedProvinceIndex}
+                  onChange={(e) => setSelectedProvinceIndex(e.target.value)}
+                >
+                  {listProvinceByRegion.map((province, index) => (
+                    <option key={index} value={index}>
+                      {province.Province_name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <p>loading...</p>
+              )}
+            </div>
           </div>
         </div>
         <div>

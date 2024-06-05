@@ -17,20 +17,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20vw;
+  width: 100px;
+  flex-shrink: 0; /* Prevents the container from shrinking */
 }
 .middle_section_navbar_container {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 50vw;
+  width: 1fr;
   height: 100%;
+  flex-grow: 1; /* Takes the remaining space */
+  margin: 0 20px; /* Adds a gap of 20px to the left and right */
 }
 .right_section_navbar_container {
-  width: 20vw;
+  width: max-content;
   display: flex;
   justify-content: space-around;
   column-gap: 10px;
+  flex-shrink: 0; /* Prevents the container from shrinking */
 }
 .middle_section_navbar_container form {
   display: flex;

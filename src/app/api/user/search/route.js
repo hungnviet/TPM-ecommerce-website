@@ -5,7 +5,7 @@ const db = connectToDatabase();
 /// Get all products
 export async function POST(req) {
   const data = await req.json();
-  const { searchValue } = data;
+  const { searchValue, user_id } = data;
   console.log(searchValue);
   const sql1 = `call SearchProductsByShopName('${searchValue}')`;
   const sql2 = `call SearchProductsName('${searchValue}')`;
@@ -29,7 +29,7 @@ export async function POST(req) {
             const productDetailsPromises = uniqueArray.map((productId) => {
               return new Promise((resolveProduct, rejectProduct) => {
                 db.query(
-                  `call Get_Product_By_ID(${productId})`,
+                  `call Get_Product_By_ID('${user_id}',${productId})`,
                   (err, productDetails) => {
                     if (err) {
                       console.log(err);
