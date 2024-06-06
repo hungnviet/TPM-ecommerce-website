@@ -5,6 +5,7 @@ import "./navbar_user.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import DropdownMenuDemo from "../dropdown_category/page";
 import {
   KnockProvider,
   KnockFeedProvider,
@@ -166,11 +167,14 @@ export default function NavbarUser({ userID }) {
             <form onSubmit={handle_search}>
               <input
                 type="text"
-                placeholder="Search"
+                placeholder="商品名またはショップ名を入力して検索してください"
                 value={search_input}
                 onChange={(e) => set_search_input(e.target.value)}
               />
             </form>
+            <div className="dropdown_category">
+              <DropdownMenuDemo user_id={userID} />
+            </div>
           </div>
           {(!cognitoUser || userID === "guest") && (
             <div className="right_section_navbar_container2">
