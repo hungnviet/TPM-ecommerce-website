@@ -2,12 +2,14 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { BeatLoader } from "react-spinners";
 import "./cart.css";
 export default function Page({ params }) {
   const route = useRouter();
   const { user_id_encode } = params;
   const user_id = decodeURIComponent(user_id_encode);
   const [cart, setCart] = useState({ shop: [] });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchCart() {
@@ -17,12 +19,17 @@ export default function Page({ params }) {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
+        if (data.cart.length === 0) {
+          setIsLoading(false);
+          return;
+        }
         const cartShopsPromises = data.cart.map(async (shop) => {
           const sellerId = shop[0].Seller_ID;
           const shopResponse = await fetch(
             `/api/user/information?user_id=${encodeURIComponent(sellerId)}`
           );
           const shopData = await shopResponse.json();
+          setIsLoading(false);
           console.log(shopData);
           return {
             sellerId: sellerId,
@@ -306,15 +313,19 @@ export default function Page({ params }) {
       <div className="cart_header">
         <div className="cart_header_left_section">
           <input type="checkbox"></input>
-          <p>San pham</p>
+          <p>製品</p>
         </div>
         <div className="cart_header_right_section">
-          <p>Đơn giá</p>
-          <p>So luong</p>
-          <p>Thanh tien</p>
-          <p>Thao tac</p>
+          <p>単価</p>
+          <p>量</p>
+          <p>Tお金に</p>
+          <p>手術</p>
         </div>
       </div>
+      <BeatLoader loading={isLoading} size={10} color="#36d7b7" />
+      {cart.shop.length === 0 && !isLoading && (
+        <p className="empty_cart">カートは空です</p>
+      )}
       {cart.shop.map((shop, shopIndex) => {
         return (
           <div className="cart_shop_container" key={shopIndex}>
@@ -400,12 +411,12 @@ export default function Page({ params }) {
             checked={checkdedAllProduct}
             onClick={checkAllProducts}
           ></input>
-          <p>Chon tat ca ({total_product}) san pham</p>
+          <p>すべて選択({total_product}) 製品</p>
         </div>
         <div className="cart_checkout_container_right">
-          <p>Tong thanh toan({total_checked_products} san pham):</p>
+          <p>お支払い総額({total_checked_products} 製品 ):</p>
           <p className="total_price_cart_checkout">{total_checked_price}</p>
-          <button onClick={handle_checkout}>Thanh toan</button>
+          <button onClick={handle_checkout}>支払う</button>
         </div>
       </div>
       {waiting_for_check && (

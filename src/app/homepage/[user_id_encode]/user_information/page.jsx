@@ -141,10 +141,10 @@ export default function Page({ params }) {
   }, [addressIndex]);
   return (
     <div className="user_information_container_page">
-      <h3>User information</h3>
+      <h3>ユーザー情報</h3>
       <div className="user_infor_page_information_container">
         <div className="user_infor_page_information">
-          <div className="user_infor_page_label">User name</div>
+          <div className="user_infor_page_label">ユーザー名</div>
           <div className="user_infor_page_value">
             <div className="user_infor_each_value">
               {isChangeName ? (
@@ -180,11 +180,11 @@ export default function Page({ params }) {
           </div>
         </div>
         <div className="user_infor_page_information">
-          <div className="user_infor_page_label">Email</div>
+          <div className="user_infor_page_label">Eメール</div>
           <div className="user_infor_page_value">{user.email}</div>
         </div>
         <div className="user_infor_page_information">
-          <div className="user_infor_page_label">Telephone</div>
+          <div className="user_infor_page_label">電話番号</div>
           <div className="user_infor_page_value">
             <div className="user_infor_each_value">
               {isChangeTelephone ? (
@@ -219,7 +219,7 @@ export default function Page({ params }) {
         </div>
 
         <div className="user_infor_page_information">
-          <div className="user_infor_page_label">Address</div>
+          <div className="user_infor_page_label">住所</div>
           <div className="user_infor_page_value">
             {user.address.map((address, index) => {
               return (
@@ -287,14 +287,14 @@ export default function Page({ params }) {
                   onChange={(e) => setNewAddressValue(e.target.value)}
                   className="add_address_user_info_input"
                 />
-                <button type="submit">Add</button>
+                <button type="submit">追加</button>
               </form>
             )}
             <button
               className="add_address_user_info"
               onClick={() => setIsAddNewAddress(true)}
             >
-              Add new address
+              新しいアドレスを追加
             </button>
           </div>
         </div>

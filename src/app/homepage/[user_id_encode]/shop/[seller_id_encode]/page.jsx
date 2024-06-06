@@ -5,13 +5,14 @@ import Image from "next/image";
 import "./page.css";
 import { useState, useEffect } from "react";
 import Product_cart from "@/components/product_cart/product_cart";
+import { BeatLoader } from "react-spinners";
 export default function Seller_shop({ params }) {
   const { user_id_encode, seller_id_encode } = params;
   const user_id = decodeURIComponent(user_id_encode);
   const seller_id = decodeURIComponent(seller_id_encode);
   const [products, setProducts] = useState([]);
   const [shopInfor, setShopInfor] = useState({}); // Add state for shop name
-
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     fetch(`/api/user/shop?seller_id=${seller_id}&user_id=${user_id}`)
       .then((response) => response.json())
@@ -19,6 +20,7 @@ export default function Seller_shop({ params }) {
         console.log(data);
         setProducts(data.products);
         setShopInfor(data.shop_in4);
+        setIsLoading(false);
       })
       .catch((error) => console.error("Error:", error));
   }, []);
@@ -35,6 +37,7 @@ export default function Seller_shop({ params }) {
           <p>農産物の卸売・小売を行う専門店です。 全国発送</p>
         </div>
       </div>
+      <BeatLoader color="#36d7b7" loading={isLoading} size={15} />
       <div className="productList">
         {products.map((product, index) => (
           <Product_cart key={index} product={product} userID={user_id} />

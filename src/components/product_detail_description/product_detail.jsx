@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ShareOnSocial from "react-share-on-social";
 import Link from "next/link";
+import { BeatLoader } from "react-spinners";
 
 const regions = [
   { region_id: 1, region_name: "Hokkaido" },
@@ -214,7 +215,7 @@ export default function Product_detail_description({ user_id, product_id }) {
 
   if (isLoading) {
     // Add this block
-    return <div>Loading...</div>;
+    return <BeatLoader color="#36d7b7" loading={isLoading} size={15} />;
   }
   async function handleAddToCart() {
     if (user_id === "guest") {
@@ -494,6 +495,6 @@ export default function Product_detail_description({ user_id, product_id }) {
       />
     </div>
   ) : (
-    <div>Loading...</div>
+    <BeatLoader color="#36d7b7" loading={isLoading} size={15} />
   );
 }

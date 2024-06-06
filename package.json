@@ -27,7 +27,8 @@
     "react-dom": "^18",
     "react-multi-carousel": "^2.8.5",
     "react-phone-input-2": "^2.15.1",
-    "react-share-on-social": "^1.0.12"
+    "react-share-on-social": "^1.0.12",
+    "react-spinners": "^0.13.8"
   },
   "devDependencies": {
     "eslint": "^8",

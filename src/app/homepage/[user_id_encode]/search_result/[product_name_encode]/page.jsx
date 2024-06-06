@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import "./search_result.css";
 import Product_cart from "@/components/product_cart/product_cart";
+import { BeatLoader } from "react-spinners";
+
 export default function Page({ params }) {
   const { user_id_encode, product_name_encode } = params;
   const user_id = decodeURIComponent(user_id_encode);
@@ -33,8 +35,20 @@ export default function Page({ params }) {
       <h3>
         Result for {product_name} ( {num_of_results} results)
       </h3>
+      {isWaiting && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100px",
+          }}
+        >
+          <BeatLoader loading={isWaiting} size={10} color="#36d7b7" />
+        </div>
+      )}
+
       <div className="search_result_list">
-        {isWaiting && <h3>Loading...</h3>}
         {products &&
           products.map((product, index) => (
             <Product_cart key={index} product={product} userID={user_id} />

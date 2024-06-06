@@ -8,6 +8,7 @@ import "./homepage.css";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 export const dynamic = "force-dynamic";
+import { BeatLoader } from "react-spinners";
 
 export default function Page({ params }) {
   const { user_id_encode } = params;
@@ -40,6 +41,8 @@ export default function Page({ params }) {
 
   const [bestSellerProducts, setBestSellerProducts] = useState([]);
   const [currentImage, setCurrentImage] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingShop, setIsLoadingShop] = useState(true);
 
   const nextImage = () => {
     setCurrentImage((prevImage) => (prevImage + 1) % advertisements2.length);
@@ -72,6 +75,7 @@ export default function Page({ params }) {
         // transform the data into the format you need
         console.log(data);
         setBestSellerProducts(data);
+        setIsLoading(false);
       })
       .catch((error) => console.error("Error:", error));
   }, []);
@@ -88,6 +92,7 @@ export default function Page({ params }) {
       .then((response) => response.json())
       .then((data) => {
         setAdvertisement(data);
+        setIsLoadingShop(false);
         console.log(data);
       })
       .catch((error) => console.error("Error:", error));
@@ -110,6 +115,7 @@ export default function Page({ params }) {
     <div className="homepage_container">
       <div className="big_advertisement_container">
         <div className="advertisement_container">
+          <BeatLoader loading={isLoadingShop} size={10} color="#36d7b7" />
           {advertisements.map((advertisement, index) => (
             <AdvertisementCart
               key={index}
@@ -177,7 +183,7 @@ export default function Page({ params }) {
                   />
                 ))}
             </div>
-
+            <BeatLoader loading={isLoading} size={10} color="#36d7b7" />
             <button
               className="morebutton"
               onClick={() =>

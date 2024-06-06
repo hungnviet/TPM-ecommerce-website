@@ -8,6 +8,9 @@ export default function Product_cart({ product, userID }) {
   const knockClient = new Knock(process.env.NEXT_PUBLIC_KNOCK_SECRET);
   const productID = product.Product_ID;
   const [isLiked, setIsLiked] = useState(product.isLiked);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
   function show_details() {
     router.push(
       `/homepage/${encodeURIComponent(userID)}/${product.Product_ID}`
@@ -15,6 +18,35 @@ export default function Product_cart({ product, userID }) {
   }
   function add_to_cart() {
     console.log(`user_id: ${userID}, product_id: ${product.Product_ID}`);
+  }
+
+  async function handleAddToCart() {
+    if (userID === "guest") {
+      router.push("/sign_in");
+      return;
+    }
+    const data = {
+      product_id: product.Product_ID,
+      user_id: userID,
+      option_number: 1,
+      quantity: 1,
+    };
+
+    const response = await fetch("/api/user/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      alert("Item added to cart successfully.");
+    } else {
+      console.error("Error:", response.statusText);
+      alert("Failed to add item to cart, please do it again.");
+    }
   }
 
   //fetch data for check like
@@ -130,7 +162,10 @@ export default function Product_cart({ product, userID }) {
         <button className="detail-button_cart_product" onClick={show_details}>
           詳細を表示
         </button>
-        <button className="detail-button_cart_product" onClick={add_to_cart}>
+        <button
+          className="detail-button_cart_product"
+          onClick={handleAddToCart}
+        >
           カートに追加
         </button>
       </div>

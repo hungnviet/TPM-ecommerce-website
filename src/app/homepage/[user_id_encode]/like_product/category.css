@@ -44,3 +44,11 @@
 .pagination button {
   user-select: none;
 }
+
+.header_of_like_page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
