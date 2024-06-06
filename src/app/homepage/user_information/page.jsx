@@ -5,23 +5,19 @@ import Image from "next/image";
 import { CognitoUserPool, CognitoUser } from "amazon-cognito-identity-js";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
+import { getCognitoUserSub } from "@/config/cognito";
+
 const poolData = {
   UserPoolId: process.env.NEXT_PUBLIC_AWS_Userpool_ID, // Your User Pool ID
   ClientId: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID, // Your Client ID
 };
-export default function Page({ params }) {
-  const API_USER_INFORMATION = ""; ///use for send the table user information to update to DB
-  const { user_id_encode } = params;
-  const userpool = new CognitoUserPool(poolData);
-  const cognitoUser = userpool.getCurrentUser();
-
+export default function Page({}) {
   const [user, setUser] = useState({
     user_name: "",
     email: "",
     telephone: "",
     address: [],
   });
-  const user_id = decodeURIComponent(user_id_encode);
   const [isChangeName, setIsChangeName] = useState(false);
   const [isChangeTelephone, setIsChangeTelephone] = useState(false);
   const [addressIndex, setAddressIndex] = useState(-1);
@@ -30,8 +26,12 @@ export default function Page({ params }) {
   const [newTelephone, setNewTelephone] = useState(user.telephone);
   const [isAddNewAddress, setIsAddNewAddress] = useState(false);
   const [newAddressValue, setNewAddressValue] = useState("");
-  const [isPhoneValid, setIsPhoneValid] = useState(true);
+  const [user_id, setUser_id] = useState("");
   useEffect(() => {
+    getCognitoUserSub().then((sub) => {
+      setUser_id(sub);
+    });
+    if (!user_id) return;
     fetch(`/api/user/information?user_id=${user_id}`)
       .then((response) => response.json())
       .then((data) => {
@@ -43,9 +43,9 @@ export default function Page({ params }) {
         });
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [user_id]);
   async function editName() {
-    await setIsChangeName(false);
+    setIsChangeName(false);
 
     ///make request to server
     const response = await fetch("/api/user/userName", {
@@ -61,7 +61,7 @@ export default function Page({ params }) {
     });
     if (response.ok) {
       const data = await response.json();
-      await setUser({ ...user, user_name: newName });
+      setUser({ ...user, user_name: newName });
       console.log(data);
     } else {
       console.log("Error:", response.statusText);
@@ -74,7 +74,7 @@ export default function Page({ params }) {
   };
 
   async function saveNewPhoneNumber() {
-    await setIsChangeTelephone(false);
+    setIsChangeTelephone(false);
     const response = await fetch("/api/user/userPhoneNumber", {
       method: "PUT",
       headers: {

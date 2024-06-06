@@ -3,6 +3,8 @@ import { useRouter } from "next/navigation";
 import "./product_cart.css";
 import { useEffect, useState } from "react";
 import { Knock } from "@knocklabs/node";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 export default function Product_cart({ product, userID }) {
   const router = useRouter();
   const knockClient = new Knock(process.env.NEXT_PUBLIC_KNOCK_SECRET);
@@ -12,9 +14,7 @@ export default function Product_cart({ product, userID }) {
   const [modalMessage, setModalMessage] = useState("");
 
   function show_details() {
-    router.push(
-      `/homepage/${encodeURIComponent(userID)}/${product.Product_ID}`
-    );
+    router.push(`/homepage/${product.Product_ID}`);
   }
   function add_to_cart() {
     console.log(`user_id: ${userID}, product_id: ${product.Product_ID}`);
@@ -28,7 +28,7 @@ export default function Product_cart({ product, userID }) {
     const data = {
       product_id: product.Product_ID,
       user_id: userID,
-      option_number: 1,
+      option_number: 0,
       quantity: 1,
     };
 
@@ -42,10 +42,10 @@ export default function Product_cart({ product, userID }) {
 
     if (response.ok) {
       const result = await response.json();
-      alert("Item added to cart successfully.");
+      toast.success("Item added to cart successfully.");
     } else {
       console.error("Error:", response.statusText);
-      alert("Failed to add item to cart, please do it again.");
+      toast.error("Failed to add item to cart, please do it again.");
     }
   }
 
@@ -121,6 +121,7 @@ export default function Product_cart({ product, userID }) {
 
   return (
     <div className="product_cart_container">
+      <ToastContainer />
       <div className="product_cart_image_container">
         <Image src={product.First_Image} fill="true" alt="product image" />
       </div>

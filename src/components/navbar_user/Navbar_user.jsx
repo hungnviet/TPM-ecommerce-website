@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import DropdownMenuDemo from "../dropdown_category/page";
+import { getCognitoUserSub } from "@/config/cognito";
+
 import {
   KnockProvider,
   KnockFeedProvider,
@@ -29,13 +31,23 @@ const poolData = {
   ClientId: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID, // Your Client ID
 };
 
-export default function NavbarUser({ userID }) {
+export default function NavbarUser({}) {
   const [isSeller, setIsSeller] = useState(false);
   const [cognitoUser, setCognitoUser] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const notifButtonRef = useRef(null);
   const [user, setUser] = useState({});
   const router = useRouter();
+  const [userID, setUserID] = useState("");
+  useEffect(() => {
+    const fetchUserSub = async () => {
+      const sub = await getCognitoUserSub();
+      setUserID(sub);
+    };
+
+    fetchUserSub();
+  }, []);
+
   const cognitoidentityserviceprovider =
     new AWS.CognitoIdentityServiceProvider();
 
@@ -48,16 +60,9 @@ export default function NavbarUser({ userID }) {
     set_show_option(false);
   };
 
-  function signOutUser() {
-    handleClose();
-    const userPool = new CognitoUserPool(poolData);
-    setCognitoUser(userPool.getCurrentUser());
-    if (cognitoUser != null) {
-      cognitoUser.signOut();
-      router.push("/sign_in");
-    }
-  }
   useEffect(() => {
+    if (!userID) return;
+
     const params = {
       UserPoolId: process.env.NEXT_PUBLIC_AWS_Userpool_ID, // replace with your User Pool ID
       Username: userID, // replace with the username of the user
@@ -73,8 +78,7 @@ export default function NavbarUser({ userID }) {
         }
       }
     );
-  }, []);
-  useEffect(() => {
+
     async function fetchUserInformation() {
       const response = await fetch(
         `/api/user/information?user_id=${encodeURIComponent(userID)}`
@@ -85,6 +89,7 @@ export default function NavbarUser({ userID }) {
         console.log(data.user);
       }
     }
+
     async function fetchlikedproduct() {
       const response = await fetch(
         `/api/user/product_like?user_id=${encodeURIComponent(userID)}`
@@ -95,30 +100,10 @@ export default function NavbarUser({ userID }) {
         setnumliked(data.length);
       }
     }
+
     fetchUserInformation();
     fetchlikedproduct();
-  }, []);
 
-  function handle_show_option() {
-    set_show_option(!show_option);
-  }
-  async function register_as_seller() {
-    /// check this user is seller or not if not then show register page
-    router.push(
-      `/seller_mode/${encodeURIComponent(userID)}/register_for_sales_account`
-    );
-    handleClose();
-    /// else navigate to seller page
-    //router.push(`/seller_mode/${encodeURIComponent(userID)}/seller_dashboard`);
-  }
-  async function handle_search(e) {
-    e.preventDefault();
-    set_search_input("");
-    router.push(
-      `/homepage/${encodeURIComponent(userID)}/search_result/${search_input}`
-    );
-  }
-  useEffect(() => {
     const userPool = new CognitoUserPool(poolData);
     setCognitoUser(userPool.getCurrentUser());
 
@@ -145,8 +130,31 @@ export default function NavbarUser({ userID }) {
         });
       });
     }
-  }, []);
-
+  }, [userID]); // add userID to the dependency array
+  function handle_show_option() {
+    set_show_option(!show_option);
+  }
+  async function register_as_seller() {
+    /// check this user is seller or not if not then show register page
+    router.push(`/seller_mode/register_for_sales_account`);
+    handleClose();
+    /// else navigate to seller page
+    //router.push(`/seller_mode/seller_dashboard`);
+  }
+  async function handle_search(e) {
+    e.preventDefault();
+    set_search_input("");
+    router.push(`/homepage/search_result/${search_input}`);
+  }
+  function signOutUser() {
+    handleClose();
+    const userPool = new CognitoUserPool(poolData);
+    setCognitoUser(userPool.getCurrentUser());
+    if (cognitoUser != null) {
+      cognitoUser.signOut();
+      router.push("/sign_in");
+    }
+  }
   return (
     <KnockProvider
       apiKey={"pk_test_pEYdIA3silk_jAqYMf3vgFMiDz-_LtT4iWDP5oUIIgw"}
@@ -155,11 +163,7 @@ export default function NavbarUser({ userID }) {
       <KnockFeedProvider feedId={"5dc457d4-da3f-46ec-b7fa-89db6fcf582c"}>
         <div className="navbar_user_container">
           <div className="left_section_navbar_container">
-            <button
-              onClick={() =>
-                router.push(`/homepage/${encodeURIComponent(userID)}`)
-              }
-            >
+            <button onClick={() => router.push(`/homepage`)}>
               <h3>TPM</h3>
             </button>
           </div>
@@ -196,7 +200,7 @@ export default function NavbarUser({ userID }) {
                 <button
                   className="icon_navbar_container"
                   onClick={() => {
-                    router.push(`/homepage/${encodeURIComponent(userID)}/cart`);
+                    router.push(`/homepage/cart`);
                   }}
                 >
                   <Image
@@ -212,9 +216,7 @@ export default function NavbarUser({ userID }) {
                 <button
                   className="icon_navbar_container"
                   onClick={() => {
-                    router.push(
-                      `/homepage/${encodeURIComponent(userID)}/like_product`
-                    );
+                    router.push("/homepage/like_product");
                   }}
                 >
                   <Image
@@ -224,7 +226,7 @@ export default function NavbarUser({ userID }) {
                     alt="cart_icon"
                   />
                 </button>
-                <p>{numliked ? numliked : "loading.."}</p>
+                <p>{numliked}</p>
               </div>
               <div className="notificationknock">
                 {/* <button
@@ -255,9 +257,7 @@ export default function NavbarUser({ userID }) {
                 <button
                   className="icon_navbar_container"
                   onClick={() => {
-                    router.push(
-                      `/homepage/${encodeURIComponent(userID)}/like_product`
-                    );
+                    router.push("/homepage/like_product");
                   }}
                 >
                   <div className="icon_navbar_container">
@@ -288,24 +288,13 @@ export default function NavbarUser({ userID }) {
           )}
           {show_option && (
             <div className="list_option">
-              <Link
-                href={`/homepage/${encodeURIComponent(
-                  userID
-                )}/user_information`}
-                onClick={handleClose}
-              >
+              <Link href={`/homepage/user_information`} onClick={handleClose}>
                 ユーザー情報
               </Link>
-              <Link
-                href={`/homepage/${encodeURIComponent(userID)}/cart`}
-                onClick={handleClose}
-              >
+              <Link href={`/homepage/cart`} onClick={handleClose}>
                 あなたのカート
               </Link>
-              <Link
-                href={`/homepage/${encodeURIComponent(userID)}/order_managment`}
-                onClick={handleClose}
-              >
+              <Link href={`/homepage/order_managment`} onClick={handleClose}>
                 注文管理
               </Link>
               {isSeller ? (

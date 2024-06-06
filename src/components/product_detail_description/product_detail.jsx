@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import ShareOnSocial from "react-share-on-social";
 import Link from "next/link";
 import { BeatLoader } from "react-spinners";
+import { getCognitoUserSub } from "@/config/cognito";
 
 const regions = [
   { region_id: 1, region_name: "Hokkaido" },
@@ -68,13 +69,14 @@ const provinces = [
   { province_id: 47, province_name: "Okinawa" },
 ];
 
-export default function Product_detail_description({ user_id, product_id }) {
+export default function Product_detail_description({ product_id }) {
   const router = useRouter();
   const [product, setProduct] = useState(null);
+  const [user_id, setUserID] = useState("");
   const [selectedOptionDelivery, setSelectedOptionDelivery] = useState("");
   const [index_option, setIndex_option] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isLoading, setIsLoading] = useState(true); // Add this line
+  const [isLoading, setIsLoading] = useState(true);
   const [option, setOption] = useState([]);
   const [seller, setSeller] = useState({});
   const [liked, setLiked] = useState(false);
@@ -113,6 +115,8 @@ export default function Product_detail_description({ user_id, product_id }) {
   ];
 
   useEffect(() => {
+    getCognitoUserSub().then((user_id) => setUserID(user_id));
+    if (!user_id) return;
     fetch(`/api/user/product?product_id=${product_id}&user_id=${user_id}`)
       .then((response) => response.json())
       .then((data) => {
@@ -146,7 +150,7 @@ export default function Product_detail_description({ user_id, product_id }) {
       .catch((error) => {
         console.error("Error:", error);
       });
-  }, [product_id]);
+  }, [product_id, user_id]);
   async function handleLikeProduct() {
     if (user_id == "guest") {
       router.push("/sign_in");
@@ -263,9 +267,7 @@ export default function Product_detail_description({ user_id, product_id }) {
             </button>
             <button
               className="btn_to_cart"
-              onClick={() =>
-                router.push(`/homepage/${encodeURIComponent(user_id)}/cart`)
-              }
+              onClick={() => router.push(`/homepage/cart`)}
             >
               Go to My Cart
             </button>
@@ -276,17 +278,11 @@ export default function Product_detail_description({ user_id, product_id }) {
   }
 
   function visitShop() {
-    router.push(
-      `/homepage/${encodeURIComponent(user_id)}/shop/${encodeURIComponent(
-        seller.User_ID
-      )}`
-    );
+    router.push(`/homepage/shop/${encodeURIComponent(seller.User_ID)}`);
   }
 
   function visitCategory(category_id) {
-    router.push(
-      `/homepage/${encodeURIComponent(user_id)}/category/${category_id}`
-    );
+    router.push(`/homepage/category/${category_id}`);
   }
   return product && seller && option && comments ? (
     <div className="product_detail">
@@ -320,15 +316,13 @@ export default function Product_detail_description({ user_id, product_id }) {
             <p>起源</p>
             <div>
               <p>地域:</p>
-              <Link href={`/homepage/${user_id}/region/${product.region_id}`}>
+              <Link href={`/homepage/region/${product.region_id}`}>
                 {regions[product.region_id - 1].region_name}{" "}
               </Link>
             </div>
             <div>
               <p>意識的な :</p>
-              <Link
-                href={`/homepage/${user_id}/province/${product.province_id}`}
-              >
+              <Link href={`/homepage/province/${product.province_id}`}>
                 {provinces[product.province_id - 1].province_name}{" "}
               </Link>
             </div>

@@ -2,16 +2,19 @@
 import { useState, useEffect } from "react";
 import "./order_managment.css";
 import { useRouter } from "next/navigation";
-export default function Page({ params }) {
+import { getCognitoUserSub } from "@/config/cognito";
+
+export default function Page() {
   const route = useRouter();
-  const { user_id_encode } = params;
-  const user_id = decodeURIComponent(user_id_encode);
+  const [user_id, setUserID] = useState("");
   const [orders, setOrders] = useState([]);
   const [shopNames, setShopNames] = useState({});
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [shippingCompanies, setShippingCompanies] = useState([]);
 
   useEffect(() => {
+    getCognitoUserSub().then((user_id) => setUserID(user_id));
+    if (!user_id) return;
     function fetchorder() {
       fetch(`/api/user/orders?customer_id=${encodeURIComponent(user_id)}`)
         .then((response) => response.json())
@@ -41,7 +44,7 @@ export default function Page({ params }) {
     fetchorder();
     fetchPaymentMethods();
     fetchShippingcompany();
-  }, []);
+  }, [user_id]);
   async function fetchUserInformation(Seller_ID) {
     const response = await fetch(
       `/api/user/information?user_id=${encodeURIComponent(Seller_ID)}`
@@ -87,11 +90,7 @@ export default function Page({ params }) {
             <div>
               <button
                 onClick={() => {
-                  route.push(
-                    `/homepage/${encodeURIComponent(user_id)}/order_managment/${
-                      item.Order_ID
-                    }`
-                  );
+                  route.push(`/homepage/order_managment/${item.Order_ID}`);
                 }}
               >
                 View

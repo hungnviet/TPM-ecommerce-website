@@ -3,15 +3,18 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
+import { getCognitoUserSub } from "@/config/cognito";
+
 import "./cart.css";
-export default function Page({ params }) {
+export default function Page({}) {
   const route = useRouter();
-  const { user_id_encode } = params;
-  const user_id = decodeURIComponent(user_id_encode);
+  const [user_id, setUserID] = useState("");
   const [cart, setCart] = useState({ shop: [] });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    getCognitoUserSub().then((user_id) => setUserID(user_id));
+    if (!user_id) return;
     async function fetchCart() {
       const response = await fetch(
         `/api/user/cart?user_id=${encodeURIComponent(user_id)}`
@@ -298,7 +301,7 @@ export default function Page({ params }) {
     }
 
     // Redirect to checkout page
-    route.push(`/homepage/${encodeURIComponent(user_id)}/checkout`);
+    route.push(`/homepage/checkout`);
   }
   const total_checked_products = calculateCheckedProducts();
 

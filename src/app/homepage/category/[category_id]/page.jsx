@@ -2,32 +2,26 @@
 import { useEffect, useState } from "react";
 import "./category.css";
 import Product_cart from "@/components/product_cart/product_cart";
+import { getCognitoUserSub } from "@/config/cognito";
 
 export default function Page({ params }) {
-  const { user_id_encode, category_id } = params;
-  const user_id = decodeURIComponent(user_id_encode);
+  const { category_id } = params;
+  const [user_id, setUserID] = useState("");
   const [products, setProducts] = useState([]);
+  const [number, setNumber] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const productsPerPage = 30;
-
   useEffect(() => {
-    fetch(`/api/user/products?user_id=${user_id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        dynamic: "force-dynamic",
-      },
-      next: { revalidate: 60 },
-    })
+    getCognitoUserSub().then((user_id) => setUserID(user_id));
+    if (!user_id) return;
+    fetch(`/api/user/category?category_id=${category_id}&user_id=${user_id}`)
       .then((response) => response.json())
       .then((data) => {
-        // transform the data into the format you need
-        console.log(data);
+        setNumber(data.length);
         setProducts(data);
       })
       .catch((error) => console.error("Error:", error));
-  }, []);
-
+  }, [category_id, user_id]);
   const indexOfLastProduct = (currentPage + 1) * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(
@@ -52,11 +46,11 @@ export default function Page({ params }) {
     }
     return pageNumbers;
   };
-
   return (
     <div className="category_page">
+      <h3 style={{ color: "black" }}>カテゴリ肉 の検索結果: {number}件</h3>
       <div className="category_product_container">
-        {currentProducts.map((product, index) => (
+        {products.map((product, index) => (
           <Product_cart key={index} product={product} userID={user_id} />
         ))}
       </div>

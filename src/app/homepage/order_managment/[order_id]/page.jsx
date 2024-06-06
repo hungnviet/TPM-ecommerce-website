@@ -3,24 +3,25 @@ import "../../checkout/checkout.css";
 import { useEffect, useState, React } from "react";
 import Image from "next/image";
 import AWS from "aws-sdk";
+import { getCognitoUserSub } from "@/config/cognito";
+
 AWS.config.update({
   accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
   region: process.env.NEXT_PUBLIC_AWS_REGION,
 });
 export default function CheckoutPage({ params }) {
-  const user_id_encode = params.user_id_encode;
+  const [user_id_encode, setUserID] = useState("");
   const s3 = new AWS.S3();
   const [images, setImages] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [orderDetails, setOrderDetails] = useState(null);
   const [comment, setComment] = useState("");
-  const path = typeof window !== "undefined" ? window.location.pathname : "";
-  const pathParts = path.split("/");
+
   const [address, setAddress] = useState("");
   const [iscomplete, setIsComplete] = useState("");
   const [activeCommentId, setActiveCommentId] = useState(null);
-  const Order_ID = pathParts[pathParts.length - 1];
+  const Order_ID = params.order_id;
   const [note, setNote] = useState("");
   const [user_information, setUserInformation] = useState({
     user_name: "",
@@ -128,6 +129,8 @@ export default function CheckoutPage({ params }) {
   }
 
   useEffect(() => {
+    getCognitoUserSub().then((user_id_encode) => setUserID(user_id_encode));
+    if (!user_id_encode) return;
     fetch(`/api/user/order?order_id=${Order_ID}`)
       .then((response) => response.json())
       .then((data) => {
@@ -173,7 +176,7 @@ export default function CheckoutPage({ params }) {
         }
       })
       .catch((error) => console.error(error));
-  }, [Order_ID]);
+  }, [Order_ID, user_id_encode]);
 
   function calculateTotalPrice() {
     let total = 0;

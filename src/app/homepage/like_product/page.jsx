@@ -1,23 +1,38 @@
 "use client";
 import { useEffect, useState } from "react";
+
 import "./category.css";
 import Product_cart from "@/components/product_cart/product_cart";
-export default function Page({ params }) {
-  const { user_id_encode, category_id } = params;
-  const user_id = decodeURIComponent(user_id_encode);
+import { BeatLoader } from "react-spinners";
+import { getCognitoUserSub } from "@/config/cognito";
+
+export default function Page() {
+  const [user_id, setUser_id] = useState("");
   const [products, setProducts] = useState([]);
-  const [number, setNumber] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const productsPerPage = 30;
+
   useEffect(() => {
-    fetch(`/api/user/category?category_id=${category_id}&user_id=${user_id}`)
+    getCognitoUserSub().then((user_id) => setUser_id(user_id));
+    if (!user_id) return;
+
+    fetch(`/api/user/product_like?user_id=${user_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        dynamic: "force-dynamic",
+      },
+      next: { revalidate: 60 },
+    })
       .then((response) => response.json())
       .then((data) => {
-        setNumber(data.length);
         setProducts(data);
+        setIsLoading(false);
       })
       .catch((error) => console.error("Error:", error));
-  }, [category_id]);
+  }, [user_id]);
+
   const indexOfLastProduct = (currentPage + 1) * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(
@@ -42,11 +57,18 @@ export default function Page({ params }) {
     }
     return pageNumbers;
   };
+
   return (
     <div className="category_page">
-      <h3 style={{ color: "black" }}>カテゴリ肉 の検索結果: {number}件</h3>
+      <div className="header_of_like_page">
+        <h3>あなたが好きな商品</h3>
+        <BeatLoader color={"#000"} loading={isLoading} size={10} />
+      </div>
       <div className="category_product_container">
-        {products.map((product, index) => (
+        {!isLoading && currentProducts.length === 0 && (
+          <h3>まだ何もお気に入りに追加していません</h3>
+        )}
+        {currentProducts.map((product, index) => (
           <Product_cart key={index} product={product} userID={user_id} />
         ))}
       </div>

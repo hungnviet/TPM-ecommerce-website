@@ -18,7 +18,7 @@ export default function Navbar() {
       <div className="name_container">
         <button
           onClick={() => {
-            router.push("/homepage/guess");
+            router.push("/homepage");
           }}
           className="btn_home_navbar"
         >

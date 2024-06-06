@@ -5,9 +5,11 @@ import Product_detail_description from "@/components/product_detail_description/
 import RealtedProduct from "@/components/related_product/page";
 import { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
+import { getCognitoUserSub } from "@/config/cognito";
+
 export default function Page({ params }) {
-  const { user_id_encode, product_id } = params;
-  const user_id = decodeURIComponent(user_id_encode);
+  const { product_id } = params;
+  const [user_id, setUserID] = useState("");
   const [category, setCategory] = useState(null);
   const [relatedProduct, setRelatedProduct] = useState(null);
 
@@ -29,20 +31,19 @@ export default function Page({ params }) {
   }
 
   useEffect(() => {
+    getCognitoUserSub().then((user_id) => setUserID(user_id));
+    if (!user_id) return;
+
     if (product_id) {
       getCategoryOfProduct();
     }
-  }, []);
 
-  useEffect(() => {
     if (category) {
       getRelatedProduct();
     }
-  }, [category]);
 
-  useEffect(() => {
     console.log(relatedProduct);
-  }, [relatedProduct]);
+  }, [user_id, category]); // run only when userID changes
 
   return (
     <div className="product_detail_page">

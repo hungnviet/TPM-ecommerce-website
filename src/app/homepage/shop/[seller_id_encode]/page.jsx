@@ -6,24 +6,29 @@ import "./page.css";
 import { useState, useEffect } from "react";
 import Product_cart from "@/components/product_cart/product_cart";
 import { BeatLoader } from "react-spinners";
+import { getCognitoUserSub } from "@/config/cognito";
+
 export default function Seller_shop({ params }) {
-  const { user_id_encode, seller_id_encode } = params;
-  const user_id = decodeURIComponent(user_id_encode);
+  const { seller_id_encode } = params;
   const seller_id = decodeURIComponent(seller_id_encode);
   const [products, setProducts] = useState([]);
   const [shopInfor, setShopInfor] = useState({}); // Add state for shop name
   const [isLoading, setIsLoading] = useState(true);
+  const [user_id, setUserID] = useState("");
   useEffect(() => {
+    getCognitoUserSub().then((user_id) => setUserID(user_id));
+    if (!user_id) return;
     fetch(`/api/user/shop?seller_id=${seller_id}&user_id=${user_id}`)
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+
         setProducts(data.products);
         setShopInfor(data.shop_in4);
         setIsLoading(false);
       })
       .catch((error) => console.error("Error:", error));
-  }, []);
+  }, [user_id]);
 
   return (
     <div className="listProductOfShopContainer">

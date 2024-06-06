@@ -9,7 +9,7 @@ export default function Product_cart_seller({
   const router = useRouter();
   function show_details() {
     router.push(
-      `/seller_mode/${userIdEncode}/${sellerIdEncode}/product_list/${product.product_id}`
+      `/seller_mode/${sellerIdEncode}/product_list/${product.product_id}`
     );
   }
 

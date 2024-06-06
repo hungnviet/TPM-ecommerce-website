@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 export default function AdvertisementCart({ advertisement, user_id }) {
   const router = useRouter();
   function showDetails() {
-    router.push(`/homepage/${user_id}/shop/${advertisement.User_ID}`);
+    router.push(`/homepage/shop/${advertisement.User_ID}`);
   }
   return (
     <div className="advertisement_cart_container">

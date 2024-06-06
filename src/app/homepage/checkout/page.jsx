@@ -2,15 +2,17 @@
 import "./checkout.css";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Knock } from "@knocklabs/node";
+import { getCognitoUserSub } from "@/config/cognito";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export default function CheckoutPage({ params }) {
+export default function CheckoutPage({}) {
   const route = useRouter();
   const knockClient = new Knock(process.env.NEXT_PUBLIC_KNOCK_SECRET);
 
-  const user_id_encode = params.user_id_encode;
-  const user_id = decodeURIComponent(user_id_encode);
+  const [user_id, setUser_id] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
 
@@ -65,6 +67,8 @@ export default function CheckoutPage({ params }) {
   };
 
   useEffect(() => {
+    getCognitoUserSub().then((user_id) => setUser_id(user_id));
+    if (!user_id) return;
     async function fetchCheckout() {
       const response = await fetch(
         `/api/user/cart?user_id=${encodeURIComponent(user_id)}`
@@ -184,12 +188,12 @@ export default function CheckoutPage({ params }) {
         });
 
         if (!response.ok) {
-          alert(`Failed to update product ${product.product_id}`);
+          toast.error(`Failed to update product ${product.product_id}`);
         }
       }
     }
     // Redirect to the previous page or any other page
-    route.push(`/homepage/${encodeURIComponent(user_id)}/cart`);
+    route.push(`/homepage/cart`);
   }
   function calculateTotalPrice() {
     let total = 0;
@@ -212,7 +216,7 @@ export default function CheckoutPage({ params }) {
   const totalPrice = calculateTotalPrice();
   async function handle_checkout() {
     if (!selectedPaymentMethod) {
-      alert("Vui lòng chọn phương thức thanh toán.");
+      toast.error("Vui lòng chọn phương thức thanh toán.");
       return;
     }
 
@@ -221,7 +225,9 @@ export default function CheckoutPage({ params }) {
       (_, index) => selectedShipment[index]
     );
     if (!allShopsHaveShipping) {
-      alert("Vui lòng chọn phương thức vận chuyển cho tất cả các cửa hàng.");
+      toast.error(
+        "Vui lòng chọn phương thức vận chuyển cho tất cả các cửa hàng."
+      );
       return;
     }
     let new_cart = { ...cart };
@@ -264,7 +270,7 @@ export default function CheckoutPage({ params }) {
         });
 
         if (!response.ok) {
-          alert("Checkout failed");
+          toast.error("Checkout failed");
           return;
         } else {
           await knockClient.workflows.trigger("buyproduct", {
@@ -286,18 +292,21 @@ export default function CheckoutPage({ params }) {
           });
 
           if (!deleteResponse.ok) {
-            alert(`Failed to remove product ${product.Product_ID} from cart`);
+            toast.error(
+              `Failed to remove product ${product.Product_ID} from cart`
+            );
           }
         }
       }
     }
 
-    alert("Order has been placed");
+    toast.success("Order has been placed");
 
-    route.push(`/homepage/${encodeURIComponent(user_id)}/order_managment`);
+    route.push(`/homepage/order_managment`);
   }
   return (
     <div className="checkout_page_container">
+      <ToastContainer />
       <div className="address_checkout_page">
         <div className="header_address_checkout">
           <Image
@@ -546,9 +555,7 @@ export default function CheckoutPage({ params }) {
             </div>
           );
         })}
-      <div className="checkout_information_payment">
-        <p>Phương thức thanh toán</p>
-      </div>
+
       <div className="checkout_final_step">
         <div>
           <p>Tong tien hang: </p> <p>{totalPrice} 円</p>

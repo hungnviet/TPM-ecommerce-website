@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
 const AWS = require("aws-sdk");
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 AWS.config.update({
   region: process.env.NEXT_PUBLIC_AWS_REGION,
@@ -480,7 +482,7 @@ export default function RegisterInformation({ params }) {
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
-          alert("User information successfully updated"); // Alert the user
+          toast.success("User information successfully updated");
           router.push("/sign_in");
         })
         .catch((error) => {
@@ -508,6 +510,7 @@ export default function RegisterInformation({ params }) {
 
   return (
     <div className="register_information_container">
+      <ToastContainer />
       <h1>Please inform you information for creating account</h1>
       <form className="form_register_information" onSubmit={handleSubmit}>
         <div className="form_register_content">

@@ -3,15 +3,17 @@ import { useEffect, useState } from "react";
 import "./search_result.css";
 import Product_cart from "@/components/product_cart/product_cart";
 import { BeatLoader } from "react-spinners";
+import { getCognitoUserSub } from "@/config/cognito";
 
 export default function Page({ params }) {
-  const { user_id_encode, product_name_encode } = params;
-  const user_id = decodeURIComponent(user_id_encode);
+  const [user_id, setUser_id] = useState("");
   const product_name = decodeURIComponent(product_name_encode);
   const [num_of_results, set_num_of_results] = useState(0);
   const [products, set_products] = useState();
   const [isWaiting, setIsWaiting] = useState(true);
   useEffect(() => {
+    getCognitoUserSub().then((sub) => setUser_id(sub));
+    if (!user_id) return;
     fetch("/api/user/search", {
       method: "POST",
       headers: {
@@ -25,7 +27,7 @@ export default function Page({ params }) {
         set_products(data);
         setIsWaiting(false);
       });
-  }, []);
+  }, [user_id]);
   useEffect(() => {
     console.log("dayne");
     console.log(products);

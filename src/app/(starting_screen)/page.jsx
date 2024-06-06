@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import "./home.css";
 import { CognitoUserPool, CognitoUser } from "amazon-cognito-identity-js";
 import { Knock } from "@knocklabs/node";
+import { BeatLoader } from "react-spinners";
 
 const poolData = {
   UserPoolId: process.env.NEXT_PUBLIC_AWS_Userpool_ID, // Your User Pool ID
@@ -45,23 +46,50 @@ export default function Home() {
               email: email,
             });
             console.log(knockuser);
-            router.push(`/homepage/${encodeURIComponent(sub)}`);
+            router.push("/homepage");
             setIsSignedIn(true);
           }
         });
       });
     } else {
       setIsSignedIn(false);
-      router.push("/homepage/guess");
+      router.push("/homepage");
     }
   }, []);
 
   const handleShopping = () => {
-    router.push("/homepage/guest");
+    router.push("/homepage");
   };
 
   if (isSignedIn === null) {
-    return <div>Loading...</div>; // or render a loading spinner
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white",
+          zIndex: 9999,
+        }}
+      >
+        <div
+          style={{
+            marginBottom: "20px",
+            fontSize: "20px",
+            animation: "fade 1s infinite",
+          }}
+        >
+          TPM EC
+        </div>
+        <BeatLoader loading={!isSignedIn} size={10} color="#36d7b7" />
+      </div>
+    );
   }
 
   if (isSignedIn) {
