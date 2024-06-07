@@ -30,6 +30,8 @@
   display: flex;
   flex-direction: row;
   column-gap: 20px;
-  overflow-y: scroll;
+  flex-wrap: wrap;
   height: max-content;
+  justify-content: space-between;
+  row-gap: 10px;
 }

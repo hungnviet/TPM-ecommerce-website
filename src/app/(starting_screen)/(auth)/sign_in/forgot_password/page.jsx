@@ -16,7 +16,7 @@ export default function Forgot_Password() {
 
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [isCheckCode, setIsCheckCode] = useState(false);
+  const [isCheckCode, setIsCheckCode] = useState(true);
   const [canResetPassword, setCanResetPassword] = useState(false); /// if the code is valid then set the state to true and send the user to the reset password page.
   const [code, setCode] = useState("");
   const [err, setErr] = useState("");
