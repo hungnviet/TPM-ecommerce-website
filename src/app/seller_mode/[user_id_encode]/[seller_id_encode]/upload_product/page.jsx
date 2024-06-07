@@ -12,7 +12,13 @@ export default function Page({ params }) {
   const { seller_id_encode: sellerid } = params;
   const s3 = new AWS.S3();
   const [rows, setRows] = useState([
-    { optionPrice: "", optionName: "", optionQuantity: "" },
+    {
+      optionPrice: "",
+      optionName: "",
+      optionQuantity: "",
+      optionInventory: "",
+      freeshipCondition: "",
+    },
   ]);
   const [rows2, setRows2] = useState([{ title: "", content: "" }]);
   const [images, setImages] = useState([]);
@@ -150,10 +156,18 @@ export default function Page({ params }) {
       const productImageList = validImageUrls.map((url) => ({ imageURL: url }));
       console.log("Product Image List:", productImageList);
       const productOptionList = rows.map(
-        ({ optionName, optionPrice, optionQuantity }) => ({
+        ({
+          optionName,
+          optionPrice,
+          optionQuantity,
+          optionInventory,
+          freeshipCondition,
+        }) => ({
           optionName,
           optionPrice: Number(optionPrice), // convert string to number
           optionQuantity: Number(optionQuantity), // convert string to number
+          optionInventory: Number(optionInventory),
+          freeshipCondition: Number(freeshipCondition),
         })
       );
       const productDescriptionList = rows2.map(({ title, content }) => ({
@@ -233,7 +247,16 @@ export default function Page({ params }) {
   };
 
   const addRow = () => {
-    setRows([...rows, { optionPrice: "", optionName: "", optionQuantity: "" }]);
+    setRows([
+      ...rows,
+      {
+        optionPrice: "",
+        optionName: "",
+        optionQuantity: "",
+        optionInventory: "",
+        freeshipCondition: "",
+      },
+    ]);
   };
 
   const updateRow = (index, field, value) => {
@@ -304,13 +327,14 @@ export default function Page({ params }) {
 
         <div className="input_price">
           <h3>Sale option</h3>
-          <table>
+          <table className="sellerproduct">
             <thead>
               <tr>
                 <th>Price</th>
                 <th>¥ per</th>
                 <th>Option</th>
                 <th>Quantity</th>
+                <th>Freeship Condition</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -318,36 +342,67 @@ export default function Page({ params }) {
               {rows.map((row, index) => (
                 <tr key={index}>
                   <td>
-                    <input
-                      type="text"
-                      value={row.optionPrice}
-                      onChange={(e) =>
-                        updateRow(index, "optionPrice", e.target.value)
-                      }
-                      placeholder="Ex: 100"
-                    />
+                    <div>
+                      <input
+                        type="text"
+                        value={row.optionPrice}
+                        onChange={(e) =>
+                          updateRow(index, "optionPrice", e.target.value)
+                        }
+                        placeholder="Ex: 100"
+                      />
+                    </div>
                   </td>
                   <td></td>
                   <td>
-                    <input
-                      type="text"
-                      value={row.optionName}
-                      onChange={(e) =>
-                        updateRow(index, "optionName", e.target.value)
-                      }
-                      placeholder="Ex: package of 1.5 kg"
-                    />
+                    <div>
+                      <input
+                        type="text"
+                        value={row.optionName}
+                        onChange={(e) =>
+                          updateRow(index, "optionName", e.target.value)
+                        }
+                        placeholder="Ex: package of 1.5 kg"
+                      />
+                    </div>
+                  </td>
+
+                  <td>
+                    <div>
+                      <input
+                        type="text"
+                        value={row.optionQuantity}
+                        onChange={(e) =>
+                          updateRow(index, "optionQuantity", e.target.value)
+                        }
+                        placeholder="Ex: 100"
+                      />
+                    </div>
+                    <div>
+                      Inventory
+                      <input
+                        type="text"
+                        value={row.optionInventory}
+                        onChange={(e) =>
+                          updateRow(index, "optionInventory", e.target.value)
+                        }
+                        placeholder="Ex: 100"
+                      />
+                    </div>
                   </td>
                   <td>
-                    <input
-                      type="text"
-                      value={row.optionQuantity}
-                      onChange={(e) =>
-                        updateRow(index, "optionQuantity", e.target.value)
-                      }
-                      placeholder="Ex: 100"
-                    />
+                    <div>
+                      <input
+                        type="text"
+                        value={row.freeshipCondition}
+                        onChange={(e) =>
+                          updateRow(index, "freeshipCondition", e.target.value)
+                        }
+                        placeholder="Ex: 100"
+                      />
+                    </div>
                   </td>
+
                   <td>
                     <button onClick={() => deleteRow(index)}>Delete</button>
                   </td>
@@ -355,6 +410,7 @@ export default function Page({ params }) {
               ))}
             </tbody>
           </table>
+
           <button onClick={addRow}>Add row</button>
         </div>
         <div className="input_description">

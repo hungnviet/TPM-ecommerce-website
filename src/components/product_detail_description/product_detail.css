@@ -310,3 +310,14 @@
   align-items: center;
   column-gap: 5px;
 }
+.sellerproduct {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sellerproduct th,
+.sellerproduct td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  vertical-align: top;
+}

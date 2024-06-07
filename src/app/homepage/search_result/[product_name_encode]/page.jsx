@@ -7,7 +7,7 @@ import { getCognitoUserSub } from "@/config/cognito";
 
 export default function Page({ params }) {
   const [user_id, setUser_id] = useState("");
-  const product_name = decodeURIComponent(product_name_encode);
+  const product_name = decodeURIComponent(params.product_name_encode);
   const [num_of_results, set_num_of_results] = useState(0);
   const [products, set_products] = useState();
   const [isWaiting, setIsWaiting] = useState(true);

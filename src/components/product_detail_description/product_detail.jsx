@@ -82,6 +82,7 @@ export default function Product_detail_description({ product_id }) {
   const [liked, setLiked] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [selectfreeshipping, setSelectFreeshipping] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const style = {
     copyContainer: {
@@ -120,6 +121,7 @@ export default function Product_detail_description({ product_id }) {
     fetch(`/api/user/product?product_id=${product_id}&user_id=${user_id}`)
       .then((response) => response.json())
       .then((data) => {
+        console.log("Bolero");
         console.log(data);
         setProduct(data);
         setOption(data.options);
@@ -398,6 +400,53 @@ export default function Product_detail_description({ product_id }) {
       <div className="product_detail_description">
         <table>
           <tbody>
+            <tr onClick={() => setSelectFreeshipping(true)}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  borderBottom: "1px solid grey",
+                }}
+              >
+                <td style={{ fontWeight: "bold", color: "grey" }}>
+                  送料無料条件
+                </td>
+                <td>
+                  {selectfreeshipping && (
+                    <Image src={"/arrow.png"} width={24} height={24}></Image>
+                  )}
+                </td>
+              </div>
+            </tr>
+            {selectfreeshipping && (
+              <tr style={{ transition: "all 0.5s ease-in-out" }}>
+                <td
+                  style={{ paddingLeft: "10px", fontSize: "12px" }}
+                  colSpan="6"
+                >
+                  <table className="sellerproduct">
+                    <thead>
+                      <tr>
+                        {product.options.map((option, index) => (
+                          <th key={`header-${index}`}>{option.Option_name}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        {product.options.map((option, index) => (
+                          <td key={`price-${index}`}>
+                            {option.FreeshipCondition}つ購入すると送料無料
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            )}
+
             {product.description.map((detail, index) => (
               <React.Fragment key={index}>
                 <tr onClick={() => handleDetailClick(detail)}>

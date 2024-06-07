@@ -138,3 +138,25 @@
 .select_region_province_for_product select:hover {
   background-color: #f0c14b;
 }
+.sellerproduct {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sellerproduct th,
+.sellerproduct td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  vertical-align: top;
+}
+
+.sellerproduct input[type="text"] {
+  width: 90%;
+  padding: 8px;
+  margin-top: 4px;
+  box-sizing: border-box;
+}
+
+.sellerproduct div {
+  margin-bottom: 10px; /* Adds space between the input groups */
+}

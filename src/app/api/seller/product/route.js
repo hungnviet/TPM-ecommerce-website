@@ -17,7 +17,7 @@ export async function POST(req) {
     province_id,
   } = data;
   const sql1 = `call Add_Product('${sellerID}','${productTitle}','${productDescription}',${categoryID},${region_id},${province_id})`; /// (sellerID,productTitle,productDescription,categoryID)
-  const sql2 = `call Add_Product_Option(?,?,?,?,?)`; /// (productID,optionName,optionPrice,optionNumber)
+  const sql2 = `call Add_Product_Option(?,?,?,?,?,?,?)`; /// (productID,optionName,optionPrice,optionNumber)
   const sql4 = `call Add_Product_Detail_Description(?,?,?,?)`; /// (productID,title,content,descriptionNumber)
   const sql3 = `call Add_Product_Image(?,?)`; /// (productID,imageURL)
   return new Promise((resolve, reject) => {
@@ -42,6 +42,8 @@ export async function POST(req) {
                   option.optionName,
                   option.optionPrice,
                   option.optionQuantity,
+                  option.optionInventory,
+                  option.freeshipCondition,
                   index,
                 ],
                 (err, result) => {
@@ -124,7 +126,7 @@ export async function PUT(req) {
         reject(NextResponse.error(err));
       } else {
         productOptionList.forEach((option, index) => {
-          const sql2 = `UPDATE PRODUCT_OPTION SET Option_Name='${option.optionName}', Option_Price='${option.optionPrice}' WHERE Product_ID='${productID}' AND Option_Number='${index}'`;
+          const sql2 = `UPDATE PRODUCT_OPTION SET Option_Name='${option.optionName}', Option_Price='${option.optionPrice}', Quantity = '${option.optionQuantity}',FreeshipCondition='${option.freeshipCondition}',Inventory='${option.optionInventory}' WHERE Product_ID='${productID}' AND Option_Number='${index}'`;
           db.query(sql2, (err, result) => {
             if (err) {
               console.log(err);

@@ -24,6 +24,7 @@ export default function CheckoutPage({}) {
   const [currentShippingOptions, setCurrentShippingOptions] = useState([]);
   const [currentPayment, setCurrentPayment] = useState([]);
   const [showPaymentModal, setshowPaymentModal] = useState(false);
+  const [shipmentCost, setShipmentCost] = useState(0);
 
   const [user_information, setUserInformation] = useState({
     user_name: "",
@@ -93,17 +94,27 @@ export default function CheckoutPage({}) {
           );
           const paymentdata = await paymentmethod.json();
           const shippingdata = await shippingmethod.json();
+
+          let freeship = 0;
+          const products = shop.map((item) => {
+            if (item.Quantity >= item.freeshipCondition) {
+              freeship = 1;
+            }
+            return {
+              ...item,
+              check: false,
+              total: item.Quantity * parseFloat(item.Option_price),
+            };
+          });
+
           return {
             sellerId: sellerId,
             Shop_name: shopData.user.Shop_name,
             check: false,
-            product: shop.map((item) => ({
-              ...item,
-              check: false,
-              total: item.Quantity * parseFloat(item.Option_price),
-            })),
+            product: products,
             shippingmethod: shippingdata,
             paymentmethod: paymentdata,
+            freeship: freeship,
           };
         });
         const cartShops = await Promise.all(cartShopsPromises);
@@ -258,6 +269,7 @@ export default function CheckoutPage({}) {
           Note: notes[shopIndex],
           Shipping_company_ID: selectedShipment[shopIndex].id,
           Payment_method_id: selectedPaymentMethod[shopIndex].id,
+          Freeship: shop.freeship,
         };
 
         // Make API request to server
@@ -493,14 +505,17 @@ export default function CheckoutPage({}) {
                       {currentShippingOptions.map((option) => (
                         <li
                           key={option.Company_ID}
-                          onClick={() =>
+                          onClick={() => {
+                            const cost =
+                              shop.freeship === 1 ? 0 : parseInt(option.Price);
+
                             handleShipmentSelect(
                               option.Company_ID,
                               option.Company_name,
-                              parseInt(option.Price),
+                              cost,
                               option.Note
-                            )
-                          }
+                            );
+                          }}
                         >
                           <strong>{option.Company_name}</strong> - ₫
                           {option.Price.toLocaleString()}
