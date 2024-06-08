@@ -41,7 +41,6 @@ export default function Page() {
 
   const [bestSellerProducts, setBestSellerProducts] = useState([]);
   const [currentImage, setCurrentImage] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [isLoadingShop, setIsLoadingShop] = useState(true);
 
   const nextImage = () => {

@@ -136,7 +136,7 @@ export default function NavbarUser({}) {
   }
   async function register_as_seller() {
     /// check this user is seller or not if not then show register page
-    router.push(`/seller_mode/register_for_sales_account`);
+    router.push(`/register_for_sales_account`);
     handleClose();
     /// else navigate to seller page
     //router.push(`/seller_mode/seller_dashboard`);
@@ -298,11 +298,7 @@ export default function NavbarUser({}) {
                 注文管理
               </Link>
               {isSeller ? (
-                <button
-                  onClick={() =>
-                    router.push(`/seller_mode/${userID}/${userID}/dashboard`)
-                  }
-                >
+                <button onClick={() => router.push(`/seller_mode/dashboard`)}>
                   My Shop
                 </button>
               ) : (

@@ -1,68 +1,50 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import "./navbar_seller.css";
 import Image from "next/image";
-export default function NavbarSeller({ user_id_encode, seller_id_encode }) {
+export default function NavbarSeller() {
   const router = useRouter();
+  const pathname = usePathname();
+
+  console.log(pathname);
   const [activeMode, setActiveMode] = useState("dashboard");
+
   function onClickDashboard() {
-    if (activeMode !== "dashboard") {
+    if (pathname !== "dashboard") {
       setActiveMode("dashboard");
       //navigtasge to dashboard
-      router.push(
-        `/seller_mode/${user_id_encode}/${seller_id_encode}/dashboard`
-      );
+      router.push(`/seller_mode/dashboard`);
     }
   }
   function onClickProduct() {
-    if (activeMode !== "product") {
-      setActiveMode("product");
+    if (pathname !== "/seller_mode/product_list") {
       //navigate to product
-      router.push(
-        `/seller_mode/${user_id_encode}/${seller_id_encode}/product_list`
-      );
+      router.push(`/seller_mode/product_list`);
     }
   }
   function onClickOrder() {
-    if (activeMode !== "order") {
-      setActiveMode("order");
+    if (pathname !== "/seller_mode/order_management") {
       //navigate to order
-      router.push(
-        `/seller_mode/${user_id_encode}/${seller_id_encode}/order_management`
-      );
-    }
-  }
-  function onClickProfile() {
-    if (activeMode !== "profile") {
-      setActiveMode("profile");
-      //navigate to profile
-      router.push(`/seller_mode/${user_id_encode}/${seller_id_encode}/profile`);
+      router.push(`/seller_mode/order_management`);
     }
   }
   function onClickWaitingConfirm() {
-    if (activeMode !== "waiting_confirm") {
-      setActiveMode("waiting_confirm");
+    if (pathname !== "/seller_mode/waiting_confirm_order") {
       //navigate to profile
-      router.push(
-        `/seller_mode/${user_id_encode}/${seller_id_encode}/waiting_confirm_order`
-      );
+      router.push(`/seller_mode/waiting_confirm_order`);
     }
   }
   function onClickUploadProduct() {
-    if (activeMode !== "upload_product") {
-      setActiveMode("upload_product");
+    if (pathname !== "/seller_mode/upload_product") {
       //navigate to profile
-      router.push(
-        `/seller_mode/${user_id_encode}/${seller_id_encode}/upload_product`
-      );
+      router.push(`/seller_mode/upload_product`);
     }
   }
   function onClickSetting() {
-    if (activeMode !== "setting") {
-      setActiveMode("setting");
+    if (pathname !== "/seller_mode/setting") {
       //navigate to profile
-      router.push(`/seller_mode/${user_id_encode}/${seller_id_encode}/setting`);
+      router.push(`/seller_mode/setting`);
     }
   }
   return (
@@ -75,13 +57,15 @@ export default function NavbarSeller({ user_id_encode, seller_id_encode }) {
       <div className="Navbar_user_left_btn_container">
         <button
           className={
-            activeMode === "dashboard" ? "Navbar_user_active_button" : ""
+            pathname === "/seller_mode/dashboard"
+              ? "Navbar_user_active_button"
+              : ""
           }
           onClick={onClickDashboard}
         >
           <Image
             src={
-              activeMode === "dashboard"
+              pathname === "/seller_mode/dashboard"
                 ? "/home_active_seller.png"
                 : "/home_seller.png"
             }
@@ -93,13 +77,15 @@ export default function NavbarSeller({ user_id_encode, seller_id_encode }) {
         </button>
         <button
           className={
-            activeMode === "product" ? "Navbar_user_active_button" : ""
+            pathname === "/seller_mode/product_list"
+              ? "Navbar_user_active_button"
+              : ""
           }
           onClick={onClickProduct}
         >
           <Image
             src={
-              activeMode === "product"
+              pathname === "/seller_mode/product_list"
                 ? "/product_active_seller.png"
                 : "/product_seller.png"
             }
@@ -110,12 +96,16 @@ export default function NavbarSeller({ user_id_encode, seller_id_encode }) {
           Products
         </button>
         <button
-          className={activeMode === "order" ? "Navbar_user_active_button" : ""}
+          className={
+            pathname === "/seller_mode/order_management"
+              ? "Navbar_user_active_button"
+              : ""
+          }
           onClick={onClickOrder}
         >
           <Image
             src={
-              activeMode === "order"
+              pathname === "/seller_mode/order_management"
                 ? "/order_active_seller.png"
                 : "/order_seller.png"
             }
@@ -127,13 +117,15 @@ export default function NavbarSeller({ user_id_encode, seller_id_encode }) {
         </button>
         <button
           className={
-            activeMode === "waiting_confirm" ? "Navbar_user_active_button" : ""
+            pathname === "/seller_mode/waiting_confirm_order"
+              ? "Navbar_user_active_button"
+              : ""
           }
           onClick={onClickWaitingConfirm}
         >
           <Image
             src={
-              activeMode === "waiting_confirm"
+              pathname === "/seller_mode/waiting_confirm_order"
                 ? "/user_active_seller.png"
                 : "/user_seller.png"
             }
@@ -146,13 +138,15 @@ export default function NavbarSeller({ user_id_encode, seller_id_encode }) {
 
         <button
           className={
-            activeMode === "upload_product" ? "Navbar_user_active_button" : ""
+            pathname === "/seller_mode/upload_product"
+              ? "Navbar_user_active_button"
+              : ""
           }
           onClick={onClickUploadProduct}
         >
           <Image
             src={
-              activeMode === "upload_product"
+              pathname === "/seller_mode/upload_product"
                 ? "/upload_active_seller.png"
                 : "/upload_seller.png"
             }
@@ -164,13 +158,17 @@ export default function NavbarSeller({ user_id_encode, seller_id_encode }) {
         </button>
         <button
           className={
-            activeMode === "setting" ? "Navbar_user_active_button" : ""
+            pathname === "/seller_mode/setting"
+              ? "Navbar_user_active_button"
+              : ""
           }
           onClick={onClickSetting}
         >
           <Image
             src={
-              activeMode === "setting" ? "/setting_active.png" : "/setting.png"
+              pathname === "/seller_mode/setting"
+                ? "/setting_active.png"
+                : "/setting.png"
             }
             width={20}
             height={20}

@@ -6,7 +6,7 @@ import RealtedProduct from "@/components/related_product/page";
 import { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import { getCognitoUserSub } from "@/config/cognito";
-
+import Product_cart from "@/components/product_cart/product_cart";
 export default function Page({ params }) {
   const { product_id } = params;
   const [user_id, setUserID] = useState("");
@@ -62,7 +62,7 @@ export default function Page({ params }) {
         {relatedProduct &&
           relatedProduct.length > 0 &&
           relatedProduct.map((product, index) => (
-            <RealtedProduct key={index} product={product} user_id={user_id} />
+            <Product_cart key={index} product={product} userID={user_id} />
           ))}
         <BeatLoader color={"#36d7b7"} loading={!relatedProduct} />
       </div>

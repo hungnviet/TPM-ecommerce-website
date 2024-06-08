@@ -19,8 +19,9 @@ function Modal({ isOpen, onClose, onSave, children }) {
     </div>
   );
 }
-export default function Page({ params }) {
-  const { user_id_encode } = params;
+import { getCognitoUserSub } from "@/config/cognito";
+export default function Page() {
+  const [user_id, setUser_id] = useState(null);
   const [shop, setShop] = useState({
     shopname: "",
     img: "",
@@ -44,28 +45,36 @@ export default function Page({ params }) {
   });
 
   useEffect(() => {
-    fetch(`/api/user/information?user_id=${user_id_encode}`)
-      .then((response) => response.json())
-      .then((data) => {
-        const shopData = {
-          shopname: data.user.Shop_name,
-          img: data.user.Shop_image,
-          address: data.address[0].Address,
-        };
-        setShop(shopData);
-        setEditShop(shopData);
-      })
-      .catch((err) => console.log(err));
-  }, [user_id_encode]);
+    getCognitoUserSub().then((sub) => {
+      setUser_id(sub);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (user_id) {
+      fetch(`/api/user/information?user_id=${user_id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          const shopData = {
+            shopname: data.user.Shop_name,
+            img: data.user.Shop_image,
+            address: data.address[0].Address,
+          };
+          setShop(shopData);
+          setEditShop(shopData);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [user_id]);
   async function fetchMethods() {
     const paymentResponse = await fetch(
-      `/api/user/payment_method_of_seller?seller_id=${user_id_encode}`
+      `/api/user/payment_method_of_seller?seller_id=${user_id}`
     );
     const paymentData = await paymentResponse.json();
     setPaymentMethods(paymentData);
 
     const shippingResponse = await fetch(
-      `/api/user/shipping_company_of_seller?seller_id=${user_id_encode}`
+      `/api/user/shipping_company_of_seller?seller_id=${user_id}`
     );
     const shippingData = await shippingResponse.json();
     setShippingMethods(shippingData);
@@ -81,9 +90,11 @@ export default function Page({ params }) {
       setAllShippingMethods(shippingData);
     }
 
-    fetchMethods();
-    fetchAllMethods();
-  }, [user_id_encode]);
+    if (user_id) {
+      fetchMethods();
+      fetchAllMethods();
+    }
+  }, [user_id]);
   const handleEditShopInfo = () => {
     setEditModalOpen(true);
   };
@@ -107,7 +118,7 @@ export default function Page({ params }) {
       },
       body: JSON.stringify({
         shopName: editShop.shopname,
-        User_ID: user_id_encode,
+        User_ID: user_id,
         shopImg: editShop.img,
       }),
     });
@@ -127,7 +138,7 @@ export default function Page({ params }) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            seller_ID: user_id_encode,
+            seller_ID: user_id,
             method_ID: [id],
           }),
         });
@@ -148,7 +159,7 @@ export default function Page({ params }) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            seller_ID: user_id_encode,
+            seller_ID: user_id,
             company_ID: [id],
           }),
         });
@@ -179,7 +190,7 @@ export default function Page({ params }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          seller_ID: user_id_encode,
+          seller_ID: user_id,
           payment_method_ID_list: [selectedMethod],
         }),
       });
@@ -210,7 +221,7 @@ export default function Page({ params }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          seller_ID: user_id_encode,
+          seller_ID: user_id,
           shipping_company_ID_list: [selectedMethod],
         }),
       });

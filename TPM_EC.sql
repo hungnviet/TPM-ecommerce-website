@@ -775,3 +775,56 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE Get_product_by_id(IN p_user_id VARCHAR(255), IN p_product_id int)
+BEGIN
+    SELECT 
+        p.Product_ID,
+        p.Seller_ID,
+        p.Product_title,
+        p.Product_description,
+        p.Category_ID,
+        MIN(po.Option_price) AS First_Option_Price,
+        MIN(po.Option_name) AS First_Option_Name,
+        MIN(pi.Image_url) AS First_Image,
+        u.*,  -- This selects all columns from the USER table
+        IF(pl.Product_ID IS NULL, FALSE, TRUE) AS isLiked
+    FROM PRODUCT p
+    LEFT JOIN PRODUCT_OPTION po ON p.Product_ID = po.Product_ID AND po.IsValid = TRUE
+    LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
+    LEFT JOIN PRODUCT_LIKED pl ON p.Product_ID = pl.Product_ID AND pl.User_ID = p_user_id
+    LEFT JOIN USER u ON p.Seller_ID = u.User_ID
+    WHERE p.Product_ID = p_product_id
+    GROUP BY p.Product_ID;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE Get_all_product_of_seller(IN p_seller_id VARCHAR(255))
+BEGIN
+    SELECT 
+        p.Product_ID,
+        p.Seller_ID,
+        p.Product_title,
+        p.Product_description,
+        p.Category_ID,
+        p.totalLike,
+        p.region_id,
+        p.province_id,
+        MIN(po.Option_price) AS First_Option_Price,
+        MIN(po.Option_name) AS First_Option_Name,
+        MIN(pi.Image_url) AS First_Image,
+        u.*  -- This selects all columns from the USER table
+    FROM PRODUCT p
+    LEFT JOIN PRODUCT_OPTION po ON p.Product_ID = po.Product_ID AND po.IsValid = TRUE
+    LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
+    LEFT JOIN USER u ON p.Seller_ID = u.User_ID
+    WHERE p.Seller_ID = p_seller_id
+    GROUP BY p.Product_ID;
+END $$
+
+DELIMITER ;

@@ -2,14 +2,15 @@
 import React, { useState, useEffect } from "react";
 import "./page.css";
 import AWS from "aws-sdk";
+import { getCognitoUserSub } from "@/config/cognito";
 
 AWS.config.update({
   accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
   region: process.env.NEXT_PUBLIC_AWS_REGION,
 });
-export default function Page({ params }) {
-  const { seller_id_encode: sellerid } = params;
+export default function Page() {
+  const [user_id, setUser_id] = useState(null);
   const s3 = new AWS.S3();
   const [rows, setRows] = useState([
     {
@@ -33,6 +34,12 @@ export default function Page({ params }) {
   const [selectedRegionIndex, setSelectedRegionIndex] = useState(0);
   const [selectedProvinceIndex, setSelectedProvinceIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    getCognitoUserSub().then((sub) => {
+      setUser_id(sub);
+    });
+  }, []);
 
   async function fetchRegion() {
     const response = await fetch("/api/general/regions", { method: "GET" });
@@ -181,7 +188,7 @@ export default function Page({ params }) {
         productOptionList: rows, // assuming rows is an array of options
         productImageList, // add your list of images here
         productDescriptionList: rows2,
-        sellerID: sellerid, // replace with actual sellerID
+        sellerID: user_id, // replace with actual sellerID
         categoryID: selectedOption,
         region_id: listRegion[selectedRegionIndex].Region_id,
         province_id: listProvinceByRegion[selectedProvinceIndex].Province_id,
@@ -199,7 +206,7 @@ export default function Page({ params }) {
           productOptionList: rows, // assuming rows is an array of options
           productImageList, // add your list of images here
           productDescriptionList: rows2,
-          sellerID: sellerid, // replace with actual sellerID
+          sellerID: user_id, // replace with actual sellerID
           categoryID: selectedOption,
           region_id: listRegion[selectedRegionIndex].Region_id,
           province_id: listProvinceByRegion[selectedProvinceIndex].Province_id,

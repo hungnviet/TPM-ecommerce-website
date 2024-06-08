@@ -3,13 +3,19 @@ import "./page.css";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Knock } from "@knocklabs/node";
+import { getCognitoUserSub } from "@/config/cognito";
 
-export default function Page({ params }) {
+export default function Page() {
   const [orderWatingConfirm, setOrderWatingConfirm] = useState([]);
   const route = useRouter();
   const knockClient = new Knock(process.env.NEXT_PUBLIC_KNOCK_SECRET);
+  const [user_id, setUser_id] = useState(null);
 
-  const { user_id_encode, seller_id_encode } = params;
+  useEffect(() => {
+    getCognitoUserSub().then((sub) => {
+      setUser_id(sub);
+    });
+  }, []);
 
   async function fetchOrders() {
     try {
@@ -29,8 +35,10 @@ export default function Page({ params }) {
   }
 
   useEffect(() => {
-    fetchOrders();
-  }, [seller_id_encode]);
+    if (user_id) {
+      fetchOrders();
+    }
+  }, [user_id]);
   async function updateOrderStatus(orderId, status, customerid) {
     const response = await fetch(`/api/seller/order`, {
       method: "PUT",
@@ -49,7 +57,7 @@ export default function Page({ params }) {
     }
     await knockClient.workflows.trigger("confirmorder", {
       recipients: [customerid],
-      actor: seller_id_encode,
+      actor: user_id,
     });
 
     // Refresh the order list after updating the status

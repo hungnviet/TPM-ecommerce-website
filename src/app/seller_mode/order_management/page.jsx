@@ -3,27 +3,37 @@ import "./order_management.css";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Knock } from "@knocklabs/node";
+import { getCognitoUserSub } from "@/config/cognito";
 
-export default function Page({ params }) {
+export default function Page() {
+  const [user_id, setUser_id] = useState(null);
   const route = useRouter();
   const [order, setOrder] = useState([]);
   const knockClient = new Knock(process.env.NEXT_PUBLIC_KNOCK_SECRET);
   const [customerid, setCustomerid] = useState("");
   const [indexUpdate, setIndexUpdate] = useState(-1);
-  const seller_id = params.seller_id_encode;
+
+  useEffect(() => {
+    getCognitoUserSub().then((sub) => {
+      setUser_id(sub);
+    });
+  }, []);
+
   async function fetchData() {
-    const response = await fetch(`/api/seller/orders?seller_id=${seller_id}`);
+    const response = await fetch(`/api/seller/orders?seller_id=${user_id}`);
     const data = await response.json();
     console.log(data);
-    console.log(params.seller_id_encode);
+    console.log(user_id);
     const filteredOrders = data.filter(
       (order) => order.Status !== "Waiting confirmation"
     );
     setOrder(filteredOrders);
   }
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (user_id) {
+      fetchData();
+    }
+  }, [user_id]);
 
   useEffect(() => {
     console.log(order);
@@ -52,7 +62,7 @@ export default function Page({ params }) {
         alert("Update successfully");
         await knockClient.workflows.trigger("updateproduct", {
           recipients: [customerid],
-          actor: seller_id,
+          actor: user_id,
         });
       } else {
         await fetchData();

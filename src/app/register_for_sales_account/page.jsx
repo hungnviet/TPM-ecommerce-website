@@ -1,18 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AWS from "aws-sdk";
 
 import "./register_seller.css";
 import { useRouter } from "next/navigation";
 import { Allerta } from "next/font/google";
+import { getCognitoUserSub } from "@/config/cognito";
+
 import Image from "next/image";
 AWS.config.update({
   accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
   region: process.env.NEXT_PUBLIC_AWS_REGION,
 });
-export default function Page({ params }) {
-  const { user_id_encode } = params;
+export default function Page() {
   const cognitoidentityserviceprovider =
     new AWS.CognitoIdentityServiceProvider();
 
@@ -24,6 +25,15 @@ export default function Page({ params }) {
   const [images, setImages] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [shopAddress, setShopAddress] = useState("");
+  const [user_id, setUser_id] = useState(null);
+  const [isCheck, setIsCheck] = useState(false);
+  const [shopName, setShopName] = useState("");
+
+  useEffect(() => {
+    getCognitoUserSub().then((sub) => {
+      setUser_id(sub);
+    });
+  }, []);
 
   const handleImageChange = (e) => {
     const newSelectedFiles = Array.from(e.target.files);
@@ -46,6 +56,7 @@ export default function Page({ params }) {
         console.error("Error reading files:", error);
       });
   };
+
   const checkAndGenerateFileName = async (s3, bucket, originalName) => {
     let baseName = originalName.split(".").slice(0, -1).join(".");
     let extension = originalName.split(".").pop();
@@ -74,8 +85,7 @@ export default function Page({ params }) {
       }
     }
   };
-  const [isCheck, setIsCheck] = useState(false);
-  const [shopName, setShopName] = useState("");
+
   async function handleCreateShop() {
     if (!isCheck) {
       setErrMsg("Please accept the terms and conditions");
@@ -122,7 +132,7 @@ export default function Page({ params }) {
         },
         body: JSON.stringify({
           shopName: shopName,
-          User_ID: user_id_encode,
+          User_ID: user_id,
           shippingCompanyList: [
             "Default Shipping Company 1",
             "Default Shipping Company 2",
@@ -134,7 +144,7 @@ export default function Page({ params }) {
       if (res.ok) {
         const params = {
           UserPoolId: process.env.NEXT_PUBLIC_AWS_Userpool_ID, // replace with your User Pool ID
-          Username: user_id_encode, // replace with the username of the user
+          Username: user_id, // replace with the username of the user
           GroupName: "seller",
         };
 
@@ -147,9 +157,10 @@ export default function Page({ params }) {
           }
         );
       }
-      route.push(`/seller_mode/${user_id_encode}/${user_id_encode}/dashboard`);
+      route.push(`/seller_mode/dashboard`);
     }
   }
+
   return (
     <div className="regiester_as_seller_page_container">
       <div className="header_register_as_seller">
