@@ -8,72 +8,10 @@ import Link from "next/link";
 import { BeatLoader } from "react-spinners";
 import { getCognitoUserSub } from "@/config/cognito";
 
-const regions = [
-  { region_id: 1, region_name: "Hokkaido" },
-  { region_id: 2, region_name: "Tohoku" },
-  { region_id: 3, region_name: "Kanto" },
-  { region_id: 4, region_name: "Chubu" },
-  { region_id: 5, region_name: "Kinki (Kansai)" },
-  { region_id: 6, region_name: "Chugoku" },
-  { region_id: 7, region_name: "Shikoku" },
-  { region_id: 8, region_name: "Kyushu (including Okinawa)" },
-];
-
-const provinces = [
-  { province_id: 1, province_name: "Hokkaido" },
-  { province_id: 2, province_name: "Aomori" },
-  { province_id: 3, province_name: "Iwate" },
-  { province_id: 4, province_name: "Miyagi" },
-  { province_id: 5, province_name: "Akita" },
-  { province_id: 6, province_name: "Yamagata" },
-  { province_id: 7, province_name: "Fukushima" },
-  { province_id: 8, province_name: "Ibaraki" },
-  { province_id: 9, province_name: "Tochigi" },
-  { province_id: 10, province_name: "Gunma" },
-  { province_id: 11, province_name: "Saitama" },
-  { province_id: 12, province_name: "Chiba" },
-  { province_id: 13, province_name: "Tokyo" },
-  { province_id: 14, province_name: "Kanagawa" },
-  { province_id: 15, province_name: "Niigata" },
-  { province_id: 16, province_name: "Toyama" },
-  { province_id: 17, province_name: "Ishikawa" },
-  { province_id: 18, province_name: "Fukui" },
-  { province_id: 19, province_name: "Yamanashi" },
-  { province_id: 20, province_name: "Nagano" },
-  { province_id: 21, province_name: "Gifu" },
-  { province_id: 22, province_name: "Shizuoka" },
-  { province_id: 23, province_name: "Aichi" },
-  { province_id: 24, province_name: "Mie" },
-  { province_id: 25, province_name: "Shiga" },
-  { province_id: 26, province_name: "Kyoto" },
-  { province_id: 27, province_name: "Osaka" },
-  { province_id: 28, province_name: "Hyogo" },
-  { province_id: 29, province_name: "Nara" },
-  { province_id: 30, province_name: "Wakayama" },
-  { province_id: 31, province_name: "Tottori" },
-  { province_id: 32, province_name: "Shimane" },
-  { province_id: 33, province_name: "Okayama" },
-  { province_id: 34, province_name: "Hiroshima" },
-  { province_id: 35, province_name: "Yamaguchi" },
-  { province_id: 36, province_name: "Tokushima" },
-  { province_id: 37, province_name: "Kagawa" },
-  { province_id: 38, province_name: "Ehime" },
-  { province_id: 39, province_name: "Kochi" },
-  { province_id: 40, province_name: "Fukuoka" },
-  { province_id: 41, province_name: "Saga" },
-  { province_id: 42, province_name: "Nagasaki" },
-  { province_id: 43, province_name: "Kumamoto" },
-  { province_id: 44, province_name: "Oita" },
-  { province_id: 45, province_name: "Miyazaki" },
-  { province_id: 46, province_name: "Kagoshima" },
-  { province_id: 47, province_name: "Okinawa" },
-];
-
 export default function Product_detail_description({ product_id }) {
   const router = useRouter();
   const [product, setProduct] = useState(null);
   const [user_id, setUserID] = useState("");
-  const [selectedOptionDelivery, setSelectedOptionDelivery] = useState("");
   const [index_option, setIndex_option] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,17 +22,8 @@ export default function Product_detail_description({ product_id }) {
   const [showModal, setShowModal] = useState(false);
   const [selectfreeshipping, setSelectFreeshipping] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-  const style = {
-    copyContainer: {
-      width: "0%",
-      backgroundcolor: "white",
-    },
-    title: {
-      color: "aquamarine",
-      fontStyle: "italic",
-    },
-  };
-
+  const [listRegion, setListRegion] = useState([]);
+  const [listProvince, setListProvince] = useState([]);
   const [comments, setComment] = useState({
     date: "",
     content: "",
@@ -102,6 +31,7 @@ export default function Product_detail_description({ product_id }) {
     name: "",
     avatar: "",
   });
+
   const categories = [
     "野菜",
     "果物",
@@ -115,9 +45,33 @@ export default function Product_detail_description({ product_id }) {
     "花・観葉植物",
   ];
 
+  async function fetchRegion() {
+    const res = await fetch("/api/general/regions");
+    const data = await res.json();
+    console.log(data);
+    setListRegion(data);
+  }
+
+  async function fetchProvince() {
+    const res = await fetch("/api/general/provinces");
+    const data = await res.json();
+    console.log(data);
+
+    setListProvince(data);
+  }
+
+  useEffect(() => {
+    fetchRegion();
+    fetchProvince();
+  }, []);
+
   useEffect(() => {
     getCognitoUserSub().then((user_id) => setUserID(user_id));
-    if (!user_id) return;
+  }, []);
+
+  useEffect(() => {
+    if (!user_id || !product_id) return;
+
     fetch(`/api/user/product?product_id=${product_id}&user_id=${user_id}`)
       .then((response) => response.json())
       .then((data) => {
@@ -153,6 +107,7 @@ export default function Product_detail_description({ product_id }) {
         console.error("Error:", error);
       });
   }, [product_id, user_id]);
+
   async function handleLikeProduct() {
     if (user_id == "guest") {
       router.push("/sign_in");
@@ -186,9 +141,11 @@ export default function Product_detail_description({ product_id }) {
         console.error("Error:", error);
       });
   }
+
   function handleDetailClick(detail) {
     setSelectedTitle(detail.Title);
   }
+
   async function unlikedProduct() {
     fetch("/api/user/product", {
       method: "DELETE",
@@ -219,10 +176,6 @@ export default function Product_detail_description({ product_id }) {
       });
   }
 
-  if (isLoading) {
-    // Add this block
-    return <BeatLoader color="#36d7b7" loading={isLoading} size={15} />;
-  }
   async function handleAddToCart() {
     if (user_id === "guest") {
       router.push("/sign_in");
@@ -286,6 +239,12 @@ export default function Product_detail_description({ product_id }) {
   function visitCategory(category_id) {
     router.push(`/homepage/category/${category_id}`);
   }
+
+  if (isLoading) {
+    // Add this block
+    return <BeatLoader color="#36d7b7" loading={isLoading} size={15} />;
+  }
+
   return product && seller && option && comments ? (
     <div className="product_detail">
       <p className="product_detail_product_name">{product.Product_title}</p>
@@ -319,13 +278,16 @@ export default function Product_detail_description({ product_id }) {
             <div>
               <p>地域:</p>
               <Link href={`/homepage/region/${product.region_id}`}>
-                {regions[product.region_id - 1].region_name}{" "}
+                {listRegion.length > 0 &&
+                  listRegion[product.region_id - 1].Region_name}{" "}
               </Link>
             </div>
             <div>
               <p>意識的な :</p>
               <Link href={`/homepage/province/${product.province_id}`}>
-                {provinces[product.province_id - 1].province_name}{" "}
+                {}
+                {listProvince.length > 0 &&
+                  listProvince[product.province_id - 1].Province_name}
               </Link>
             </div>
           </div>
