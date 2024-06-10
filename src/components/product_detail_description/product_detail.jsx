@@ -24,13 +24,20 @@ export default function Product_detail_description({ product_id }) {
   const [modalMessage, setModalMessage] = useState("");
   const [listRegion, setListRegion] = useState([]);
   const [listProvince, setListProvince] = useState([]);
-  const [comments, setComment] = useState({
-    date: "",
-    content: "",
-    image: "",
-    name: "",
-    avatar: "",
-  });
+  const [listPaymentMethod, setListPaymentMethod] = useState([]);
+  const [listShippingMethod, setListShippingMethod] = useState([]);
+  const [isShowShipping, setIsShowShipping] = useState(false);
+  const [isShowPayment, setIsShowPayment] = useState(false);
+
+  const [comments, setComment] = useState([
+    {
+      date: "",
+      content: "",
+      image: "",
+      name: "",
+      avatar: "",
+    },
+  ]);
 
   const categories = [
     "野菜",
@@ -60,6 +67,24 @@ export default function Product_detail_description({ product_id }) {
     setListProvince(data);
   }
 
+  async function fetchPaymentMethod({ seller_id }) {
+    console.log("seller_id for getting payment method", seller_id);
+    const res = await fetch(
+      `/api/user/payment_method_of_seller?seller_id=${seller_id}`
+    );
+    const data = await res.json();
+    setListPaymentMethod(data);
+  }
+
+  async function fetchShippingMethod({ seller_id }) {
+    console.log("seller_id for getting shipping method", seller_id);
+    const res = await fetch(
+      `/api/user/shipping_company_of_seller?seller_id=${seller_id}`
+    );
+    const data = await res.json();
+    setListShippingMethod(data);
+  }
+
   useEffect(() => {
     fetchRegion();
     fetchProvince();
@@ -68,6 +93,19 @@ export default function Product_detail_description({ product_id }) {
   useEffect(() => {
     getCognitoUserSub().then((user_id) => setUserID(user_id));
   }, []);
+
+  useEffect(() => {
+    if (!product) return;
+    if (product.Seller_ID) {
+      fetchPaymentMethod({ seller_id: product.Seller_ID });
+      fetchShippingMethod({ seller_id: product.Seller_ID });
+    }
+  }, [product]);
+
+  useEffect(() => {
+    console.log("listPaymentMethod", listPaymentMethod);
+    console.log("listShippingMethod", listShippingMethod);
+  }, [listPaymentMethod, listShippingMethod]);
 
   useEffect(() => {
     if (!user_id || !product_id) return;
@@ -353,6 +391,7 @@ export default function Product_detail_description({ product_id }) {
           Add to cart
         </button>
       </div>
+
       <div className="product_detail_description">
         <p className="description_title_product_detail">商品説明</p>
         <div>
@@ -447,6 +486,64 @@ export default function Product_detail_description({ product_id }) {
           </tbody>
         </table>
       </div>
+      <div className="Shipping_company_product_detail_user">
+        <div className="header_table">
+          <h4>配送会社</h4>
+          <button onClick={() => setIsShowShipping(!isShowShipping)}>
+            {isShowShipping ? "隠れる" : "見せる"}
+          </button>
+        </div>
+
+        <table className="shipping-table">
+          <thead>
+            <tr>
+              <th>会社名</th>
+              <th>価格</th>
+              <th>説明</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* Repeat this row for each company */}
+            {isShowShipping &&
+              listShippingMethod.length > 0 &&
+              listShippingMethod.map((company, index) => (
+                <tr>
+                  <td>{company.Company_name}</td>
+                  <td>{company.Price}</td>
+                  <td>{company.Note}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div className="header_table">
+          <h4>支払方法</h4>
+          <button onClick={() => setIsShowPayment(!isShowPayment)}>
+            {isShowPayment ? "隠れる" : "見せる"}
+          </button>
+        </div>
+
+        <table className="payment-table">
+          <thead>
+            <tr>
+              <th>支払方法</th>
+              <th>説明</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* Repeat this row for each payment method */}
+            {isShowPayment &&
+              listPaymentMethod.length > 0 &&
+              listPaymentMethod.map((method, index) => (
+                <tr>
+                  <td>{method.Method_name}</td>
+                  <td>{method.Note}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
       <div>
         <ShareOnSocial
           textToShare={product.Product_title}
@@ -462,6 +559,7 @@ export default function Product_detail_description({ product_id }) {
         <h2>みんなの投稿</h2>
         <h4>2505件</h4>
         {comments &&
+          comments.length > 0 &&
           comments.map((comment, index) => (
             <div className="comments" key={index}>
               <div className="comment_content">
