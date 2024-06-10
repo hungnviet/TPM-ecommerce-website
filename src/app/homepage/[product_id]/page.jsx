@@ -32,31 +32,31 @@ export default function Page({ params }) {
 
   useEffect(() => {
     getCognitoUserSub().then((user_id) => setUserID(user_id));
-    if (!user_id) return;
+    if (!user_id || !product_id) return;
+    getCategoryOfProduct();
+  }, [user_id, product_id]); // run only when userID or productID changes
 
-    if (product_id) {
-      getCategoryOfProduct();
-    }
-
-    if (category) {
-      getRelatedProduct();
-    }
-
-    console.log(relatedProduct);
-  }, [user_id, category]); // run only when userID changes
+  useEffect(() => {
+    if (!category || !user_id) return;
+    getRelatedProduct();
+  }, [category, user_id]); // run only when category or userID changes
 
   return (
     <div className="product_detail_page">
       <div className="product_detail_content">
-        <div className="left_section_product_detail">
-          <Product_detail_img product_id={product_id} />
-        </div>
-        <div className="right_section_product_detail">
-          <Product_detail_description
-            product_id={product_id}
-            user_id={user_id}
-          />
-        </div>
+        {product_id && user_id && (
+          <>
+            <div className="left_section_product_detail">
+              <Product_detail_img product_id={product_id} />
+            </div>
+            <div className="right_section_product_detail">
+              <Product_detail_description
+                product_id={product_id}
+                user_id={user_id}
+              />
+            </div>
+          </>
+        )}
       </div>
       <div className="relatedProductInProducDetailScreen">
         {relatedProduct &&
