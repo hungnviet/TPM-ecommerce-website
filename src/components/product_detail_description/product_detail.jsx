@@ -507,7 +507,7 @@ export default function Product_detail_description({ product_id }) {
             {isShowShipping &&
               listShippingMethod.length > 0 &&
               listShippingMethod.map((company, index) => (
-                <tr>
+                <tr key={index}>
                   <td>{company.Company_name}</td>
                   <td>{company.Price}</td>
                   <td>{company.Note}</td>
@@ -536,7 +536,7 @@ export default function Product_detail_description({ product_id }) {
             {isShowPayment &&
               listPaymentMethod.length > 0 &&
               listPaymentMethod.map((method, index) => (
-                <tr>
+                <tr key={index}>
                   <td>{method.Method_name}</td>
                   <td>{method.Note}</td>
                 </tr>
