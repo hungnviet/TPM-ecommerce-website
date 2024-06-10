@@ -183,11 +183,85 @@
 .knock-notification-item:hover {
   background-color: #f8f9fa; /* Light grey background on hover */
 }
-.dropdown_category {
+
+.btn_show_category_navbar {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #38b000;
+}
+.category_list_contianer {
   position: absolute;
-  right: 0;
-  width: max-content;
-  top: 15%;
-  bottom: 15%;
-  z-index: 800;
+  z-index: 99999;
+  top: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.category_list_overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.list_category {
+  margin-top: 30px;
+  background-color: white;
+  height: 600px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header_close_show_category {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+}
+.header_close_show_category button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: red;
+  width: 50px;
+}
+.list_btn_category_navbar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 10px;
+  width: 100%;
+  height: 550px;
+}
+
+.btn_category_navbar {
+  background-color: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  margin: 5px 0 !important;
+  width: 90% !important;
+  border-bottom: 1px solid #ccc !important;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  column-gap: 10px !important;
+  height: 50px;
+}
+
+.btn_category_navbar_img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
 }

@@ -7,11 +7,17 @@ import { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import { getCognitoUserSub } from "@/config/cognito";
 import Product_cart from "@/components/product_cart/product_cart";
+import { useRouter } from "next/navigation";
 export default function Page({ params }) {
   const { product_id } = params;
   const [user_id, setUserID] = useState("");
   const [category, setCategory] = useState(null);
   const [relatedProduct, setRelatedProduct] = useState(null);
+  const router = useRouter();
+
+  function ShowMore() {
+    router.push(`/homepage/category/${category}`);
+  }
 
   async function getCategoryOfProduct() {
     const res = await fetch(
@@ -24,7 +30,7 @@ export default function Page({ params }) {
 
   async function getRelatedProduct() {
     const res = await fetch(
-      `/api/user/category?category_id=${category}&user_id=${user_id}`
+      `/api/user/relatedProduct?category_id=${category}&user_id=${user_id}`
     );
     const data = await res.json();
     setRelatedProduct(data);
@@ -65,6 +71,9 @@ export default function Page({ params }) {
             <Product_cart key={index} product={product} userID={user_id} />
           ))}
         <BeatLoader color={"#36d7b7"} loading={!relatedProduct} />
+      </div>
+      <div className="btn_show_more_product_detail">
+        {category && <button onClick={ShowMore}>Show more</button>}
       </div>
     </div>
   );

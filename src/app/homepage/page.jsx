@@ -218,7 +218,7 @@ export default function Page() {
                 </div>
                 <button
                   className="morebutton"
-                  onClick={() => router.push("/homepage/category/${i + 1}")}
+                  onClick={() => router.push(`/homepage/category/${i + 1}`)}
                 >
                   もっと見る
                 </button>

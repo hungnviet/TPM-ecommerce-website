@@ -4,9 +4,7 @@ import { useRouter } from "next/navigation";
 export default function CategoryCart({ category, userID }) {
   const router = useRouter();
   function handleCategoryClick() {
-    router.push(
-      `/homepage/${encodeURIComponent(userID)}/category/${category.category_id}`
-    );
+    router.push(`/homepage/category/${category.category_id}`);
   }
   return (
     <button className="category-cart" onClick={handleCategoryClick}>

@@ -5,7 +5,6 @@ import "./navbar_user.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
-import DropdownMenuDemo from "../dropdown_category/page";
 import { getCognitoUserSub } from "@/config/cognito";
 
 import {
@@ -30,6 +29,19 @@ const poolData = {
   UserPoolId: process.env.NEXT_PUBLIC_AWS_Userpool_ID, // Your User Pool ID
   ClientId: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID, // Your Client ID
 };
+
+const categories = [
+  { name: "野菜", image: "/1.webp" },
+  { name: "果物", image: "/2.webp" },
+  { name: "米・穀類", image: "/3.webp" },
+  { name: "お茶", image: "/4.webp" },
+  { name: "魚介類", image: "/5.webp" },
+  { name: "肉", image: "/6.webp" },
+  { name: "卵・乳", image: "/7.webp" },
+  { name: "蜂蜜", image: "/8.webp" },
+  { name: "加工食品", image: "/9.webp" },
+  { name: "花・観葉植物", image: "/10.webp" },
+];
 
 export default function NavbarUser({}) {
   const [isSeller, setIsSeller] = useState(false);
@@ -56,6 +68,7 @@ export default function NavbarUser({}) {
 
   const [show_option, set_show_option] = useState(false);
   const [search_input, set_search_input] = useState("");
+  const [isShowCategory, setIsShowCategory] = useState(false);
   const handleClose = () => {
     set_show_option(false);
   };
@@ -155,6 +168,10 @@ export default function NavbarUser({}) {
       router.push("/sign_in");
     }
   }
+  async function handleSelectCategory(category) {
+    await setIsShowCategory(false);
+    router.push(`/homepage/category/${category}`);
+  }
   return (
     <KnockProvider
       apiKey={"pk_test_pEYdIA3silk_jAqYMf3vgFMiDz-_LtT4iWDP5oUIIgw"}
@@ -176,9 +193,12 @@ export default function NavbarUser({}) {
                 onChange={(e) => set_search_input(e.target.value)}
               />
             </form>
-            <div className="dropdown_category">
-              <DropdownMenuDemo user_id={userID} />
-            </div>
+            <button
+              onClick={() => setIsShowCategory(true)}
+              className="btn_show_category_navbar"
+            >
+              カテゴリー
+            </button>
           </div>
           {(!cognitoUser || userID === "guest") && (
             <div className="right_section_navbar_container2">
@@ -305,6 +325,40 @@ export default function NavbarUser({}) {
                 <button onClick={register_as_seller}>Register as seller</button>
               )}
               <button onClick={signOutUser}>ログアウト</button>{" "}
+            </div>
+          )}
+          {/* list category */}
+          {isShowCategory && (
+            <div className="category_list_contianer">
+              <div className="category_list_overlay">
+                <div className="list_category">
+                  <div className="header_close_show_category">
+                    <button onClick={() => setIsShowCategory(false)}>
+                      近い
+                    </button>
+                  </div>
+                  <div className="list_btn_category_navbar">
+                    {categories.map((category, index) => {
+                      return (
+                        <button
+                          className="btn_category_navbar"
+                          key={index}
+                          onClick={() => handleSelectCategory(index + 1)}
+                        >
+                          <div className="btn_category_navbar_img">
+                            <Image
+                              src={category.image}
+                              fill="true"
+                              alt="icon category"
+                            />
+                          </div>
+                          <div>{category.name}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>

@@ -11,7 +11,7 @@ export async function GET(req) {
 
   const categories = Array.from({ length: 10 }, (_, i) => i + 1); // Creates an array with categories from 1 to 10
   const promises = categories.map((category_id) => {
-    const sql = `CALL Get_All_Products_For_User_With_Category('${user_id}', ${category_id})`;
+    const sql = `CALL Get_10_Products_For_User_With_Category('${user_id}', ${category_id})`;
     return new Promise((resolve, reject) => {
       db.query(sql, (err, result) => {
         if (err) {
