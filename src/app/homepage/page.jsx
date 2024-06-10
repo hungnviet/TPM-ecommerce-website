@@ -38,7 +38,7 @@ export default function Page() {
     "加工食品",
     "花・観葉植物",
   ];
-
+  // redeploy
   const [bestSellerProducts, setBestSellerProducts] = useState([]);
   const [currentImage, setCurrentImage] = useState(0);
   const [isLoadingShop, setIsLoadingShop] = useState(true);
