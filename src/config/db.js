@@ -1,3 +1,4 @@
+require("dotenv").config({ path: ".env.local" });
 const mysql2 = require("mysql2");
 
 let db;
@@ -5,11 +6,11 @@ let db;
 function connectToDatabase() {
   if (!db) {
     db = mysql2.createConnection({
-      host: "tpmec.clma0msasvlh.ap-southeast-2.rds.amazonaws.com",
-      port: "3306",
-      user: "admin",
-      password: "tpmec123",
-      database: "TPM_EC",
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
     });
 
     console.log("Connecting for testing BE functionality");
