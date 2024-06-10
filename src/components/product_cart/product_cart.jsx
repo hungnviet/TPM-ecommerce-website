@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Knock } from "@knocklabs/node";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-export default function Product_cart({ product, userID }) {
+export default function Product_cart({ product, userID, freeship }) {
   const router = useRouter();
   const knockClient = new Knock(process.env.NEXT_PUBLIC_KNOCK_SECRET);
   const productID = product.Product_ID;
@@ -124,6 +124,7 @@ export default function Product_cart({ product, userID }) {
       <ToastContainer />
       <div className="product_cart_image_container">
         <Image src={product.First_Image} fill="true" alt="product image" />
+        {freeship && <div className="free_shipping_label">Free Shipping </div>}
       </div>
       <div className="product_cart_info_container">
         <div className="seller_in4_product_cart">

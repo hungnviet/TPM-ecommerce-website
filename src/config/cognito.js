@@ -14,8 +14,15 @@ export function getCognitoUserSub() {
     if (cognitoUser != null) {
       cognitoUser.getSession(function (err, session) {
         if (err) {
-          reject(err);
-          return;
+          console.error("Session error:", err);
+          resolve("guest");
+        }
+
+        if (!session.isValid()) {
+          console.log(
+            "Session is invalid or has expired, redirecting to sign-in."
+          );
+          resolve("guest");
         }
 
         cognitoUser.getUserAttributes(function (err, attributes) {

@@ -130,3 +130,101 @@ input[type="text"] {
 .delete-iconmethod {
   cursor: pointer;
 }
+/* Voucher section styling */
+.voucher-section {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.voucher-section h2 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.add-voucher-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px 0;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.add-voucher-button:hover {
+  background-color: #45a049;
+}
+
+.vouchertable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border: 1px solid #ddd; /* Light grey border */
+}
+
+.vouchertable th,
+.vouchertable td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.vouchertable th {
+  background-color: #007bff; /* A nice blue */
+  color: white;
+  font-size: 18px;
+}
+
+.vouchertable tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.vouchertable tr:hover {
+  background-color: #ccefff; /* Light blue background on hover */
+}
+
+/* Custom styles for delete icon in the table */
+.delete-iconmethod {
+  margin-left: 10px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.delete-iconmethod img {
+  vertical-align: middle;
+}
+/* Styles for the select dropdown specific to the voucher modal */
+.voucher-select {
+  width: 100%; /* Full width of the container */
+  padding: 8px 12px; /* Vertical and horizontal padding */
+  border: 1px solid #ccc; /* Light grey border */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  background-color: white; /* White background color */
+  font-size: 16px; /* Adequate font size for readability */
+  color: #333; /* Dark grey text color for better readability */
+  cursor: pointer; /* Cursor indicates this is an interactive element */
+}
+
+.voucher-select:focus {
+  outline: none; /* Removes the default focus outline */
+  border-color: #0056b3; /* Blue border on focus for visibility */
+  box-shadow: 0 0 8px rgba(0, 86, 179, 0.5); /* Enhanced shadow on focus */
+}
+
+/* Style for the option elements within the voucher select */
+.voucher-select option {
+  padding: 8px; /* Padding for each option */
+  background: #fff; /* White background for options */
+  color: #333; /* Consistent text color */
+}
+
+/* Optionally style the hover state for options within the voucher select */
+.voucher-select option:hover {
+  background-color: #f1f1f1; /* Light grey background on hover */
+}

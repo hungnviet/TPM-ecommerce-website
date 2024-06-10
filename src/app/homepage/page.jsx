@@ -42,6 +42,9 @@ export default function Page() {
   const [bestSellerProducts, setBestSellerProducts] = useState([]);
   const [currentImage, setCurrentImage] = useState(0);
   const [isLoadingShop, setIsLoadingShop] = useState(true);
+  const hasFreeShipping = (vouchers) => {
+    return vouchers ? vouchers.some((v) => v.Type === "Freeship") : false;
+  };
 
   const nextImage = () => {
     setCurrentImage((prevImage) => (prevImage + 1) % advertisements2.length);
@@ -163,6 +166,7 @@ export default function Page() {
                     key={index}
                     product={product}
                     userID={user_id}
+                    freeship={hasFreeShipping(product.Vouchers)}
                   />
                 ))}
               </div>

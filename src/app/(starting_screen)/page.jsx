@@ -19,41 +19,42 @@ export default function Home() {
   const knock = new Knock(process.env.NEXT_PUBLIC_KNOCK_SECRET);
   useEffect(() => {
     if (cognitoUser != null) {
-      cognitoUser.getSession(function (err, session) {
-        if (err) {
-          alert(err);
+      cognitoUser.getSession((err, session) => {
+        if (err || !session.isValid()) {
+          console.error("Session error or expired:", err);
+          // Sign out the user if there is an error or session is not valid
+          cognitoUser.signOut();
+          setIsSignedIn(false);
+          router.push("/sign_in");
           return;
         }
-        cognitoUser.getUserAttributes(async function (err, attributes) {
+
+        // Fetch user attributes if session is valid
+        cognitoUser.getUserAttributes((err, attributes) => {
           if (err) {
-            // Handle error
-            console.log(err);
-          } else {
-            const sub = attributes.find(
-              (attribute) => attribute.Name === "sub"
-            ).Value;
-            const name =
-              attributes.find((attribute) => attribute.Name === "given_name")
-                .Value +
-              " " +
-              attributes.find((attribute) => attribute.Name === "family_name")
-                .Value;
-            const email = attributes.find(
-              (attribute) => attribute.Name === "email"
-            ).Value;
-            const knockuser = await knock.users.identify(sub, {
-              name: name,
-              email: email,
-            });
-            console.log(knockuser);
+            console.log("Error fetching user attributes:", err);
+            cognitoUser.signOut();
+            setIsSignedIn(false);
             router.push("/homepage");
-            setIsSignedIn(true);
+
+            return;
           }
+          // Assuming identity and navigation are successful
+          const sub = attributes.find((attr) => attr.Name === "sub").Value;
+          const name =
+            attributes.find((attr) => attr.Name === "given_name").Value +
+            " " +
+            attributes.find((attr) => attr.Name === "family_name").Value;
+          const email = attributes.find((attr) => attr.Name === "email").Value;
+
+          console.log("User identified:", { sub, name, email });
+          setIsSignedIn(true);
+          router.push("/homepage"); // Redirect to homepage on success
         });
       });
     } else {
-      setIsSignedIn(false);
-      router.push("/homepage");
+      console.log("No Cognito user found, redirecting to sign-in.");
+      router.push("/sign_in");
     }
   }, []);
 

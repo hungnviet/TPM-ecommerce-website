@@ -187,3 +187,15 @@
   background-color: #adb5bd;
   border-radius: 8px;
 }
+
+.free_shipping_label {
+  color: white;
+  background-color: red;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 14px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 100;
+}

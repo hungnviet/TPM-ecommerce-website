@@ -38,10 +38,20 @@ export default function Page() {
   const [modalOpen2, setModalOpen2] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+
   const [editShop, setEditShop] = useState({
     shopname: "",
     img: "",
     address: "",
+  });
+  const [vouchers, setVouchers] = useState([]);
+  const [modalOpenVoucher, setModalOpenVoucher] = useState(false);
+  const [newVoucher, setNewVoucher] = useState({
+    name: "",
+    type: "Discount", // Default to 'Discount'
+    discount: "",
+    start: "",
+    end: "",
   });
 
   useEffect(() => {
@@ -79,6 +89,14 @@ export default function Page() {
     const shippingData = await shippingResponse.json();
     setShippingMethods(shippingData);
   }
+  async function fetchVouchers() {
+    const voucherResponse = await fetch(
+      `/api/seller/vouchers?seller_id=${user_id}`
+    );
+    const voucherData = await voucherResponse.json();
+    console.log(voucherData);
+    setVouchers(voucherData);
+  }
   useEffect(() => {
     async function fetchAllMethods() {
       const paymentResponse = await fetch(`/api/seller/payment_methods`);
@@ -93,6 +111,7 @@ export default function Page() {
     if (user_id) {
       fetchMethods();
       fetchAllMethods();
+      fetchVouchers();
     }
   }, [user_id]);
   const handleEditShopInfo = () => {
@@ -109,6 +128,54 @@ export default function Page() {
     updateUserInformation();
     console.log("Save shop info");
     setEditModalOpen(false);
+  };
+  const handleAddVoucher = () => {
+    setModalOpenVoucher(true);
+  };
+
+  const handleSaveVoucher = async () => {
+    async function addVoucher() {
+      const response = await fetch(`/api/seller/vouchers`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sellerId: user_id,
+          name: newVoucher.name,
+          type: newVoucher.type,
+          discountValue: newVoucher.discount,
+          start: newVoucher.start,
+          end: newVoucher.end,
+        }),
+      });
+
+      if (!response.ok) {
+        console.log("Failed to add voucher");
+      } else {
+        // Successfully added the voucher, fetch the latest list of vouchers
+        fetchVouchers();
+
+        // Reset the newVoucher state to initial values
+        setNewVoucher({
+          name: "",
+          type: "Discount", // Default to 'Discount'
+          discount: "",
+          start: "",
+          end: "",
+        });
+
+        // Close the modal
+        setModalOpenVoucher(false);
+      }
+    }
+
+    // Call the addVoucher function
+    addVoucher();
+  };
+
+  const handleVoucherModalClose = () => {
+    setModalOpenVoucher(false);
   };
   async function updateUserInformation() {
     const response = await fetch(`/api/seller/information`, {
@@ -260,6 +327,104 @@ export default function Page() {
           </p>
         </div>
       </div>
+      <div className="voucher-section">
+        <button onClick={handleAddVoucher} className="add-voucher-button">
+          Add New Voucher
+        </button>
+        <table className="vouchertable ">
+          <thead>
+            <tr>
+              <th>Voucher Code</th>
+              <th>Type</th>
+              <th>Discount</th>
+              <th>Start</th>
+              <th>End</th>
+            </tr>
+          </thead>
+          <tbody>
+            {vouchers.map((voucher, index) => (
+              <tr key={index}>
+                <td>{voucher.Voucher_Name}</td>
+                <td>{voucher.Type}</td>
+                <td>{voucher.Discount_Value}%</td>
+                <td>{new Date(voucher.Start).toISOString().split("T")[0]}</td>
+                <td>{new Date(voucher.End).toISOString().split("T")[0]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <Modal
+        isOpen={modalOpenVoucher}
+        onClose={handleVoucherModalClose}
+        onSave={handleSaveVoucher}
+      >
+        <div>
+          <label htmlFor="name">Voucher Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={newVoucher.name}
+            onChange={(e) =>
+              setNewVoucher((prev) => ({ ...prev, name: e.target.value }))
+            }
+          />
+        </div>
+        <div>
+          <label htmlFor="type">Type:</label>
+          <select
+            id="type"
+            name="type"
+            className="voucher-select"
+            value={newVoucher.type}
+            onChange={(e) =>
+              setNewVoucher((prev) => ({ ...prev, type: e.target.value }))
+            }
+          >
+            <option value="Ship">Ship</option>
+            <option value="Freeship">Freeship</option>
+            <option value="Discount">Discount</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="discount">Discount (%):</label>
+          <input
+            type="number"
+            id="discount"
+            name="discount"
+            value={newVoucher.discount}
+            onChange={(e) =>
+              setNewVoucher((prev) => ({ ...prev, discount: e.target.value }))
+            }
+          />
+        </div>
+        <div>
+          <label htmlFor="start">Start Date:</label>
+          <input
+            type="date"
+            id="start"
+            name="start"
+            value={newVoucher.start}
+            onChange={(e) =>
+              setNewVoucher((prev) => ({ ...prev, start: e.target.value }))
+            }
+          />
+        </div>
+        <div>
+          <label htmlFor="end">End Date:</label>
+          <input
+            type="date"
+            id="end"
+            name="end"
+            value={newVoucher.end}
+            onChange={(e) =>
+              setNewVoucher((prev) => ({ ...prev, end: e.target.value }))
+            }
+          />
+        </div>
+      </Modal>
+
       <div className="setting">
         <button className="methodbutton" onClick={handleEditShopInfo}>
           Edit Shop Information
