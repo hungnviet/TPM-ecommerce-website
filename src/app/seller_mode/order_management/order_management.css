@@ -19,6 +19,7 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  overflow-y: auto;
 }
 .order_management_seller_filter_container {
   width: 90%;
