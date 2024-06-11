@@ -507,7 +507,10 @@ DELIMITER ;
 
 DELIMITER $$
 
-CREATE PROCEDURE Get_10_Products_For_User_With_Category(IN p_user_id VARCHAR(255), IN p_category_ID int)
+CREATE DEFINER=`admin`@`%` PROCEDURE `Get_10_Products_For_User_With_Category`(
+    IN p_user_id VARCHAR(255), 
+    IN p_category_ID int
+)
 BEGIN
     SELECT 
         p.Product_ID,
@@ -519,16 +522,32 @@ BEGIN
         MIN(po.Option_name) AS First_Option_Name,
         MIN(pi.Image_url) AS First_Image,
         u.*,  -- This selects all columns from the USER table
-        IF(pl.Product_ID IS NULL, FALSE, TRUE) AS isLiked
+        IF(pl.Product_ID IS NULL, FALSE, TRUE) AS isLiked,
+        COALESCE(vv.Vouchers, JSON_ARRAY()) AS Vouchers
     FROM PRODUCT p
     LEFT JOIN PRODUCT_OPTION po ON p.Product_ID = po.Product_ID AND po.IsValid = TRUE
     LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
     LEFT JOIN PRODUCT_LIKED pl ON p.Product_ID = pl.Product_ID AND pl.User_ID = p_user_id
     LEFT JOIN USER u ON p.Seller_ID = u.User_ID
+    LEFT JOIN (
+        -- Subquery to aggregate vouchers by Seller_ID
+        SELECT
+            Seller_ID,
+            JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'Voucher_Name', v.voucher_name,
+                    'Type', v.Type,
+                    'Discount_Value', v.Discount_Value,
+                    'End', v.End
+                )
+            ) AS Vouchers
+        FROM SHOP_VOUCHER v
+        GROUP BY Seller_ID
+    ) vv ON u.User_ID = vv.Seller_ID 
     WHERE p.Category_ID = p_category_ID
     GROUP BY p.Product_ID
     LIMIT 10;
-END $$
+END
 
 DELIMITER ;
 

@@ -14,6 +14,7 @@ export default function Product_detail_img({ product_id }) {
           `/api/user/product?product_id=${product_id}`
         );
         const data = await response.json();
+        console.log(data);
         const imageUrls = data.images.map((image) => image.Image_url);
         set_img_url(imageUrls);
       } catch (error) {

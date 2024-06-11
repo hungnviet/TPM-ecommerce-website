@@ -2,6 +2,7 @@
 import "./product_detail.css";
 import Product_detail_img from "@/components/product_detail_image/product_detail_img";
 import Product_detail_description from "@/components/product_detail_description/product_detail";
+import Product_voucher from "@/components/product_voucher/product_voucher";
 import RealtedProduct from "@/components/related_product/page";
 import { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
@@ -54,6 +55,7 @@ export default function Page({ params }) {
           <>
             <div className="left_section_product_detail">
               <Product_detail_img product_id={product_id} />
+              <Product_voucher product_id={product_id} />
             </div>
             <div className="right_section_product_detail">
               <Product_detail_description

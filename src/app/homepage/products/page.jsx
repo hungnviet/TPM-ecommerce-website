@@ -11,6 +11,9 @@ export default function Page({}) {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const productsPerPage = 30;
+  const hasFreeShipping = (vouchers) => {
+    return vouchers ? vouchers.some((v) => v.Type === "Freeship") : false;
+  };
   const [isMounted, setIsMounted] = useState(false); // new state variable
 
   useEffect(() => {
@@ -67,7 +70,12 @@ export default function Page({}) {
     <div className="category_page">
       <div className="category_product_container">
         {currentProducts.map((product, index) => (
-          <Product_cart key={index} product={product} userID={user_id} />
+          <Product_cart
+            key={index}
+            product={product}
+            userID={user_id}
+            freeship={hasFreeShipping(product.Vouchers)}
+          />
         ))}
       </div>
       <div className="pagination">{renderPageNumbers()}</div>

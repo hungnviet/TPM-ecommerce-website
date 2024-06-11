@@ -23,8 +23,11 @@ export default function CheckoutPage({}) {
   const [currentShopIndex, setCurrentShopIndex] = useState(null);
   const [currentShippingOptions, setCurrentShippingOptions] = useState([]);
   const [currentPayment, setCurrentPayment] = useState([]);
+  const [currentVoucher, setCurrentVoucher] = useState([]);
   const [showPaymentModal, setshowPaymentModal] = useState(false);
   const [shipmentCost, setShipmentCost] = useState(0);
+  const [showVoucherModal, setshowVoucherModal] = useState(false);
+  const [selectedVoucher, setSelectedVoucher] = useState({});
 
   const [user_information, setUserInformation] = useState({
     user_name: "",
@@ -44,6 +47,19 @@ export default function CheckoutPage({}) {
     setCurrentPayment(cart.shop[shopIndex].paymentmethod);
     setshowPaymentModal(true);
   };
+  const openVoucherModal = (shopIndex) => {
+    setCurrentShopIndex(shopIndex);
+    setCurrentVoucher(cart.shop[shopIndex].vouchers);
+    setshowVoucherModal(true);
+  };
+  const handleVoucherSelect = (vouchername, discount, type) => {
+    setSelectedVoucher((prevState) => ({
+      ...prevState,
+      [currentShopIndex]: { vouchername, discount, type },
+    }));
+    setshowVoucherModal(false);
+  };
+
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(""); // Default selected payment method
 
   const handlePaymentMethodSelect = (id, payment, note) => {
@@ -60,6 +76,7 @@ export default function CheckoutPage({}) {
     }));
     setShowShipmentModal(false);
   };
+
   const handleNoteChange = (index, value) => {
     setNotes((prev) => ({
       ...prev,
@@ -92,14 +109,15 @@ export default function CheckoutPage({}) {
               sellerId
             )}`
           );
+          const vouchers = await fetch(
+            `/api/seller/vouchers?seller_id=${encodeURIComponent(sellerId)}`
+          );
+          const voucherdata = await vouchers.json();
           const paymentdata = await paymentmethod.json();
           const shippingdata = await shippingmethod.json();
 
           let freeship = 0;
           const products = shop.map((item) => {
-            if (item.Quantity >= item.freeshipCondition) {
-              freeship = 1;
-            }
             return {
               ...item,
               check: false,
@@ -114,7 +132,7 @@ export default function CheckoutPage({}) {
             product: products,
             shippingmethod: shippingdata,
             paymentmethod: paymentdata,
-            freeship: freeship,
+            vouchers: voucherdata,
           };
         });
         const cartShops = await Promise.all(cartShopsPromises);
@@ -210,8 +228,17 @@ export default function CheckoutPage({}) {
     let total = 0;
     if (cart.shop && Array.isArray(cart.shop)) {
       cart.shop.forEach((shop, index) => {
-        const shopTotal = shop.product.reduce((a, b) => a + b.total, 0);
-        const shipmentCost = selectedShipment[index]?.price || 0;
+        let shopTotal = shop.product.reduce((a, b) => a + b.total, 0);
+        let shipmentCost = selectedShipment[index]?.price || 0;
+        if (selectedVoucher[index]?.type === "Freeship") {
+          shipmentCost = 0;
+        } else if (selectedVoucher[index]?.type === "Ship") {
+          shipmentCost =
+            shipmentCost - (shopTotal * selectedVoucher[index]?.discount) / 100;
+        } else {
+          shopTotal =
+            shopTotal - (shopTotal * selectedVoucher[index]?.discount) / 100;
+        }
         total += shopTotal + shipmentCost;
       });
     }
@@ -473,6 +500,27 @@ export default function CheckoutPage({}) {
                     </p>
                   </div>
                   <div className="shipping_selection">
+                    <p>Voucher khuyen mai</p>
+                    <button onClick={() => openVoucherModal(index)}>
+                      Chọn Voucher
+                    </button>
+                    <p className="shipment_status">
+                      {selectedVoucher[index] ? (
+                        <>
+                          <strong>{selectedVoucher[index].vouchername}</strong>
+                          <span className="shipment_note">
+                            {selectedVoucher[index].type} +{" "}
+                            {selectedVoucher[index].type !== "Freeship"
+                              ? selectedVoucher[index].discount + "%"
+                              : ""}
+                          </span>
+                        </>
+                      ) : (
+                        "Chưa chọn"
+                      )}
+                    </p>
+                  </div>
+                  <div className="shipping_selection">
                     <p>Phương thức thanh toán</p>
                     <button onClick={() => openPaymentModal(index)}>
                       Chọn phương thức
@@ -529,10 +577,42 @@ export default function CheckoutPage({}) {
                   </div>
                 </div>
               )}
+              {showVoucherModal && (
+                <div className="modal">
+                  <div className="modal-content">
+                    <h3>Chọn phuongw thuc thanh toan</h3>
+                    <ul>
+                      {currentVoucher.map((option, index) => (
+                        <li
+                          key={index}
+                          onClick={() =>
+                            handleVoucherSelect(
+                              option.Voucher_Name,
+                              option.Discount_Value,
+                              option.Type
+                            )
+                          }
+                        >
+                          <strong>{option.Voucher_Name}</strong>
+                          <div>{option.Type}</div>
+                          <div>
+                            {option.Type !== "Freeship"
+                              ? option.Discount_Value + "%"
+                              : ""}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                    <button onClick={() => setshowVoucherModal(false)}>
+                      Đóng
+                    </button>
+                  </div>
+                </div>
+              )}
               {showPaymentModal && (
                 <div className="modal">
                   <div className="modal-content">
-                    <h3>Chọn đơn vị vận chuyển</h3>
+                    <h3>Chọn phuongw thuc thanh toan</h3>
                     <ul>
                       {currentPayment.map((option) => (
                         <li
@@ -550,7 +630,7 @@ export default function CheckoutPage({}) {
                         </li>
                       ))}
                     </ul>
-                    <button onClick={() => setShowPaymentModal(false)}>
+                    <button onClick={() => setshowPaymentModal(false)}>
                       Đóng
                     </button>
                   </div>
@@ -559,11 +639,20 @@ export default function CheckoutPage({}) {
 
               <div>
                 <p>
-                  Tổng cộng:{" "}
                   {shop.product.reduce((a, b) => a + b.total, 0) +
-                    (selectedShipment[index]
-                      ? selectedShipment[index].price
-                      : 0)}{" "}
+                    (selectedShipment[index] && selectedVoucher[index]
+                      ? selectedVoucher[index].type === "Ship"
+                        ? selectedShipment[index].price -
+                          (selectedShipment[index].price *
+                            selectedVoucher[index].discount) /
+                            100
+                        : selectedVoucher[index].type !== "Freeship"
+                        ? selectedShipment[index].price -
+                          (shop.product.reduce((a, b) => a + b.total, 0) *
+                            selectedVoucher[index].discount) /
+                            100
+                        : 0
+                      : 0)}
                   円
                 </p>
               </div>

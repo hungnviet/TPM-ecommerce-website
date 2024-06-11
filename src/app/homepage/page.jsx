@@ -196,6 +196,7 @@ export default function Page() {
                       key={index}
                       product={product}
                       userID={user_id}
+                      freeship={hasFreeShipping(product.Vouchers)}
                     />
                   ))}
               </div>
@@ -217,6 +218,7 @@ export default function Page() {
                         key={index}
                         product={product}
                         userID={user_id}
+                        freeship={hasFreeShipping(product.Vouchers)}
                       />
                     ))}
                 </div>

@@ -2,32 +2,41 @@
 import "../../upload_product/page.css";
 import { useState, useEffect } from "react";
 export default function Page({ params }) {
-  const { user_id_encode, seller_id_encode, product_id } = params;
-
+  const { product_id } = params;
   const [product, setProduct] = useState(null);
   const [name, setName] = useState("");
   const [rows, setRows] = useState([]);
   const [rows2, setRows2] = useState([{}]);
   const [images, setImages] = useState([]);
   const [description, setDescription] = useState("");
+  const [Voucher, setVoucher] = useState([{}]);
+  const [seller_id_encode, setSeller_id_encode] = useState("");
 
   useEffect(() => {
     fetch(`/api/user/product?product_id=${product_id}`)
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+
+        const formattedVouchers = data.voucher.map((v) => ({
+          ...v,
+          Start: new Date(v.Start).toISOString(),
+          End: new Date(v.End).toISOString(),
+        }));
         setProduct(data);
         setName(data.Product_title);
         setRows(data.options);
         setRows2(data.description);
         setImages(data.images);
-
+        setVoucher(formattedVouchers);
         setDescription(data.Product_description);
+        setSeller_id_encode(data.Seller_ID);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
   }, [product_id]);
+
   const handleUpdate = () => {
     const productData = {
       productID: product_id,
@@ -38,7 +47,15 @@ export default function Page({ params }) {
         optionPrice: row.Option_price,
         optionQuantity: row.Quantity,
         optionInventory: row.Inventory,
-        freeshipCondition: row.FreeshipCondition,
+        optionisNew: row.isNew,
+      })),
+      productVoucherList: Voucher.map((row) => ({
+        Voucher_name: row.Voucher_Name,
+        Type: row.Type,
+        Discount_value: row.Discount_Value,
+        Start: row.Start,
+        End: row.End,
+        isNew: row.isNew,
       })),
       sellerID: seller_id_encode,
     };
@@ -47,6 +64,7 @@ export default function Page({ params }) {
       content: row.content,
     }));
     console.log(productData.productOptionList);
+    console.log(productData.productVoucherList);
 
     fetch(`/api/seller/product`, {
       method: "PUT",
@@ -87,8 +105,44 @@ export default function Page({ params }) {
         console.error("Error reading files:", error);
       });
   };
+  const addVoucher = () => {
+    setVoucher([
+      ...Voucher,
+      {
+        Voucher_Name: "",
+        Type: "",
+        Discount_Value: "",
+        Start: "",
+        End: "",
+        isNew: true,
+      },
+    ]);
+  };
+  const updateVoucher = (index, field, value) => {
+    if (Voucher && Voucher[index]) {
+      const newRows = [...Voucher];
+      if (field === "Start" || field === "End") {
+        newRows[index][field] = new Date(value);
+      } else {
+        newRows[index][field] = value;
+      }
+      setVoucher(newRows);
+    } else {
+      console.error("Voucher or voucher index is undefined:", Voucher, index);
+    }
+    console.log("Current Voucher state:", Voucher);
+  };
+
+  const deleteVoucher = (index) => {
+    const newRows = [...Voucher];
+    newRows.splice(index, 1);
+    setVoucher(newRows);
+  };
   const addRow = () => {
-    setRows([...rows, { optionPrice: "", optionName: "", optionQuantity: "" }]);
+    setRows([
+      ...rows,
+      { optionPrice: "", optionName: "", optionQuantity: "", isNew: true },
+    ]);
   };
   const updateRow = (index, field, value) => {
     const newRows = [...rows];
@@ -129,6 +183,105 @@ export default function Page({ params }) {
           />
         </div>
         <div className="input_price">
+          <h3>Voucher Management</h3>
+
+          <table className="sellerproduct">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Discount Value</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Voucher.map((row, index) => (
+                <tr key={index}>
+                  <td>
+                    <div>
+                      <input
+                        type="text"
+                        value={row.Voucher_Name}
+                        onChange={(e) =>
+                          updateVoucher(index, "Voucher_Name", e.target.value)
+                        }
+                        placeholder="Ex: Flash Sale"
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <select
+                        id="type"
+                        name="type"
+                        className="voucher-select"
+                        value={row.Type}
+                        onChange={(e) =>
+                          updateVoucher(index, "Type", e.target.value)
+                        }
+                      >
+                        <option value="Ship">Ship</option>
+                        <option value="Freeship">Freeship</option>
+                        <option value="Discount">Discount</option>
+                      </select>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div>
+                      <input
+                        type="text"
+                        value={row.Discount_Value}
+                        onChange={(e) =>
+                          updateVoucher(index, "Discount_Value", e.target.value)
+                        }
+                        placeholder="Ex: 30%"
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <input
+                        type="date"
+                        value={
+                          row.Start
+                            ? new Date(row.Start).toISOString().split("T")[0]
+                            : ""
+                        }
+                        onChange={(e) =>
+                          updateVoucher(index, "Start", e.target.value)
+                        }
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <input
+                        type="date"
+                        value={
+                          row.End
+                            ? new Date(row.End).toISOString().split("T")[0]
+                            : ""
+                        }
+                        onChange={(e) =>
+                          updateVoucher(index, "End", e.target.value)
+                        }
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <button onClick={() => deleteVoucher(index)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button onClick={addVoucher}>Add new Voucher</button>
+        </div>
+
+        <div className="input_price">
           <h3>Sale option</h3>
           <table className="sellerproduct">
             <thead>
@@ -137,7 +290,6 @@ export default function Page({ params }) {
                 <th>¥ per</th>
                 <th>Option</th>
                 <th>Quantity</th>
-                <th>Freeship Condition</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -188,18 +340,6 @@ export default function Page({ params }) {
                         value={row.Inventory}
                         onChange={(e) =>
                           updateRow(index, "Inventory", e.target.value)
-                        }
-                        placeholder="Ex: 100"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div>
-                      <input
-                        type="text"
-                        value={row.FreeshipCondition}
-                        onChange={(e) =>
-                          updateRow(index, "FreeshipCondition", e.target.value)
                         }
                         placeholder="Ex: 100"
                       />

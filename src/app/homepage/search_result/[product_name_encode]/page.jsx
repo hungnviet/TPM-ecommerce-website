@@ -10,6 +10,9 @@ export default function Page({ params }) {
   const product_name = decodeURIComponent(params.product_name_encode);
   const [num_of_results, set_num_of_results] = useState(0);
   const [products, set_products] = useState();
+  const hasFreeShipping = (vouchers) => {
+    return vouchers ? vouchers.some((v) => v.Type === "Freeship") : false;
+  };
   const [isWaiting, setIsWaiting] = useState(true);
   useEffect(() => {
     getCognitoUserSub().then((sub) => setUser_id(sub));
@@ -53,7 +56,12 @@ export default function Page({ params }) {
       <div className="search_result_list">
         {products &&
           products.map((product, index) => (
-            <Product_cart key={index} product={product} userID={user_id} />
+            <Product_cart
+              key={index}
+              product={product}
+              userID={user_id}
+              freeship={hasFreeShipping(product.Vouchers)}
+            />
           ))}
         {num_of_results === 0 && <h3>No results found</h3>}
       </div>

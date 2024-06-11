@@ -21,6 +21,7 @@ export default function Page() {
       freeshipCondition: "",
     },
   ]);
+
   const [rows2, setRows2] = useState([{ title: "", content: "" }]);
   const [images, setImages] = useState([]);
   const [productname, setProductname] = useState("");

@@ -10,6 +10,9 @@ export default function Page({ params }) {
   const [products, setProducts] = useState([]);
   const [number, setNumber] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
+  const hasFreeShipping = (vouchers) => {
+    return vouchers ? vouchers.some((v) => v.Type === "Freeship") : false;
+  };
   const productsPerPage = 30;
   useEffect(() => {
     getCognitoUserSub().then((user_id) => setUserID(user_id));
@@ -51,7 +54,12 @@ export default function Page({ params }) {
       <h3 style={{ color: "black" }}>カテゴリ肉 の検索結果: {number}件</h3>
       <div className="category_product_container">
         {products.map((product, index) => (
-          <Product_cart key={index} product={product} userID={user_id} />
+          <Product_cart
+            key={index}
+            product={product}
+            userID={user_id}
+            freeship={hasFreeShipping(product.Vouchers)}
+          />
         ))}
       </div>
       <div className="pagination">{renderPageNumbers()}</div>

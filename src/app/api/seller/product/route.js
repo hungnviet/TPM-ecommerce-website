@@ -113,7 +113,7 @@ export async function PUT(req) {
     productTitle,
     productDescription,
     productOptionList, // list option [{optionName,optionPrice}]
-    productImageList, //list image [{imageURL}]
+    productVoucherList,
     sellerID,
   } = data;
 
@@ -126,8 +126,28 @@ export async function PUT(req) {
         reject(NextResponse.error(err));
       } else {
         productOptionList.forEach((option, index) => {
-          const sql2 = `UPDATE PRODUCT_OPTION SET Option_Name='${option.optionName}', Option_Price='${option.optionPrice}', Quantity = '${option.optionQuantity}',FreeshipCondition='${option.freeshipCondition}',Inventory='${option.optionInventory}' WHERE Product_ID='${productID}' AND Option_Number='${index}'`;
+          let sql2;
+          if (option.optionisNew) {
+            sql2 = `INSERT INTO PRODUCT_OPTION (Product_ID, Option_Name, Option_Price, Quantity, Inventory, Option_number) VALUES ('${productID}', '${option.optionName}', '${option.optionPrice}', '${option.optionQuantity}',  '${option.optionInventory}', '${index}')`;
+          } else {
+            sql2 = `UPDATE PRODUCT_OPTION SET Option_Name='${option.optionName}', Option_Price='${option.optionPrice}', Quantity = '${option.optionQuantity}', Inventory='${option.optionInventory}' WHERE Product_ID='${productID}' AND Option_number='${index}'`;
+          }
           db.query(sql2, (err, result) => {
+            if (err) {
+              console.log(err);
+              reject(NextResponse.error(err));
+            }
+          });
+        });
+        productVoucherList.forEach((voucher, index) => {
+          let sql3;
+
+          if (voucher.isNew) {
+            sql3 = `INSERT INTO PRODUCT_VOUCHER (Product_ID, Voucher_Name, Type, Discount_Value, Start, End, Seller_ID) VALUES ('${productID}', '${voucher.Voucher_name}', '${voucher.Type}', '${voucher.Discount_value}', '${voucher.Start}', '${voucher.End}', '${sellerID}')`;
+          } else {
+            sql3 = `UPDATE PRODUCT_VOUCHER SET Voucher_Name='${voucher.Voucher_name}', Type='${voucher.Type}', Discount_Value='${voucher.Discount_value}', Start='${voucher.Start}', End='${voucher.End}' WHERE Product_ID='${productID}' AND Voucher_ID='${index}' AND Seller_ID='${sellerID}'`;
+          }
+          db.query(sql3, (err, result) => {
             if (err) {
               console.log(err);
               reject(NextResponse.error(err));

@@ -1,0 +1,34 @@
+.shipping-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.shipping-table th,
+.shipping-table td {
+  text-align: left;
+  padding: 5px;
+}
+
+.shipping-table th:nth-child(1),
+.shipping-table td:nth-child(1) {
+  width: 20%;
+}
+
+.shipping-table th:nth-child(2),
+.shipping-table td:nth-child(2) {
+  width: 20%;
+}
+
+.shipping-table th:nth-child(3),
+.shipping-table td:nth-child(3) {
+  width: 60%;
+}
+
+.shipping-table th {
+  background-color: #f2f2f2;
+  color: black;
+}
+
+.shipping-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
