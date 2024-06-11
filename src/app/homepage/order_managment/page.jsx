@@ -82,10 +82,10 @@ export default function Page() {
             <div>{item.Total_quantity}</div>
             <div>{item.Status}</div>
             <div>
-              {paymentMethods[item.Payment_method_id]?.Method_name}
+              {paymentMethods[item.Payment_method_id - 1]?.Method_name}
             </div>{" "}
             <div>
-              {shippingCompanies[item.Shipping_company_ID]?.Company_name}
+              {shippingCompanies[item.Shipping_company_ID - 1]?.Company_name}
             </div>{" "}
             <div>
               <button

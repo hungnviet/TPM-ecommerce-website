@@ -39,38 +39,35 @@ export default function Product_detail_img({ product_id }) {
   return (
     <div className="product-voucher-details">
       <h2>Vouchers</h2>
-      {voucher &&
-        voucherseller &&
-        voucher.length > 0 &&
-        voucherseller.length > 0 && (
-          <table className="shipping-table">
-            <thead>
-              <tr>
-                <th>Voucher Name</th>
-                <th>Type</th>
-                <th>Discount Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {voucher.map((v, index) => (
+      {(voucher || voucherseller) && (
+        <table className="shipping-table">
+          <thead>
+            <tr>
+              <th>Voucher Name</th>
+              <th>Type</th>
+              <th>Discount Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {voucher &&
+              voucher.map((v, index) => (
                 <tr key={`voucher-${index}`}>
                   <td>{v.Voucher_Name}</td>
                   <td>{v.Type}</td>
                   <td>{v.Type !== "Freeship" ? `${v.Discount_Value}%` : ""}</td>
                 </tr>
               ))}
-              {voucherseller.map((v, index) => (
+            {voucherseller &&
+              voucherseller.map((v, index) => (
                 <tr key={`voucherseller-${index}`}>
                   <td>{v.Voucher_Name}</td>
                   <td>{v.Type}</td>
                   <td>{v.Type !== "Freeship" ? `${v.Discount_Value}%` : ""}</td>
                 </tr>
               ))}
-            </tbody>
-          </table>
-        )}
-
-      {(!voucher || !voucherseller) && <BeatLoader />}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }

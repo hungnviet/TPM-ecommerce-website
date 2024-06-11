@@ -83,6 +83,35 @@ export default function CheckoutPage({}) {
       [index]: value,
     }));
   };
+  function calculateShopTotalPrice(shop, index) {
+    let productTotal = shop.product.reduce(
+      (sum, product) => sum + product.total,
+      0
+    );
+    let shipmentPrice = selectedShipment[index]
+      ? selectedShipment[index].price
+      : 0;
+    let discount = 0;
+
+    if (selectedVoucher[index]) {
+      const voucher = selectedVoucher[index];
+      if (voucher.type === "Ship") {
+        // Discount on shipping cost
+        discount = (shipmentPrice * voucher.discount) / 100;
+      } else if (voucher.type !== "Freeship") {
+        // Percentage discount on product total
+        discount = (productTotal * voucher.discount) / 100;
+      }
+
+      if (voucher.type === "Freeship") {
+        shipmentPrice = 0;
+      }
+    } else {
+      discount = 0;
+    }
+
+    return productTotal + shipmentPrice - discount;
+  }
 
   useEffect(() => {
     getCognitoUserSub().then((user_id) => setUser_id(user_id));
@@ -116,7 +145,7 @@ export default function CheckoutPage({}) {
           const paymentdata = await paymentmethod.json();
           const shippingdata = await shippingmethod.json();
 
-          let freeship = 0;
+          let totalshopprice = 0;
           const products = shop.map((item) => {
             return {
               ...item,
@@ -133,6 +162,7 @@ export default function CheckoutPage({}) {
             shippingmethod: shippingdata,
             paymentmethod: paymentdata,
             vouchers: voucherdata,
+            totalshopprice,
           };
         });
         const cartShops = await Promise.all(cartShopsPromises);
@@ -235,7 +265,7 @@ export default function CheckoutPage({}) {
         } else if (selectedVoucher[index]?.type === "Ship") {
           shipmentCost =
             shipmentCost - (shopTotal * selectedVoucher[index]?.discount) / 100;
-        } else {
+        } else if (selectedVoucher[index]?.type === "Discount") {
           shopTotal =
             shopTotal - (shopTotal * selectedVoucher[index]?.discount) / 100;
         }
@@ -296,9 +326,11 @@ export default function CheckoutPage({}) {
           Note: notes[shopIndex],
           Shipping_company_ID: selectedShipment[shopIndex].id,
           Payment_method_id: selectedPaymentMethod[shopIndex].id,
-          Freeship: shop.freeship,
+          DiscountType: selectedVoucher[shopIndex].type,
+          Discount_percentage: selectedVoucher[shopIndex].discount,
+          Total_price: calculateShopTotalPrice(shop, shopIndex),
         };
-
+        console.log(data);
         // Make API request to server
         const response = await fetch("/api/user/order", {
           method: "POST",
@@ -616,7 +648,7 @@ export default function CheckoutPage({}) {
                     <ul>
                       {currentPayment.map((option) => (
                         <li
-                          key={option.Company_ID}
+                          key={option.Method_ID}
                           onClick={() =>
                             handlePaymentMethodSelect(
                               option.Method_ID,
@@ -639,21 +671,7 @@ export default function CheckoutPage({}) {
 
               <div>
                 <p>
-                  {shop.product.reduce((a, b) => a + b.total, 0) +
-                    (selectedShipment[index] && selectedVoucher[index]
-                      ? selectedVoucher[index].type === "Ship"
-                        ? selectedShipment[index].price -
-                          (selectedShipment[index].price *
-                            selectedVoucher[index].discount) /
-                            100
-                        : selectedVoucher[index].type !== "Freeship"
-                        ? selectedShipment[index].price -
-                          (shop.product.reduce((a, b) => a + b.total, 0) *
-                            selectedVoucher[index].discount) /
-                            100
-                        : 0
-                      : 0)}
-                  円
+                  <p>{calculateShopTotalPrice(shop, index)} 円</p>
                 </p>
               </div>
             </div>
