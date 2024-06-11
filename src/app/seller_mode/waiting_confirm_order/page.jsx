@@ -19,9 +19,7 @@ export default function Page() {
 
   async function fetchOrders() {
     try {
-      const response = await fetch(
-        `/api/seller/orders?seller_id=${seller_id_encode}`
-      );
+      const response = await fetch(`/api/seller/orders?seller_id=${user_id}`);
       const data = await response.json();
       console.log(data);
       const waitingConfirmationOrders = data.filter(
