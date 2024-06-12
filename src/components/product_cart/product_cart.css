@@ -87,7 +87,6 @@
   width: 60%;
   height: max-content;
   color: #adb5bd;
-  font-weight: 600;
 }
 .product_name_cart {
   font-size: 14px;
@@ -95,7 +94,7 @@
 }
 .price_container_cart div:last-child {
   height: max-content;
-  font-weight: bold;
+
   padding-right: 10px;
   justify-content: center;
 }

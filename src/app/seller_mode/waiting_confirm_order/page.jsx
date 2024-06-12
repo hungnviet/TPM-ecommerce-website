@@ -83,16 +83,16 @@ export default function Page() {
   return (
     <div className="waiting_confirm_container">
       <div className="waiting_conform_order">
-        <h3>Confirmation is awaited before proceeding with the order.</h3>
+        <h3>注文を続行する前に確認が待たれます。</h3>
         <table>
           <thead>
             <tr>
-              <th>Order Number</th>
-              <th>Order ID</th>
-              <th>Total Price</th>
-              <th>User Name</th>
-              <th>Date</th>
-              <th>Action</th>
+              <th>注文番号</th>
+              <th>注文 ID</th>
+              <th>合計金額</th>
+              <th>ユーザー名</th>
+              <th>作成日</th>
+              <th>アクション</th>
             </tr>
           </thead>
           <tbody>
@@ -113,7 +113,7 @@ export default function Page() {
                       );
                     }}
                   >
-                    View
+                    ビュー
                   </button>
                   <button
                     onClick={() =>
@@ -124,10 +124,10 @@ export default function Page() {
                       )
                     }
                   >
-                    Accept
+                    受け入れる
                   </button>
                   <button onClick={() => deleteOrder(order.Order_ID)}>
-                    Reject
+                    拒否する
                   </button>
                 </td>
               </tr>

@@ -95,7 +95,7 @@ export default function Page() {
   return (
     <div className="order_management_seller_container">
       <div className="order_management_seller">
-        <h3>Order Management</h3>
+        <h3>注文管理</h3>
         {/* <div className="order_management_seller_filter_container">
           <div>
             <label>From</label>

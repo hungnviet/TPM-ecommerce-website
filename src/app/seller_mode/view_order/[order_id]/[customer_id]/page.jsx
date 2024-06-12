@@ -150,11 +150,7 @@ export default function CheckoutPage({ params }) {
         </div>
         <button
           style={{ marginTop: "20px" }}
-          onClick={() =>
-            router.push(
-              `/seller_mode/${seller_id}/${seller_id}/order_management`
-            )
-          }
+          onClick={() => router.push(`/seller_mode/order_management`)}
         >
           Quay lai
         </button>

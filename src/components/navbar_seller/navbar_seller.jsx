@@ -73,7 +73,7 @@ export default function NavbarSeller() {
             height={20}
             alt="icon"
           />
-          Dashboard
+          ダッシュボード
         </button>
         <button
           className={
@@ -93,7 +93,7 @@ export default function NavbarSeller() {
             height={20}
             alt="icon"
           />
-          Products
+          製品
         </button>
         <button
           className={
@@ -113,7 +113,7 @@ export default function NavbarSeller() {
             height={20}
             alt="icon"
           />
-          Orders
+          注文
         </button>
         <button
           className={
@@ -133,7 +133,7 @@ export default function NavbarSeller() {
             height={20}
             alt="icon"
           />
-          Wating for confirm order
+          注文の確認を待っています
         </button>
 
         <button
@@ -154,7 +154,7 @@ export default function NavbarSeller() {
             height={20}
             alt="icon"
           />
-          Upload product
+          製品をアップロードする
         </button>
         <button
           className={
@@ -174,7 +174,7 @@ export default function NavbarSeller() {
             height={20}
             alt="icon"
           />
-          Setting
+          設定
         </button>
       </div>
     </div>
