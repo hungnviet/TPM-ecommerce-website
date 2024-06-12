@@ -5,11 +5,13 @@ export const dynamic = "force-dynamic";
 
 import Product_cart from "@/components/product_cart/product_cart";
 import { getCognitoUserSub } from "@/config/cognito";
+import { BeatLoader } from "react-spinners";
 
 export default function Page({}) {
   const [user_id, setUser_id] = useState("");
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const productsPerPage = 30;
   const hasFreeShipping = (vouchers) => {
     return vouchers ? vouchers.some((v) => v.Type === "Freeship") : false;
@@ -37,6 +39,7 @@ export default function Page({}) {
       .then((data) => {
         console.log(data);
         setProducts(data);
+        setIsLoading(false);
       })
       .catch((error) => console.error("Error:", error));
   }, [user_id, isMounted]);
@@ -68,6 +71,18 @@ export default function Page({}) {
 
   return (
     <div className="category_page">
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {" "}
+        <BeatLoader color={"#36d7b7"} loading={isLoading} size={15} />
+      </div>
+
       <div className="category_product_container">
         {currentProducts.map((product, index) => (
           <Product_cart

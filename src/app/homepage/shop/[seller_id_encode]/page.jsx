@@ -15,6 +15,10 @@ export default function Seller_shop({ params }) {
   const [shopInfor, setShopInfor] = useState({}); // Add state for shop name
   const [isLoading, setIsLoading] = useState(true);
   const [user_id, setUserID] = useState("");
+  const hasFreeShipping = (vouchers) => {
+    return vouchers ? vouchers.some((v) => v.Type === "Freeship") : false;
+  };
+
   useEffect(() => {
     getCognitoUserSub().then((user_id) => setUserID(user_id));
     if (!user_id) return;
@@ -29,6 +33,9 @@ export default function Seller_shop({ params }) {
       })
       .catch((error) => console.error("Error:", error));
   }, [user_id]);
+  useEffect(() => {
+    console.log("products", products);
+  }, [products]);
 
   return (
     <div className="listProductOfShopContainer">
@@ -45,7 +52,12 @@ export default function Seller_shop({ params }) {
       <BeatLoader color="#36d7b7" loading={isLoading} size={15} />
       <div className="productList">
         {products.map((product, index) => (
-          <Product_cart key={index} product={product} userID={user_id} />
+          <Product_cart
+            key={index}
+            product={product}
+            userID={user_id}
+            freeship={hasFreeShipping(product.Vouchers)}
+          />
         ))}
       </div>
     </div>

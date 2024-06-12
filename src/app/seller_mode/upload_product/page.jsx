@@ -17,7 +17,6 @@ export default function Page() {
       optionPrice: "",
       optionName: "",
       optionQuantity: "",
-      optionInventory: "",
       freeshipCondition: "",
     },
   ]);
@@ -159,22 +158,16 @@ export default function Page() {
       );
 
       const validImageUrls = imageUrls.filter((url) => url !== null);
+
       console.log("Image URLs:", validImageUrls);
 
       const productImageList = validImageUrls.map((url) => ({ imageURL: url }));
       console.log("Product Image List:", productImageList);
       const productOptionList = rows.map(
-        ({
-          optionName,
-          optionPrice,
-          optionQuantity,
-          optionInventory,
-          freeshipCondition,
-        }) => ({
+        ({ optionName, optionPrice, optionQuantity, freeshipCondition }) => ({
           optionName,
           optionPrice: Number(optionPrice), // convert string to number
           optionQuantity: Number(optionQuantity), // convert string to number
-          optionInventory: Number(optionInventory),
           freeshipCondition: Number(freeshipCondition),
         })
       );
@@ -261,7 +254,6 @@ export default function Page() {
         optionPrice: "",
         optionName: "",
         optionQuantity: "",
-        optionInventory: "",
         freeshipCondition: "",
       },
     ]);
@@ -382,17 +374,6 @@ export default function Page() {
                         value={row.optionQuantity}
                         onChange={(e) =>
                           updateRow(index, "optionQuantity", e.target.value)
-                        }
-                        placeholder="Ex: 100"
-                      />
-                    </div>
-                    <div>
-                      Inventory
-                      <input
-                        type="text"
-                        value={row.optionInventory}
-                        onChange={(e) =>
-                          updateRow(index, "optionInventory", e.target.value)
                         }
                         placeholder="Ex: 100"
                       />

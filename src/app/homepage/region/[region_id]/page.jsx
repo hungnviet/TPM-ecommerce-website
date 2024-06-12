@@ -16,6 +16,9 @@ const regions = [
   { region_id: 7, region_name: "Shikoku" },
   { region_id: 8, region_name: "Kyushu (including Okinawa)" },
 ];
+const hasFreeShipping = (vouchers) => {
+  return vouchers ? vouchers.some((v) => v.Type === "Freeship") : false;
+};
 export default function Region_Product({ params }) {
   const { user_id_encode, region_id } = params;
   const user_id = decodeURIComponent(user_id_encode);
@@ -43,7 +46,12 @@ export default function Region_Product({ params }) {
       </div>
       <div className="productListInRegion">
         {products.map((product, index) => (
-          <Product_cart key={index} product={product} userID={user_id} />
+          <Product_cart
+            key={index}
+            product={product}
+            userID={user_id}
+            freeship={hasFreeShipping(product.Vouchers)}
+          />
         ))}
       </div>
     </div>

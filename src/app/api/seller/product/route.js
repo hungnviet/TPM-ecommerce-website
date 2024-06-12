@@ -17,7 +17,7 @@ export async function POST(req) {
     province_id,
   } = data;
   const sql1 = `call Add_Product('${sellerID}','${productTitle}','${productDescription}',${categoryID},${region_id},${province_id})`; /// (sellerID,productTitle,productDescription,categoryID)
-  const sql2 = `call Add_Product_Option(?,?,?,?,?,?,?)`; /// (productID,optionName,optionPrice,optionNumber)
+  const sql2 = `call Add_Product_Option(?,?,?,?,?,?)`;
   const sql4 = `call Add_Product_Detail_Description(?,?,?,?)`; /// (productID,title,content,descriptionNumber)
   const sql3 = `call Add_Product_Image(?,?)`; /// (productID,imageURL)
   return new Promise((resolve, reject) => {
@@ -42,7 +42,6 @@ export async function POST(req) {
                   option.optionName,
                   option.optionPrice,
                   option.optionQuantity,
-                  option.optionInventory,
                   option.freeshipCondition,
                   index,
                 ],

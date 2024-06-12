@@ -319,10 +319,12 @@ export default function NavbarUser({}) {
               </Link>
               {isSeller ? (
                 <button onClick={() => router.push(`/seller_mode/dashboard`)}>
-                  My Shop
+                  私の店
                 </button>
               ) : (
-                <button onClick={register_as_seller}>Register as seller</button>
+                <button onClick={register_as_seller}>
+                  販売者として登録する
+                </button>
               )}
               <button onClick={signOutUser}>ログアウト</button>{" "}
             </div>

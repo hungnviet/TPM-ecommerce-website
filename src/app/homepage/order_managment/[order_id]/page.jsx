@@ -4,6 +4,7 @@ import { useEffect, useState, React } from "react";
 import Image from "next/image";
 import AWS from "aws-sdk";
 import { getCognitoUserSub } from "@/config/cognito";
+import { BeatLoader } from "react-spinners";
 
 AWS.config.update({
   accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
@@ -172,6 +173,7 @@ export default function CheckoutPage({ params }) {
               ...orderData,
               orderItems: enrichedOrderData,
             });
+            setIsLoading(false);
           });
         }
       })
@@ -200,26 +202,38 @@ export default function CheckoutPage({ params }) {
             width={20}
             height={20}
           />
-          <p>Dia chi nhan hang</p>
+          <p>配送先住所</p>
         </div>
         <div className="information_address_checkout">
+          <p>{address}</p>
           <p>
             {user_information.user_name} {user_information.user_phone}
           </p>
-          <p>{address}</p>
         </div>
+      </div>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {" "}
+        <BeatLoader color={"#36d7b7"} loading={isLoading} size={15} />
       </div>
       <table>
         <thead>
           <tr>
-            <th style={{ padding: "0 60px" }}>Hình ảnh</th>
-            <th style={{ padding: "0 60px" }}>Tên</th>
-            <th style={{ padding: "0 60px" }}>Option</th>
-            <th style={{ padding: "0 60px" }}>Đơn giá</th>
-            <th style={{ padding: "0 60px" }}>Số lượng</th>
-            <th style={{ padding: "0 60px" }}>Thành tiền</th>
+            <th style={{ padding: "0 60px" }}>画像</th>
+            <th style={{ padding: "0 60px" }}>名前</th>
+            <th style={{ padding: "0 60px" }}>オプション</th>
+            <th style={{ padding: "0 60px" }}>単価</th>
+            <th style={{ padding: "0 60px" }}>量</th>
+            <th style={{ padding: "0 60px" }}>合計金額</th>
           </tr>
         </thead>
+
         <tbody>
           {orderDetails?.orderItems?.map((order, index) => (
             <>
@@ -253,7 +267,7 @@ export default function CheckoutPage({ params }) {
                     onClick={() => openCommentModal(order.Product_ID)}
                     className="comment_button"
                   >
-                    Bình luận về sản phẩm này
+                    この商品についてのコメント
                   </button>
                 )}
               </td>
@@ -279,7 +293,7 @@ export default function CheckoutPage({ params }) {
                         onChange={(e) => setComment(e.target.value)}
                       ></textarea>
                       <div className="choose_shop_image_container">
-                        <h3> Thêm hình ảnh</h3>
+                        <h3> 写真をもっと見る</h3>
                         {images.length === 0 && (
                           <input
                             type="file"
@@ -318,7 +332,7 @@ export default function CheckoutPage({ params }) {
                       style={{ marginTop: "20px", marginLeft: "200px" }}
                       onClick={handleComment}
                     >
-                      Thêm bình luận
+                      コメントを追加する
                     </button>
                   </td>
                 </tr>
@@ -330,9 +344,9 @@ export default function CheckoutPage({ params }) {
 
       <div className="checkout_final_step">
         <div>
-          <p>Tong tien hang: </p> <p>{totalPrice} 円</p>
+          <p>注文総額 </p> <p>{totalPrice} 円</p>
         </div>
-        <p>Ghi chu</p>
+        <p>注記</p>
         <div
           style={{
             border: "1px solid black",

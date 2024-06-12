@@ -40,6 +40,8 @@ export default function Page() {
   ];
   // redeploy
   const [bestSellerProducts, setBestSellerProducts] = useState([]);
+  const [newProducts, setNewProducts] = useState([]);
+  const [famousProducts, setFamousProducts] = useState([]); // [product1, product2, product3, ...
   const [currentImage, setCurrentImage] = useState(0);
   const [isLoadingShop, setIsLoadingShop] = useState(true);
   const hasFreeShipping = (vouchers) => {
@@ -70,6 +72,7 @@ export default function Page() {
 
     if (!user_id) return;
 
+    ///Get 10 product of each category
     fetch(`/api/user/productForHomePage?user_id=${user_id}`, {
       method: "GET",
       headers: {
@@ -83,6 +86,38 @@ export default function Page() {
         console.log(data);
         setBestSellerProducts(data);
         setIsLoadingShop(false);
+      })
+      .catch((error) => console.error("Error:", error));
+
+    ///Get 10 newest product
+    fetch(`/api/user/new_product?user_id=${user_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        dynamic: "force-dynamic",
+      },
+      next: { revalidate: 60 },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setNewProducts(data);
+      })
+      .catch((error) => console.error("Error:", error));
+
+    ///Get 10 famous product
+    fetch(`/api/user/famous_product?user_id=${user_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        dynamic: "force-dynamic",
+      },
+      next: { revalidate: 60 },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setFamousProducts(data);
       })
       .catch((error) => console.error("Error:", error));
 
@@ -161,7 +196,7 @@ export default function Page() {
             <p className="best_seller_title">新製品</p>
             <div className="big_best_seller_container">
               <div className="product_list" ref={productBestSellerListRef}>
-                {bestSellerProducts.slice(-10).map((product, index) => (
+                {newProducts.map((product, index) => (
                   <Product_cart
                     key={index}
                     product={product}
@@ -188,20 +223,22 @@ export default function Page() {
             </p>
             <div className="big_best_seller_container">
               <div className="product_list" ref={productBestSellerListRef}>
-                {bestSellerProducts
-                  .sort((a, b) => b.totalLike - a.totalLike)
-                  .slice(0, 10)
-                  .map((product, index) => (
-                    <Product_cart
-                      key={index}
-                      product={product}
-                      userID={user_id}
-                      freeship={hasFreeShipping(product.Vouchers)}
-                    />
-                  ))}
+                {famousProducts.map((product, index) => (
+                  <Product_cart
+                    key={index}
+                    product={product}
+                    userID={user_id}
+                    freeship={hasFreeShipping(product.Vouchers)}
+                  />
+                ))}
               </div>
 
-              <button className="morebutton">もっと見る</button>
+              <button
+                className="morebutton"
+                onClick={() => router.push("/homepage/products")}
+              >
+                もっと見る
+              </button>
             </div>
           </div>
           {categories.map((category, i) => (

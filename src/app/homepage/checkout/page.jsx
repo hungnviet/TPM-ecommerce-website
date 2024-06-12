@@ -83,6 +83,7 @@ export default function CheckoutPage({}) {
       [index]: value,
     }));
   };
+
   function calculateShopTotalPrice(shop, index) {
     let productTotal = shop.product.reduce(
       (sum, product) => sum + product.total,
@@ -326,8 +327,8 @@ export default function CheckoutPage({}) {
           Note: notes[shopIndex],
           Shipping_company_ID: selectedShipment[shopIndex].id,
           Payment_method_id: selectedPaymentMethod[shopIndex].id,
-          DiscountType: selectedVoucher[shopIndex].type,
-          Discount_percentage: selectedVoucher[shopIndex].discount,
+          DiscountType: selectedVoucher[shopIndex]?.type || "Discount",
+          Discount_percentage: selectedVoucher[shopIndex]?.discount || 0,
           Total_price: calculateShopTotalPrice(shop, shopIndex),
         };
         console.log(data);

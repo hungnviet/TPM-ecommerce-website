@@ -333,17 +333,6 @@ export default function Page({ params }) {
                         placeholder="Ex: 100"
                       />
                     </div>
-                    <div>
-                      Inventory
-                      <input
-                        type="text"
-                        value={row.Inventory}
-                        onChange={(e) =>
-                          updateRow(index, "Inventory", e.target.value)
-                        }
-                        placeholder="Ex: 100"
-                      />
-                    </div>
                   </td>
 
                   <td>

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import "./order_managment.css";
 import { useRouter } from "next/navigation";
 import { getCognitoUserSub } from "@/config/cognito";
+import { BeatLoader } from "react-spinners";
 
 export default function Page() {
   const route = useRouter();
@@ -11,6 +12,7 @@ export default function Page() {
   const [shopNames, setShopNames] = useState({});
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [shippingCompanies, setShippingCompanies] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getCognitoUserSub().then((user_id) => setUserID(user_id));
@@ -19,8 +21,9 @@ export default function Page() {
       fetch(`/api/user/orders?customer_id=${encodeURIComponent(user_id)}`)
         .then((response) => response.json())
         .then((data) => {
-          setOrders(data);
+          setOrders([...data].reverse());
           data.forEach((order) => fetchUserInformation(order.Seller_ID));
+          setIsLoading(false);
         })
         .catch((error) => console.error(error));
     }
@@ -63,16 +66,28 @@ export default function Page() {
   return (
     <div className="order_management_page_container">
       <h3>Order management</h3>
+
       <div className="order_management_in4">
         <div className="field_bar_order_management">
-          <div>Created date</div>
-          <div>Seller Name</div>
-          <div>Total Price</div>
-          <div>Quantity of items</div>
-          <div>Status</div>
-          <div>Payment method</div>
-          <div>Shipping company</div>
-          <div>Actions</div>
+          <div>作成日</div>
+          <div>販売者名</div>
+          <div>合計金額</div>
+          <div>アイテムの数量</div>
+          <div>状態</div>
+          <div>支払方法</div>
+          <div>運送会社</div>
+          <div>行動</div>
+        </div>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {" "}
+          <BeatLoader color={"#36d7b7"} loading={isLoading} size={15} />
         </div>
         {orders.map((item, index) => (
           <div className="field_bar_order_management" key={index}>
@@ -93,7 +108,7 @@ export default function Page() {
                   route.push(`/homepage/order_managment/${item.Order_ID}`);
                 }}
               >
-                View
+                ビュー
               </button>
             </div>
           </div>

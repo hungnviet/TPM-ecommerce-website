@@ -71,7 +71,9 @@ export default function Province_Product({ params }) {
       })
       .catch((error) => console.error("Error:", error));
   }, []);
-
+  const hasFreeShipping = (vouchers) => {
+    return vouchers ? vouchers.some((v) => v.Type === "Freeship") : false;
+  };
   return (
     <div className="listProductOfRegionContainer">
       <div className="infor_of_region">
@@ -84,7 +86,12 @@ export default function Province_Product({ params }) {
       </div>
       <div className="productListInRegion">
         {products.map((product, index) => (
-          <Product_cart key={index} product={product} userID={user_id} />
+          <Product_cart
+            key={index}
+            product={product}
+            userID={user_id}
+            freeship={hasFreeShipping(product.Vouchers)}
+          />
         ))}
       </div>
     </div>

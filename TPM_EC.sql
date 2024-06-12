@@ -321,8 +321,8 @@ CREATE PROCEDURE Add_Product(
     IN p_province_id INT
 )
 BEGIN
-    INSERT INTO PRODUCT (Seller_ID, Product_title, Product_description, Category_ID,region_id,province_id)
-    VALUES (p_Seller_ID, p_Product_Title, p_Product_Description, p_Category_ID,p_region_id,p_province_id);
+    INSERT INTO PRODUCT (Seller_ID, Product_title, Product_description, Category_ID,region_id,province_id,totalLike)
+    VALUES (p_Seller_ID, p_Product_Title, p_Product_Description, p_Category_ID,p_region_id,p_province_id,0);
 END $$
 
 DELIMITER ;
@@ -335,11 +335,12 @@ CREATE PROCEDURE Add_Product_Option(
     IN p_Option_Name VARCHAR(255),
     IN p_Option_Price DECIMAL(10,2),
     IN p_Quantity INT,
+    IN p_free_ship_condition INT
     IN p_Option_Number INT
 )
 BEGIN
-    INSERT INTO PRODUCT_OPTION (Product_ID, Option_name, Option_price, Option_number, Quantity, QuantityOfGoodsSold, IsValid)
-    VALUES (p_Product_ID, p_Option_Name, p_Option_Price, p_Option_Number,p_Quantity,0, TRUE);
+    INSERT INTO PRODUCT_OPTION (Product_ID, Option_name, Option_price, Option_number, Quantity,FreeshipCondition, QuantityOfGoodsSold, IsValid)
+    VALUES (p_Product_ID, p_Option_Name, p_Option_Price, p_Option_Number,p_Quantity,p_free_ship_condition,0, TRUE);
 END $$
 
 DELIMITER ;
@@ -474,14 +475,15 @@ BEGIN
     LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
     LEFT JOIN PRODUCT_LIKED pl ON p.Product_ID = pl.Product_ID AND pl.User_ID = p_user_id
     LEFT JOIN USER u ON p.Seller_ID = u.User_ID
-    GROUP BY p.Product_ID;
+    GROUP BY p.Product_ID
+     ORDER BY p.Product_ID DESC;
 END $$
 
 DELIMITER ;
 
 DELIMITER $$
 
-CREATE PROCEDURE Get_All_Products_For_User_With_Category(IN p_user_id VARCHAR(255), IN p_category_ID int)
+CREATE PROCEDURE Get_10_new_Products_For_User(IN p_user_id VARCHAR(255))
 BEGIN
     SELECT 
         p.Product_ID,
@@ -499,15 +501,17 @@ BEGIN
     LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
     LEFT JOIN PRODUCT_LIKED pl ON p.Product_ID = pl.Product_ID AND pl.User_ID = p_user_id
     LEFT JOIN USER u ON p.Seller_ID = u.User_ID
-    WHERE p.Category_ID = p_category_ID
-    GROUP BY p.Product_ID;
+    GROUP BY p.Product_ID
+     ORDER BY p.Product_ID DESC
+     limit 10;
 END $$
 
 DELIMITER ;
 
+
 DELIMITER $$
 
-CREATE DEFINER=`admin`@`%` PROCEDURE `Get_10_Products_For_User_With_Category`(
+CREATE DEFINER=`admin`@`%` PROCEDURE `Get_all_Products_For_User_With_Category`(
     IN p_user_id VARCHAR(255), 
     IN p_category_ID int
 )
@@ -553,6 +557,140 @@ DELIMITER ;
 
 
 
+DELIMITER $$
+
+CREATE DEFINER=`admin`@`%` PROCEDURE `Get_10_Products_For_User_With_Category`(
+    IN p_user_id VARCHAR(255), 
+    IN p_category_ID int
+)
+BEGIN
+    SELECT 
+        p.Product_ID,
+        p.Seller_ID,
+        p.Product_title,
+        p.Product_description,
+        p.Category_ID,
+        MIN(po.Option_price) AS First_Option_Price,
+        MIN(po.Option_name) AS First_Option_Name,
+        MIN(pi.Image_url) AS First_Image,
+        u.*,  -- This selects all columns from the USER table
+        IF(pl.Product_ID IS NULL, FALSE, TRUE) AS isLiked,
+        COALESCE(vv.Vouchers, JSON_ARRAY()) AS Vouchers
+    FROM PRODUCT p
+    LEFT JOIN PRODUCT_OPTION po ON p.Product_ID = po.Product_ID AND po.IsValid = TRUE
+    LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
+    LEFT JOIN PRODUCT_LIKED pl ON p.Product_ID = pl.Product_ID AND pl.User_ID = p_user_id
+    LEFT JOIN USER u ON p.Seller_ID = u.User_ID
+    LEFT JOIN (
+        -- Subquery to aggregate vouchers by Seller_ID
+        SELECT
+            Seller_ID,
+            JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'Voucher_Name', v.voucher_name,
+                    'Type', v.Type,
+                    'Discount_Value', v.Discount_Value,
+                    'End', v.End
+                )
+            ) AS Vouchers
+        FROM SHOP_VOUCHER v
+        GROUP BY Seller_ID
+    ) vv ON u.User_ID = vv.Seller_ID 
+    WHERE p.Category_ID = p_category_ID
+    GROUP BY p.Product_ID
+    ORDER BY p.Product_ID DESC 
+    LIMIT 10;
+END
+
+DELIMITER ;
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE Get_all_product_of_seller_with_vouchers(IN p_user_id VARCHAR(255), IN p_seller_id VARCHAR(255))
+BEGIN
+    SELECT 
+        p.Product_ID,
+        p.Seller_ID,
+        p.Product_title,
+        p.Product_description,
+        p.Category_ID,
+        MIN(po.Option_price) AS First_Option_Price,
+        MIN(po.Option_name) AS First_Option_Name,
+        MIN(pi.Image_url) AS First_Image,
+        u.*,  -- This selects all columns from the USER table
+        IF(pl.Product_ID IS NULL, FALSE, TRUE) AS isLiked,
+        COALESCE(vv.Vouchers, JSON_ARRAY()) AS Vouchers
+    FROM PRODUCT p
+    LEFT JOIN PRODUCT_OPTION po ON p.Product_ID = po.Product_ID AND po.IsValid = TRUE
+    LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
+    LEFT JOIN PRODUCT_LIKED pl ON p.Product_ID = pl.Product_ID AND pl.User_ID = p_user_id
+    LEFT JOIN USER u ON p.Seller_ID = u.User_ID
+    LEFT JOIN (
+        -- Subquery to aggregate vouchers by Product_ID
+        SELECT
+            Seller_ID,
+            JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'Voucher_Name', v.voucher_name,
+                    'Type', v.Type,
+                    'Discount_Value', v.Discount_Value,
+                    'End', v.End
+                )
+            ) AS Vouchers
+        FROM SHOP_VOUCHER v
+        WHERE v.Seller_ID = p_seller_id  -- Assuming the voucher table has a Seller_ID column
+        GROUP BY Seller_ID
+    ) vv ON u.User_ID = vv.Seller_ID 
+    WHERE p.Seller_ID = p_seller_id
+    GROUP BY p.Product_ID;
+    ORDER BY p.Product_ID DESC;
+END $$
+
+DELIMITER $$
+
+CREATE PROCEDURE Get_all_product_of_region_with_vouchers(IN p_user_id VARCHAR(255), IN p_region_id int)
+BEGIN
+    SELECT 
+        p.Product_ID,
+        p.Seller_ID,
+        p.Product_title,
+        p.Product_description,
+        p.Category_ID,
+        p.region_id,
+        MIN(po.Option_price) AS First_Option_Price,
+        MIN(po.Option_name) AS First_Option_Name,
+        MIN(pi.Image_url) AS First_Image,
+        u.*,  -- This selects all columns from the USER table
+        IF(pl.Product_ID IS NULL, FALSE, TRUE) AS isLiked,
+        COALESCE(vv.Vouchers, JSON_ARRAY()) AS Vouchers
+    FROM PRODUCT p
+    LEFT JOIN PRODUCT_OPTION po ON p.Product_ID = po.Product_ID AND po.IsValid = TRUE
+    LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
+    LEFT JOIN PRODUCT_LIKED pl ON p.Product_ID = pl.Product_ID AND pl.User_ID = p_user_id
+    LEFT JOIN USER u ON p.Seller_ID = u.User_ID
+    LEFT JOIN (
+        -- Subquery to aggregate vouchers by Seller_ID
+        SELECT
+            Seller_ID,
+            JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'Voucher_Name', v.voucher_name,
+                    'Type', v.Type,
+                    'Discount_Value', v.Discount_Value,
+                    'End', v.End
+                )
+            ) AS Vouchers
+        FROM SHOP_VOUCHER v
+        GROUP BY v.Seller_ID
+    ) vv ON p.Seller_ID = vv.Seller_ID 
+    WHERE p.region_id = p_region_id
+    GROUP BY p.Product_ID;
+END $$
+
+DELIMITER ;
+
 
 DELIMITER $$
 
@@ -578,25 +716,7 @@ END $$
 
 DELIMITER ;
 
-DELIMITER $$
 
-CREATE PROCEDURE Get_All_Product_For_Seller(
-    IN p_Seller_ID VARCHAR(255)
-)
-BEGIN
-    SELECT 
-        p.Product_ID,
-        p.Seller_ID,
-        p.Product_title,
-        p.Product_description,
-        MIN(pi.Image_url) AS Image_url  -- Using MIN() to get the first image URL
-    FROM PRODUCT p
-    LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
-    WHERE p.Seller_ID = p_Seller_ID
-    GROUP BY p.Product_ID;
-END $$
-
-DELIMITER ;
 
 DELIMITER $$
 
@@ -635,31 +755,8 @@ DELIMITER ;
 call searchProduct('apple');
 
 ## procedure get all product of shop
-DELIMITER $$
 
-CREATE PROCEDURE Get_all_product_of_seller_for_user(IN p_user_id VARCHAR(255), IN p_seller_id VARCHAR(255))
-BEGIN
-    SELECT 
-        p.Product_ID,
-        p.Seller_ID,
-        p.Product_title,
-        p.Product_description,
-        p.Category_ID,
-        MIN(po.Option_price) AS First_Option_Price,
-        MIN(po.Option_name) AS First_Option_Name,
-        MIN(pi.Image_url) AS First_Image,
-        u.*,  -- This selects all columns from the USER table
-        IF(pl.Product_ID IS NULL, FALSE, TRUE) AS isLiked
-    FROM PRODUCT p
-    LEFT JOIN PRODUCT_OPTION po ON p.Product_ID = po.Product_ID AND po.IsValid = TRUE
-    LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
-    LEFT JOIN PRODUCT_LIKED pl ON p.Product_ID = pl.Product_ID AND pl.User_ID = p_user_id
-    LEFT JOIN USER u ON p.Seller_ID = u.User_ID
-    WHERE p.Seller_ID = p_seller_id
-    GROUP BY p.Product_ID;
-END $$
 
-DELIMITER ;
 
 ## procedure for create order
 ## moi them 8/5/2024
@@ -733,6 +830,9 @@ BEGIN
         p_Original_price,
         v_Final_price
     );
+    --- update quantity of product
+    UPDATE PRODUCT_OPTION SET QuantityOfGoodsSold = QuantityOfGoodsSold - p_Quantity WHERE Product_ID = p_Product_ID AND Option_number = p_Option_number;
+    UPDATE PRODUCT SET TotalOrder=TotalOrder+1 Where Product_ID=p_Product_ID;
 END$$
 
 DELIMITER ;
@@ -773,33 +873,11 @@ END //
 
 DELIMITER $$
 
-CREATE PROCEDURE Get_all_product_of_region_for_user(IN p_user_id VARCHAR(255), IN p_region_id int)
-BEGIN
-    SELECT 
-        p.Product_ID,
-        p.Seller_ID,
-        p.Product_title,
-        p.Product_description,
-        p.Category_ID,
-        MIN(po.Option_price) AS First_Option_Price,
-        MIN(po.Option_name) AS First_Option_Name,
-        MIN(pi.Image_url) AS First_Image,
-        u.*,  -- This selects all columns from the USER table
-        IF(pl.Product_ID IS NULL, FALSE, TRUE) AS isLiked
-    FROM PRODUCT p
-    LEFT JOIN PRODUCT_OPTION po ON p.Product_ID = po.Product_ID AND po.IsValid = TRUE
-    LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
-    LEFT JOIN PRODUCT_LIKED pl ON p.Product_ID = pl.Product_ID AND pl.User_ID = p_user_id
-    LEFT JOIN USER u ON p.Seller_ID = u.User_ID
-    WHERE p.region_id = p_region_id
-    GROUP BY p.Product_ID;
-END $$
 
-DELIMITER ;
 
 DELIMITER $$
 
-CREATE PROCEDURE Get_all_product_of_province_for_user(IN p_user_id VARCHAR(255), IN p_province_id int)
+CREATE PROCEDURE Get_all_product_of_province_with_vouchers(IN p_user_id VARCHAR(255), IN p_province_id int)
 BEGIN
     SELECT 
         p.Product_ID,
@@ -807,43 +885,34 @@ BEGIN
         p.Product_title,
         p.Product_description,
         p.Category_ID,
+        p.province_id,
         MIN(po.Option_price) AS First_Option_Price,
         MIN(po.Option_name) AS First_Option_Name,
         MIN(pi.Image_url) AS First_Image,
         u.*,  -- This selects all columns from the USER table
-        IF(pl.Product_ID IS NULL, FALSE, TRUE) AS isLiked
+        IF(pl.Product_ID IS NULL, FALSE, TRUE) AS isLiked,
+        COALESCE(vv.Vouchers, JSON_ARRAY()) AS Vouchers
     FROM PRODUCT p
     LEFT JOIN PRODUCT_OPTION po ON p.Product_ID = po.Product_ID AND po.IsValid = TRUE
     LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
     LEFT JOIN PRODUCT_LIKED pl ON p.Product_ID = pl.Product_ID AND pl.User_ID = p_user_id
     LEFT JOIN USER u ON p.Seller_ID = u.User_ID
+    LEFT JOIN (
+        -- Subquery to aggregate vouchers by Seller_ID
+        SELECT
+            Seller_ID,
+            JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'Voucher_Name', v.voucher_name,
+                    'Type', v.Type,
+                    'Discount_Value', v.Discount_Value,
+                    'End', v.End
+                )
+            ) AS Vouchers
+        FROM SHOP_VOUCHER v
+        GROUP BY v.Seller_ID
+    ) vv ON p.Seller_ID = vv.Seller_ID 
     WHERE p.province_id = p_province_id
-    GROUP BY p.Product_ID;
-END $$
-
-DELIMITER ;
-
-DELIMITER $$
-
-CREATE PROCEDURE Get_product_by_id(IN p_user_id VARCHAR(255), IN p_product_id int)
-BEGIN
-    SELECT 
-        p.Product_ID,
-        p.Seller_ID,
-        p.Product_title,
-        p.Product_description,
-        p.Category_ID,
-        MIN(po.Option_price) AS First_Option_Price,
-        MIN(po.Option_name) AS First_Option_Name,
-        MIN(pi.Image_url) AS First_Image,
-        u.*,  -- This selects all columns from the USER table
-        IF(pl.Product_ID IS NULL, FALSE, TRUE) AS isLiked
-    FROM PRODUCT p
-    LEFT JOIN PRODUCT_OPTION po ON p.Product_ID = po.Product_ID AND po.IsValid = TRUE
-    LEFT JOIN PRODUCT_IMAGE pi ON p.Product_ID = pi.Product_ID
-    LEFT JOIN PRODUCT_LIKED pl ON p.Product_ID = pl.Product_ID AND pl.User_ID = p_user_id
-    LEFT JOIN USER u ON p.Seller_ID = u.User_ID
-    WHERE p.Product_ID = p_product_id
     GROUP BY p.Product_ID;
 END $$
 

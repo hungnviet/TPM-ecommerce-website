@@ -2,12 +2,12 @@ import connectToDatabase from "@/config/db";
 import { NextResponse } from "next/server";
 const db = connectToDatabase();
 
+/// Get all products
 export async function GET(req) {
   const url = new URL(req.url);
-  const searchParams = url.searchParams;
-  const province_id = searchParams.get("province_id");
+  const searchParams = new URLSearchParams(url.searchParams);
   const user_id = searchParams.get("user_id");
-  const sql = `call Get_all_product_of_province_with_vouchers('${user_id}',${province_id})`; //just get the title the first image and the first price of the product and the product id
+  const sql = `call Get_10_new_Products_For_User('${user_id}')`; //just get the title the first image and the first price of the product and the product id
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {
       if (err) {
