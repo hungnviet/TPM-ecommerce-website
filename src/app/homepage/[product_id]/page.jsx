@@ -55,7 +55,6 @@ export default function Page({ params }) {
           <>
             <div className="left_section_product_detail">
               <Product_detail_img product_id={product_id} />
-              <Product_voucher product_id={product_id} />
             </div>
             <div className="right_section_product_detail">
               <Product_detail_description

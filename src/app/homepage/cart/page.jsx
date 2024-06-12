@@ -360,7 +360,7 @@ export default function Page({}) {
                     <p>{product.Product_title}</p>
                   </div>
                   <div className="cart_prodcut_container_right_section">
-                    <p>{product.Option_price}</p>
+                    <p>{Math.floor(product.Option_price)}円</p>
                     <div className="cart_quantity_container">
                       <button
                         onClick={() => sub_quantity(shopIndex, productIndex)}
@@ -386,7 +386,7 @@ export default function Page({}) {
                         />
                       </button>
                     </div>
-                    <p className="total_price_cart">{product.total}</p>
+                    <p className="total_price_cart">{product.total}円</p>
                     <button
                       onClick={(e) => {
                         e.preventDefault();
@@ -418,7 +418,9 @@ export default function Page({}) {
         </div>
         <div className="cart_checkout_container_right">
           <p>お支払い総額({total_checked_products} 製品 ):</p>
-          <p className="total_price_cart_checkout">{total_checked_price}</p>
+          <p className="total_price_cart_checkout">
+            {Math.floor(total_checked_price)}円
+          </p>
           <button onClick={handle_checkout}>支払う</button>
         </div>
       </div>

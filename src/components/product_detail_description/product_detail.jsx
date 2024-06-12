@@ -344,7 +344,7 @@ export default function Product_detail_description({ product_id }) {
               onClick={() => setIndex_option(index)}
             >
               <p>{option.Option_name}</p>
-              <p>{option.Option_price}円</p>
+              <p>{Math.floor(option.Option_price)}円</p>
             </div>
           );
         })}

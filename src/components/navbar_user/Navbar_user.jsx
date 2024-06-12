@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { getCognitoUserSub } from "@/config/cognito";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 import {
   KnockProvider,
@@ -192,6 +193,9 @@ export default function NavbarUser({}) {
                 value={search_input}
                 onChange={(e) => set_search_input(e.target.value)}
               />
+              <button className="btn_search">
+                <MagnifyingGlassIcon />
+              </button>
             </form>
             <button
               onClick={() => setIsShowCategory(true)}
