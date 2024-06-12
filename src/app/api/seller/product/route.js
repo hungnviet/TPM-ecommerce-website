@@ -112,12 +112,12 @@ export async function PUT(req) {
     productTitle,
     productDescription,
     productOptionList, // list option [{optionName,optionPrice}]
-    productVoucherList,
+    productDescriptionDetail,
     sellerID,
   } = data;
 
   const sql1 = `UPDATE PRODUCT SET Product_Title='${productTitle}', Product_Description='${productDescription}' WHERE Product_ID='${productID}' AND Seller_ID='${sellerID}'`;
-
+  const sql4 = `call Add_Product_Detail_Description(?,?,?,?)`;
   return new Promise((resolve, reject) => {
     db.query(sql1, (err, result) => {
       if (err) {
@@ -127,9 +127,9 @@ export async function PUT(req) {
         productOptionList.forEach((option, index) => {
           let sql2;
           if (option.optionisNew) {
-            sql2 = `INSERT INTO PRODUCT_OPTION (Product_ID, Option_Name, Option_Price, Quantity, Inventory, Option_number) VALUES ('${productID}', '${option.optionName}', '${option.optionPrice}', '${option.optionQuantity}',  '${option.optionInventory}', '${index}')`;
+            sql2 = `INSERT INTO PRODUCT_OPTION (Product_ID, Option_Name, Option_Price, Quantity, Option_number) VALUES ('${productID}', '${option.optionName}', '${option.optionPrice}', '${option.optionQuantity}',   '${index}')`;
           } else {
-            sql2 = `UPDATE PRODUCT_OPTION SET Option_Name='${option.optionName}', Option_Price='${option.optionPrice}', Quantity = '${option.optionQuantity}', Inventory='${option.optionInventory}' WHERE Product_ID='${productID}' AND Option_number='${index}'`;
+            sql2 = `UPDATE PRODUCT_OPTION SET Option_Name='${option.optionName}', Option_Price='${option.optionPrice}', Quantity = '${option.optionQuantity}' WHERE Product_ID='${productID}' AND Option_number='${index}'`;
           }
           db.query(sql2, (err, result) => {
             if (err) {
@@ -138,20 +138,28 @@ export async function PUT(req) {
             }
           });
         });
-        productVoucherList.forEach((voucher, index) => {
-          let sql3;
 
-          if (voucher.isNew) {
-            sql3 = `INSERT INTO PRODUCT_VOUCHER (Product_ID, Voucher_Name, Type, Discount_Value, Start, End, Seller_ID) VALUES ('${productID}', '${voucher.Voucher_name}', '${voucher.Type}', '${voucher.Discount_value}', '${voucher.Start}', '${voucher.End}', '${sellerID}')`;
+        productDescriptionDetail.forEach((description, index) => {
+          if (description.isNew) {
+            db.query(
+              sql4,
+              [productID, description.title, description.content, index],
+              (err, result) => {
+                if (err) {
+                  console.log(err);
+                  reject(NextResponse.error(err));
+                }
+              }
+            );
           } else {
-            sql3 = `UPDATE PRODUCT_VOUCHER SET Voucher_Name='${voucher.Voucher_name}', Type='${voucher.Type}', Discount_Value='${voucher.Discount_value}', Start='${voucher.Start}', End='${voucher.End}' WHERE Product_ID='${productID}' AND Voucher_ID='${index}' AND Seller_ID='${sellerID}'`;
+            const sql3 = `UPDATE PRODUCT_DETAIL_DESCRIPTION SET Content='${description.content}', Title='${description.title}' WHERE Product_ID='${productID}' AND Description_number='${index}'`;
+            db.query(sql3, (err, result) => {
+              if (err) {
+                console.log(err);
+                reject(NextResponse.error(err));
+              }
+            });
           }
-          db.query(sql3, (err, result) => {
-            if (err) {
-              console.log(err);
-              reject(NextResponse.error(err));
-            }
-          });
         });
 
         resolve(

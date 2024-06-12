@@ -1,5 +1,5 @@
 "use client";
-import "../../upload_product/page.css";
+import "./product_detail_seller.css";
 import { useState, useEffect } from "react";
 export default function Page({ params }) {
   const { product_id } = params;
@@ -31,6 +31,7 @@ export default function Page({ params }) {
         setVoucher(formattedVouchers);
         setDescription(data.Product_description);
         setSeller_id_encode(data.Seller_ID);
+        console.log();
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -49,22 +50,16 @@ export default function Page({ params }) {
         optionInventory: row.Inventory,
         optionisNew: row.isNew,
       })),
-      productVoucherList: Voucher.map((row) => ({
-        Voucher_name: row.Voucher_Name,
-        Type: row.Type,
-        Discount_value: row.Discount_Value,
-        Start: row.Start,
-        End: row.End,
+
+      productDescriptionDetail: rows2.map((row) => ({
+        title: row.title,
+        content: row.content,
         isNew: row.isNew,
       })),
       sellerID: seller_id_encode,
     };
-    description: rows2.map((row) => ({
-      title: row.title,
-      content: row.content,
-    }));
     console.log(productData.productOptionList);
-    console.log(productData.productVoucherList);
+    console.log(productData.productDescriptionDetail);
 
     fetch(`/api/seller/product`, {
       method: "PUT",
@@ -86,25 +81,7 @@ export default function Page({ params }) {
         console.error("Error:", error);
       });
   };
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    const fileReaders = files.map((file) => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    });
 
-    Promise.all(fileReaders)
-      .then((newImages) => {
-        setImages((prevImages) => [...prevImages, ...newImages]);
-      })
-      .catch((error) => {
-        console.error("Error reading files:", error);
-      });
-  };
   const addVoucher = () => {
     setVoucher([
       ...Voucher,
@@ -156,7 +133,7 @@ export default function Page({ params }) {
     setRows(newRows);
   };
   const addRow2 = () => {
-    setRows2([...rows2, { title: "", content: "" }]);
+    setRows2([...rows2, { title: "", content: "", isNew: true }]);
   };
 
   const updateRow2 = (index, field, value) => {
@@ -278,7 +255,9 @@ export default function Page({ params }) {
               ))}
             </tbody>
           </table>
-          <button onClick={addVoucher}>Add new Voucher</button>
+          <button className="addrowbutton" onClick={addVoucher}>
+            Add new Voucher
+          </button>
         </div>
 
         <div className="input_price">
@@ -323,27 +302,46 @@ export default function Page({ params }) {
                   </td>
 
                   <td>
-                    <div>
-                      <input
-                        type="text"
-                        value={row.Quantity}
-                        onChange={(e) =>
-                          updateRow(index, "Quantity", e.target.value)
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <button
+                        className="buttonquantity"
+                        onClick={() =>
+                          updateRow(index, "Quantity", Number(row.Quantity) + 1)
                         }
-                        placeholder="Ex: 100"
-                      />
+                      >
+                        +
+                      </button>
+                      <span style={{ padding: "10px", fontSize: "18px" }}>
+                        {row.Quantity}
+                      </span>
+                      <button
+                        className="buttonquantity"
+                        onClick={() =>
+                          updateRow(index, "Quantity", Number(row.Quantity) - 1)
+                        }
+                      >
+                        -
+                      </button>
                     </div>
                   </td>
-
-                  <td>
-                    <button onClick={() => deleteRow(index)}>Delete</button>
-                  </td>
+                  {row.isNew && (
+                    <td>
+                      <button
+                        className="addrowbutton"
+                        onClick={() => deleteRow(index)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <button onClick={addRow}>Add row</button>
+          <button className="addrowbutton" onClick={addRow}>
+            Add row
+          </button>
         </div>
         <div className="input_description">
           <h3>Description</h3>
@@ -363,37 +361,47 @@ export default function Page({ params }) {
                 </tr>
               </thead>
               <tbody>
-                {rows2.map((row, index) => (
-                  <tr key={index}>
-                    <td>
-                      <input
-                        type="text"
-                        value={row.title}
-                        onChange={(e) =>
-                          updateRow2(index, "title", e.target.value)
-                        }
-                        placeholder="Ex: 100"
-                      />
-                    </td>
-                    <td></td>
-                    <td>
-                      <input
-                        type="text"
-                        value={row.content}
-                        onChange={(e) =>
-                          updateRow2(index, "content", e.target.value)
-                        }
-                        placeholder="Ex: package of 1.5 kg"
-                      />
-                    </td>
-                    <td>
-                      <button onClick={() => deleteRow2(index)}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
+                {rows2.length > 0 &&
+                  rows2.map((row, index) => (
+                    <tr key={index}>
+                      <td>
+                        <input
+                          type="text"
+                          value={row.Title}
+                          onChange={(e) =>
+                            updateRow2(index, "title", e.target.value)
+                          }
+                          placeholder="Ex: 100"
+                        />
+                      </td>
+                      <td></td>
+                      <td>
+                        <input
+                          type="text"
+                          value={row.Content}
+                          onChange={(e) =>
+                            updateRow2(index, "content", e.target.value)
+                          }
+                          placeholder="Ex: package of 1.5 kg"
+                        />
+                      </td>
+                      {row.isNew && (
+                        <td>
+                          <button
+                            className="addrowbutton"
+                            onClick={() => deleteRow2(index)}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
               </tbody>
             </table>
-            <button onClick={addRow2}>Add row</button>
+            <button className="addrowbutton" onClick={addRow2}>
+              Add row
+            </button>
           </div>
         </div>
         <div>
