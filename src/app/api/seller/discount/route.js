@@ -29,7 +29,7 @@ export async function GET(req) {
   const searchParams = new URLSearchParams(url.searchParams);
   const product_id = searchParams.get("product_id");
 
-  const sql = `SELECT * FROM PRODUCT_VOUCHER WHERE Product_ID = '${product_id}'`;
+  const sql = `SELECT * FROM DISCOUNT WHERE Product_ID = '${product_id}'`;
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {
       if (err) {

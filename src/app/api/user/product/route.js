@@ -21,7 +21,7 @@ export async function GET(req) {
               ) as IsLiked;`;
 
   const sql7 = `SELECT * FROM PRODUCT_DETAIL_DESCRIPTION WHERE Product_ID=${product_id}`;
-  const sql18 = `SELECT * FROM PRODUCT_VOUCHER WHERE Product_ID = '${product_id}'`;
+  const sql18 = `SELECT * FROM DISCOUNT WHERE Product_ID = '${product_id}'`;
 
   return new Promise((resolve, reject) => {
     db.query(sql1, (err, result1) => {
@@ -74,7 +74,7 @@ export async function GET(req) {
                                       likes: result5[0].Likes,
                                       isLiked: result6[0].IsLiked,
                                       description: result7,
-                                      voucher: result8, // add this line
+                                      discount: result8, // add this line
                                     };
                                     resolve(NextResponse.json(product));
                                   }

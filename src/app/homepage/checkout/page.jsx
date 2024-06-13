@@ -121,8 +121,11 @@ export default function CheckoutPage({}) {
       const response = await fetch(
         `/api/user/cart?user_id=${encodeURIComponent(user_id)}`
       );
+      let extraShops = [];
+
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         const cartShopsPromises = data.checkout.map(async (shop) => {
           const sellerId = shop[0].Seller_ID;
           const shopResponse = await fetch(
@@ -147,13 +150,40 @@ export default function CheckoutPage({}) {
           const shippingdata = await shippingmethod.json();
 
           let totalshopprice = 0;
+          let freeship = 0;
+          let priceforfreeship = 0;
           const products = shop.map((item) => {
+            priceforfreeship += item.Quantity * parseFloat(item.Option_price);
             return {
               ...item,
               check: false,
               total: item.Quantity * parseFloat(item.Option_price),
             };
           });
+          if (priceforfreeship >= 50000) {
+            freeship = 1;
+          } else {
+            products.forEach((product, index) => {
+              if (
+                product.Condition_value &&
+                product.Quantity >= product.Condition_value
+              ) {
+                let newShop = {
+                  sellerId: sellerId,
+                  Shop_name: shopData.user.Shop_name,
+                  check: false,
+                  product: [product],
+                  shippingmethod: shippingdata,
+                  paymentmethod: paymentdata,
+                  vouchers: voucherdata,
+                  totalshopprice,
+                  freeship: 1,
+                };
+                extraShops.push(newShop);
+                products.splice(index, 1);
+              }
+            });
+          }
 
           return {
             sellerId: sellerId,
@@ -164,9 +194,16 @@ export default function CheckoutPage({}) {
             paymentmethod: paymentdata,
             vouchers: voucherdata,
             totalshopprice,
+            freeship: freeship,
           };
         });
-        const cartShops = await Promise.all(cartShopsPromises);
+
+        let cartShops = await Promise.all(cartShopsPromises);
+        cartShops = cartShops.filter((shop) => shop.product.length > 0);
+
+        extraShops.forEach((extraShop) => {
+          cartShops.push(extraShop);
+        });
         setCart({ shop: cartShops });
         console.log(cartShops);
       } else {
@@ -259,7 +296,7 @@ export default function CheckoutPage({}) {
     let total = 0;
     if (cart.shop && Array.isArray(cart.shop)) {
       cart.shop.forEach((shop, index) => {
-        let shopTotal = shop.product.reduce((a, b) => a + b.total, 0);
+        let shopTotal = shop.product?.reduce((a, b) => a + b.total, 0);
         let shipmentCost = selectedShipment[index]?.price || 0;
         if (selectedVoucher[index]?.type === "Freeship") {
           shipmentCost = 0;
@@ -327,7 +364,7 @@ export default function CheckoutPage({}) {
           Note: notes[shopIndex],
           Shipping_company_ID: selectedShipment[shopIndex].id,
           Payment_method_id: selectedPaymentMethod[shopIndex].id,
-          DiscountType: selectedVoucher[shopIndex]?.type || "Discount",
+          DiscountType: selectedVoucher[shopIndex]?.type,
           Discount_percentage: selectedVoucher[shopIndex]?.discount || 0,
           Total_price: calculateShopTotalPrice(shop, shopIndex),
         };
@@ -487,6 +524,11 @@ export default function CheckoutPage({}) {
             <div className="shop_checkout" key={index}>
               <div className="shop_checkout_header">
                 <p className="s ">{shop.Shop_name}</p>
+                {shop.freeship === 1 && (
+                  <p style={{ color: "red" }}>
+                    You get freeship for products in this order
+                  </p>
+                )}
               </div>
               {shop.product.map((product, productIndex) => {
                 return (
@@ -605,8 +647,12 @@ export default function CheckoutPage({}) {
                         <li
                           key={option.Company_ID}
                           onClick={() => {
+                            console.log("shop:", cart.shop[currentShopIndex]);
+
                             const cost =
-                              shop.freeship === 1 ? 0 : parseInt(option.Price);
+                              cart.shop[currentShopIndex].freeship === 1
+                                ? 0
+                                : parseInt(option.Price);
 
                             handleShipmentSelect(
                               option.Company_ID,
@@ -631,18 +677,18 @@ export default function CheckoutPage({}) {
               {showVoucherModal && (
                 <div className="modal">
                   <div className="modal-content">
-                    <h3>Chọn phuongw thuc thanh toan</h3>
+                    <h3>Chọn Voucher</h3>
                     <ul>
                       {currentVoucher.map((option, index) => (
                         <li
                           key={index}
-                          onClick={() =>
+                          onClick={() => {
                             handleVoucherSelect(
                               option.Voucher_Name,
                               option.Discount_Value,
                               option.Type
-                            )
-                          }
+                            );
+                          }}
                         >
                           <strong>{option.Voucher_Name}</strong>
                           <div>{option.Type}</div>
@@ -663,18 +709,20 @@ export default function CheckoutPage({}) {
               {showPaymentModal && (
                 <div className="modal">
                   <div className="modal-content">
-                    <h3>Chọn phuongw thuc thanh toan</h3>
+                    <h3>Chọn phuong thuc thanh toan</h3>
                     <ul>
                       {currentPayment.map((option) => (
                         <li
                           key={option.Method_ID}
-                          onClick={() =>
+                          onClick={() => {
+                            console.log("shop:", shop);
+
                             handlePaymentMethodSelect(
                               option.Method_ID,
                               option.Method_name,
                               option.Note
-                            )
-                          }
+                            );
+                          }}
                         >
                           <strong>{option.Method_name}</strong>
                           <div>{option.Note}</div>

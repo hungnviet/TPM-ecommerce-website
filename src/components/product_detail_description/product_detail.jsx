@@ -332,6 +332,11 @@ export default function Product_detail_description({ product_id }) {
         </div>
       </div>
       <div className="option_container_product_detail">
+        {product.discount && product.discount.length > 0 && (
+          <div className="product_detail_discount">
+            <p>Buy {product.discount[0].Condition_value} to get Freeship!</p>
+          </div>
+        )}
         {option.map((option, index) => {
           return (
             <div
@@ -384,7 +389,7 @@ export default function Product_detail_description({ product_id }) {
                 fontWeight: "bold",
               }}
             >
-              Total like : {product.likes}
+              {product.likes}
             </p>
             <button
               className="btn_like_product_detail"

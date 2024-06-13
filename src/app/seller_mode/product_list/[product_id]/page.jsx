@@ -9,7 +9,7 @@ export default function Page({ params }) {
   const [rows2, setRows2] = useState([{}]);
   const [images, setImages] = useState([]);
   const [description, setDescription] = useState("");
-  const [Voucher, setVoucher] = useState([{}]);
+  const [Discount, setDiscount] = useState([{}]);
   const [seller_id_encode, setSeller_id_encode] = useState("");
   const [additionalProductQuantity, setAdditionalProductQuantity] = useState(
     []
@@ -21,18 +21,13 @@ export default function Page({ params }) {
       .then((data) => {
         console.log(data);
 
-        const formattedVouchers = data.voucher.map((v) => ({
-          ...v,
-          Start: new Date(v.Start).toISOString(),
-          End: new Date(v.End).toISOString(),
-        }));
         setProduct(data);
         setName(data.Product_title);
         setRows(data.options);
         setAdditionalProductQuantity(new Array(data.options.length).fill(0)); // Assuming you want to initialize with 0s
         setRows2(data.description);
         setImages(data.images);
-        setVoucher(formattedVouchers);
+        setDiscount(data.discount);
         setDescription(data.Product_description);
         setSeller_id_encode(data.Seller_ID);
         console.log();
@@ -59,8 +54,13 @@ export default function Page({ params }) {
         content: row.content,
         isNew: row.isNew,
       })),
+      productDiscount: Discount.map((row) => ({
+        isNew: row.isNew,
+        Condition_value: row.Condition_value,
+      })),
       sellerID: seller_id_encode,
     };
+
     console.log(productData.productOptionList);
     console.log(productData.productDescriptionDetail);
 
@@ -85,38 +85,40 @@ export default function Page({ params }) {
       });
   };
 
-  const addVoucher = () => {
-    setVoucher([
-      ...Voucher,
+  const addDiscount = () => {
+    setDiscount([
+      ...Discount,
       {
-        Voucher_Name: "",
+        Discount_Name: "",
         Type: "",
         Discount_Value: "",
-        Start: "",
-        End: "",
         isNew: true,
       },
     ]);
   };
-  const updateVoucher = (index, field, value) => {
-    if (Voucher && Voucher[index]) {
-      const newRows = [...Voucher];
+  const updateDiscount = (index, field, value) => {
+    if (Discount && Discount[index]) {
+      const newRows = [...Discount];
       if (field === "Start" || field === "End") {
         newRows[index][field] = new Date(value);
       } else {
         newRows[index][field] = value;
       }
-      setVoucher(newRows);
+      setDiscount(newRows);
     } else {
-      console.error("Voucher or voucher index is undefined:", Voucher, index);
+      console.error(
+        "Discount or Discount index is undefined:",
+        Discount,
+        index
+      );
     }
-    console.log("Current Voucher state:", Voucher);
+    console.log("Current Discount state:", Discount);
   };
 
-  const deleteVoucher = (index) => {
-    const newRows = [...Voucher];
+  const deleteDiscount = (index) => {
+    const newRows = [...Discount];
     newRows.splice(index, 1);
-    setVoucher(newRows);
+    setDiscount(newRows);
   };
   const addRow = () => {
     setRows([
@@ -187,104 +189,75 @@ export default function Page({ params }) {
         </div>
 
         <div className="input_price">
-          <h3>Voucher Management</h3>
+          <h3>Discount</h3>
 
-          <table className="sellerproduct">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Discount Value</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Voucher.map((row, index) => (
-                <tr key={index}>
-                  <td>
-                    <div>
-                      <input
-                        type="text"
-                        value={row.Voucher_Name}
-                        onChange={(e) =>
-                          updateVoucher(index, "Voucher_Name", e.target.value)
-                        }
-                        placeholder="Ex: Flash Sale"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div>
-                      <select
-                        id="type"
-                        name="type"
-                        className="voucher-select"
-                        value={row.Type}
-                        onChange={(e) =>
-                          updateVoucher(index, "Type", e.target.value)
-                        }
-                      >
-                        <option value="Ship">Ship</option>
-                        <option value="Freeship">Freeship</option>
-                        <option value="Discount">Discount</option>
-                      </select>
-                    </div>
-                  </td>
-
-                  <td>
-                    <div>
-                      <input
-                        type="text"
-                        value={row.Discount_Value}
-                        onChange={(e) =>
-                          updateVoucher(index, "Discount_Value", e.target.value)
-                        }
-                        placeholder="Ex: 30%"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div>
-                      <input
-                        type="date"
-                        value={
-                          row.Start
-                            ? new Date(row.Start).toISOString().split("T")[0]
-                            : ""
-                        }
-                        onChange={(e) =>
-                          updateVoucher(index, "Start", e.target.value)
-                        }
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div>
-                      <input
-                        type="date"
-                        value={
-                          row.End
-                            ? new Date(row.End).toISOString().split("T")[0]
-                            : ""
-                        }
-                        onChange={(e) =>
-                          updateVoucher(index, "End", e.target.value)
-                        }
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <button onClick={() => deleteVoucher(index)}>Delete</button>
-                  </td>
+          {Discount && Discount.length > 0 && (
+            <table className="sellerproduct">
+              <thead>
+                <tr>
+                  <th>Discount Type</th>
+                  <th>Quantity need</th>
+                  <th>Description</th>
+                  <th>Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <button className="addrowbutton" onClick={addVoucher}>
-            Add new Voucher
-          </button>
+              </thead>
+              <tbody>
+                {Discount.map((row, index) => (
+                  <tr key={index}>
+                    <td>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        Freeship
+                      </div>
+                    </td>
+
+                    <td>
+                      <div>
+                        <input
+                          type="number"
+                          value={row.Condition_value}
+                          onChange={(e) =>
+                            updateDiscount(
+                              index,
+                              "Condition_value",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Ex: 5"
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <div>
+                        The customer will get Freeship if they buy{" "}
+                        {row.Condition_value} or more!
+                      </div>
+                    </td>
+
+                    {row.isNew && (
+                      <td>
+                        <button
+                          className="addrowbutton"
+                          onClick={() => deleteDiscount(index)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {(Discount.length == 0 || !Discount) && (
+            <button className="addrowbutton" onClick={addDiscount}>
+              Add new Discount
+            </button>
+          )}
         </div>
 
         <div className="input_price">

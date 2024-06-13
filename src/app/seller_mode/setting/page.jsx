@@ -1,7 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
+import AWS from "aws-sdk";
+
 import "./setting.css";
 import Image from "next/image";
+AWS.config.update({
+  accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+  region: process.env.NEXT_PUBLIC_AWS_REGION,
+});
 function Modal({ isOpen, onClose, onSave, children }) {
   if (!isOpen) return null;
 
@@ -27,6 +34,9 @@ export default function Page() {
     img: "",
     address: "",
   });
+  const s3 = new AWS.S3();
+  const [images, setImages] = useState([]);
+
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
   const [showShippingMethods, setShowShippingMethods] = useState(false);
   const [paymentMethods, setPaymentMethods] = useState([]);
@@ -38,6 +48,10 @@ export default function Page() {
   const [modalOpen2, setModalOpen2] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [Discount, setDiscount] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
+  const [imageCount, setImageCount] = useState(0);
 
   const [editShop, setEditShop] = useState({
     shopname: "",
@@ -75,7 +89,17 @@ export default function Page() {
         })
         .catch((err) => console.log(err));
     }
+    fetchImageCount();
   }, [user_id]);
+  const fetchImageCount = async () => {
+    try {
+      const response = await fetch("/api/seller/product", { method: "GET" });
+      const data = await response.json();
+      setImageCount(data.count);
+    } catch (error) {
+      console.error("Failed to fetch image count:", error);
+    }
+  };
   async function fetchMethods() {
     const paymentResponse = await fetch(
       `/api/user/payment_method_of_seller?seller_id=${user_id}`
@@ -89,6 +113,32 @@ export default function Page() {
     const shippingData = await shippingResponse.json();
     setShippingMethods(shippingData);
   }
+  const checkAndGenerateFileName = async (s3, bucket, originalName, index) => {
+    let newName = `tpmec${imageCount + index + 1}`;
+    return newName;
+  };
+  const handleImageChange = (e) => {
+    const newSelectedFiles = Array.from(e.target.files);
+    setSelectedFiles((prevFiles) => [...prevFiles, ...newSelectedFiles]);
+
+    const fileReaders = newSelectedFiles.map((file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(fileReaders)
+      .then((newImages) => {
+        setImages((prevImages) => [...prevImages, ...newImages]);
+      })
+      .catch((error) => {
+        console.error("Error reading files:", error);
+      });
+  };
+
   async function fetchVouchers() {
     const voucherResponse = await fetch(
       `/api/seller/vouchers?seller_id=${user_id}`
@@ -178,6 +228,34 @@ export default function Page() {
     setModalOpenVoucher(false);
   };
   async function updateUserInformation() {
+    const imageUrls = await Promise.all(
+      selectedFiles.map(async (file, index) => {
+        const newName = await checkAndGenerateFileName(
+          s3,
+          "tpms3",
+          file.name,
+          index
+        );
+        const uploadParams = {
+          Bucket: "tpms3",
+          Key: newName,
+          Body: file,
+          ACL: "public-read",
+        };
+
+        return s3
+          .upload(uploadParams)
+          .promise()
+          .then((data) => data.Location)
+          .catch((err) => {
+            console.error("Error uploading file:", err);
+            return null;
+          });
+      })
+    );
+    const validImageUrls = imageUrls.filter((url) => url !== null);
+    console.log(validImageUrls);
+
     const response = await fetch(`/api/seller/information`, {
       method: "PUT",
       headers: {
@@ -186,12 +264,13 @@ export default function Page() {
       body: JSON.stringify({
         shopName: editShop.shopname,
         User_ID: user_id,
-        shopImg: editShop.img,
+        shopImg: validImageUrls[0],
       }),
     });
     if (!response.ok) {
       console.log("Failed to update shop information");
     }
+    setSelectedFiles([]);
   }
 
   function handleDeleteMethod(type, id) {
@@ -465,17 +544,7 @@ export default function Page() {
           </div>
           <div>
             <label htmlFor="shopImage">Image URL:</label>
-            <input
-              type="text"
-              id="shopImage"
-              value={editShop.img}
-              onChange={(e) =>
-                setEditShop((prevShop) => ({
-                  ...prevShop,
-                  img: e.target.value,
-                }))
-              }
-            />
+            <input type="file" multiple onChange={handleImageChange} />
           </div>
         </Modal>
         <button

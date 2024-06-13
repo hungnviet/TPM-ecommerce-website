@@ -66,54 +66,69 @@ export default function Page() {
   return (
     <div className="order_management_page_container">
       <h3>注文管理</h3>
-
-      <div className="order_management_in4">
-        <div className="field_bar_order_management">
-          <div>作成日</div>
-          <div>販売者名</div>
-          <div>合計金額</div>
-          <div>アイテムの数量</div>
-          <div>状態</div>
-          <div>支払方法</div>
-          <div>運送会社</div>
-          <div>行動</div>
-        </div>
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {" "}
+      {isLoading ? (
+        <div className="loader_container">
           <BeatLoader color={"#36d7b7"} loading={isLoading} size={15} />
         </div>
-        {orders.map((item, index) => (
-          <div className="field_bar_order_management" key={index}>
-            <div>{new Date(item.Order_date).toISOString().split("T")[0]}</div>
-            <div>{shopNames[item.Seller_ID]}</div>
-            <div>{Math.floor(item.Total_price)}円</div>
-            <div>{item.Total_quantity}</div>
-            <div>{item.Status}</div>
-            <div>
-              {paymentMethods[item.Payment_method_id - 1]?.Method_name}
-            </div>{" "}
-            <div>
-              {shippingCompanies[item.Shipping_company_ID - 1]?.Company_name}
-            </div>{" "}
-            <div>
-              <button
-                onClick={() => {
-                  route.push(`/homepage/order_managment/${item.Order_ID}`);
-                }}
-              >
-                ビュー
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+      ) : (
+        <div className="table_scrollable">
+          <table className="order_table">
+            <thead>
+              <tr>
+                <th>作成日</th>
+                <th>販売者名</th>
+                <th>合計金額</th>
+                <th>アイテムの数量</th>
+                <th>状態</th>
+                <th>支払方法</th>
+                <th>運送会社</th>
+                <th>プロモーション</th>
+                <th>行動</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((item, index) => (
+                <tr key={index}>
+                  <td>
+                    {new Date(item.Order_date).toISOString().split("T")[0]}
+                  </td>
+                  <td>{shopNames[item.Seller_ID] || "Loading..."}</td>
+                  <td>{Math.floor(item.Total_price)}円</td>
+                  <td>{item.Total_quantity}</td>
+                  <td>{item.Status}</td>
+                  <td>
+                    {paymentMethods[item.Payment_method_id - 1]?.Method_name}
+                  </td>
+                  <td>
+                    {
+                      shippingCompanies[item.Shipping_company_ID - 1]
+                        ?.Company_name
+                    }
+                  </td>
+                  <td>
+                    {item.DiscountType === "Discount"
+                      ? `${Math.floor(
+                          item.Discount_percentage
+                        )}% プロモーション`
+                      : item.DiscountType === "Freeship"
+                      ? "フリーシップ"
+                      : "プロモーションはありません"}
+                  </td>
+                  <td>
+                    <button
+                      onClick={() =>
+                        route.push(`/homepage/order_managment/${item.Order_ID}`)
+                      }
+                    >
+                      ビュー
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

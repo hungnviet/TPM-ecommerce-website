@@ -113,6 +113,7 @@ export async function PUT(req) {
     productDescription,
     productOptionList, // list option [{optionName,optionPrice}]
     productDescriptionDetail,
+    productDiscount,
     sellerID,
   } = data;
 
@@ -160,6 +161,20 @@ export async function PUT(req) {
               }
             });
           }
+        });
+        productDiscount.forEach((option) => {
+          let sql4;
+          if (option.isNew) {
+            sql4 = `INSERT INTO DISCOUNT (Product_ID, Seller_ID, Type, Condition_type, Condition_value) VALUES ('${productID}', '${sellerID}', 'Freeship', 'Quantity', '${option.Condition_value}')`;
+          } else {
+            sql4 = `UPDATE DISCOUNT SET  Condition_value = '${option.Condition_value}' WHERE Product_ID='${productID}'`;
+          }
+          db.query(sql4, (err, result) => {
+            if (err) {
+              console.log(err);
+              reject(NextResponse.error(err));
+            }
+          });
         });
 
         resolve(

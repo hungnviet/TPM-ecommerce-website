@@ -43,3 +43,62 @@
   height: 50vh;
   overflow-y: scroll;
 }
+.order_management_page_container {
+  width: 100%;
+  max-width: 1200px; /* Adjust the width as needed */
+  margin: auto;
+  overflow: hidden;
+}
+
+.order_management_page_container {
+  width: 100%; /* Use full width of the viewport */
+  max-width: none; /* Remove max-width restriction */
+  margin: 20px auto; /* Consistent margin for top and bottom */
+  padding: 20px; /* Padding around the container */
+}
+
+.table_scrollable {
+  overflow-x: auto; /* Enable horizontal scrolling */
+  max-height: 60vh; /* Larger vertical space */
+  min-height: 500px; /* Minimum height to ensure visibility */
+}
+
+.order_table {
+  width: 100%; /* Full width of its container */
+  min-width: 100%; /* Minimum width to avoid squeezed content */
+  border-collapse: collapse;
+  margin-top: 20px; /* Space above the table */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+}
+
+.order_table th,
+.order_table td {
+  padding: 15px; /* Increased padding for better readability */
+  text-align: left;
+  border: 1px solid #ddd; /* Light gray border */
+}
+
+.order_table th {
+  background-color: #4caf50; /* Green background for headers */
+  color: white;
+  font-size: 16px; /* Larger font size */
+}
+
+.order_table tbody tr {
+  font-size: 14px; /* Slightly larger font size for body */
+}
+
+.order_table tbody tr:nth-child(odd) {
+  background-color: #f2f2f2; /* Zebra striping for rows */
+}
+
+.order_table tbody tr:hover {
+  background-color: #ddd; /* Hover effect for rows */
+}
+
+.loader_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px; /* Space for the loader */
+}
