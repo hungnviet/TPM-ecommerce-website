@@ -11,6 +11,9 @@ export default function Page({ params }) {
   const [description, setDescription] = useState("");
   const [Voucher, setVoucher] = useState([{}]);
   const [seller_id_encode, setSeller_id_encode] = useState("");
+  const [additionalProductQuantity, setAdditionalProductQuantity] = useState(
+    []
+  );
 
   useEffect(() => {
     fetch(`/api/user/product?product_id=${product_id}`)
@@ -26,6 +29,7 @@ export default function Page({ params }) {
         setProduct(data);
         setName(data.Product_title);
         setRows(data.options);
+        setAdditionalProductQuantity(new Array(data.options.length).fill(0)); // Assuming you want to initialize with 0s
         setRows2(data.description);
         setImages(data.images);
         setVoucher(formattedVouchers);
@@ -47,7 +51,6 @@ export default function Page({ params }) {
         optionName: row.Option_name,
         optionPrice: row.Option_price,
         optionQuantity: row.Quantity,
-        optionInventory: row.Inventory,
         optionisNew: row.isNew,
       })),
 
@@ -148,17 +151,40 @@ export default function Page({ params }) {
     setRows2(newRows);
   };
 
+  function handleAddQuantityToExistenceOption(index) {
+    updateRow(
+      index,
+      "Quantity",
+      Number(rows[index].Quantity) + Number(additionalProductQuantity[index])
+    );
+
+    setAdditionalProductQuantity((prev) =>
+      prev.map((item, i) => (i === index ? 0 : item))
+    );
+  }
+
   return (
     <div className="upload_product_big_container">
       <div className="upload_product_container">
         <div className="input_name">
-          <h3>Name</h3>
-          <input
-            type="text"
-            value={name ? name : ""}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <div>
+            <h3>Name</h3>
+            <input
+              type="text"
+              value={name ? name : ""}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div>
+            <h3>Category</h3>
+            <p>{product?.Category_ID}</p>
+          </div>
+          <div>
+            <h3>Total Sale</h3>
+            <p>{product?.TotalOrder} Orders</p>
+          </div>
         </div>
+
         <div className="input_price">
           <h3>Voucher Management</h3>
 
@@ -278,13 +304,14 @@ export default function Page({ params }) {
                   <td>
                     <div>
                       <input
-                        type="text"
+                        type="Number"
                         value={row.Option_price}
                         onChange={(e) =>
                           updateRow(index, "Option_price", e.target.value)
                         }
-                        placeholder="Ex: 100"
+                        placeholder="Ex: 100¥"
                       />
+                      ¥
                     </div>
                   </td>
                   <td></td>
@@ -302,27 +329,86 @@ export default function Page({ params }) {
                   </td>
 
                   <td>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <button
+                    {row.isNew ? (
+                      <div>
+                        <input
+                          type="Number"
+                          placeholder="Enter the number of product in your stock"
+                          value={row.Quantity}
+                          onChange={(e) =>
+                            updateRow(index, "Quantity", e.target.value)
+                          }
+                        ></input>
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          flexDirection: "column",
+                        }}
+                      >
+                        {/* <button
                         className="buttonquantity"
                         onClick={() =>
                           updateRow(index, "Quantity", Number(row.Quantity) + 1)
                         }
                       >
                         +
-                      </button>
-                      <span style={{ padding: "10px", fontSize: "18px" }}>
-                        {row.Quantity}
-                      </span>
-                      <button
+                      </button> */}
+                        <div>
+                          Total goods entered into inventory from the beginning:{" "}
+                          {row.Quantity}
+                        </div>
+                        <div>
+                          Total goods sold from the beginning:{" "}
+                          {row.QuantityOfGoodsSold}
+                        </div>
+                        <div>
+                          Total goods currenly exist in inventory:{" "}
+                          {row.Quantity - row.QuantityOfGoodsSold}
+                        </div>
+                        <div>Additional goods added to inventory:</div>
+                        <div
+                          style={{
+                            display: "flex",
+                            columnGap: "10px",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <input
+                            type="Number"
+                            placeholder="The quantity of products you have added to inventory."
+                            value={additionalProductQuantity[index]}
+                            onChange={(e) =>
+                              setAdditionalProductQuantity((prev) =>
+                                prev.map((item, i) =>
+                                  i === index ? e.target.value : item
+                                )
+                              )
+                            }
+                          ></input>
+                          <button
+                            className="addrowbutton"
+                            onClick={() =>
+                              handleAddQuantityToExistenceOption(index)
+                            }
+                          >
+                            Add
+                          </button>
+                        </div>
+
+                        {/* <button
                         className="buttonquantity"
                         onClick={() =>
                           updateRow(index, "Quantity", Number(row.Quantity) - 1)
                         }
                       >
                         -
-                      </button>
-                    </div>
+                      </button> */}
+                      </div>
+                    )}
                   </td>
                   {row.isNew && (
                     <td>

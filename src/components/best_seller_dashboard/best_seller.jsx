@@ -1,26 +1,22 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import "./best_seller.css";
 import Image from "next/image";
-export default function BestSeller({ productId }) {
-  const [productData, setProductData] = useState({});
-  // useEffect(() => {
-  //   // get product data by productId
-  //   // setProductData
-  // }, [productId]);
+export default function BestSeller({ product_id, product_name, sales, image }) {
+  const router = useRouter();
+  function onClick() {
+    router.push(`/seller_mode/product_list/${product_id}`);
+  }
   return (
-    <div className="best_seller_tag">
+    <button className="best_seller_tag" onClick={onClick}>
       <div className="best_seller_tag_img">
-        <Image src="/product_1.webp" fill="true" alt="img product" />
+        <Image src={image} fill="true" alt="img product" />
       </div>
-      <div className="best_seller_tag_in4">
-        <p>Apple Red </p>
-        <p>10 YEN</p>
+      <div className="best_seller_product_infor">
+        <p style={{ textAlign: "start" }}>{product_name}</p>
+        <p style={{ fontWeight: "bold" }}>販売数 : {sales}</p>
       </div>
-      <div className="best_seller_tag_sale_in4">
-        <p>200 YEN</p>
-        <p>20 sales</p>
-      </div>
-    </div>
+    </button>
   );
 }

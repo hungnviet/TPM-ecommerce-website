@@ -11,6 +11,7 @@ import { BeatLoader } from "react-spinners";
 export default function Page() {
   const currentDate = new Date();
   const [user_id, setUser_id] = useState(null);
+  const [bestSeller, setBestSeller] = useState([]); // [ { product_id, product_name, sales }, ...
   const [totalOrders, setTotalOrders] = useState(0);
   const [completedOrders, setCompletedOrders] = useState(0);
   const [processingOrders, setProcessingOrders] = useState(0);
@@ -64,6 +65,13 @@ export default function Page() {
             img: data.user.Shop_image,
           });
           setSubLoading2(false);
+        })
+        .catch((err) => console.log(err));
+
+      fetch(`/api/seller/bestSeller?seller_id=${user_id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setBestSeller(data);
         })
         .catch((err) => console.log(err));
     }
@@ -231,7 +239,17 @@ export default function Page() {
                 <div className="best_seller_dashboard_header">
                   <h3>Best seller</h3>
                 </div>
-                <div className="best_seller_content"></div>
+                <div className="best_seller_content">
+                  {bestSeller.map((item, index) => (
+                    <BestSeller
+                      key={index}
+                      product_id={item.Product_ID}
+                      product_name={item.Product_title}
+                      sales={item.TotalOrder}
+                      image={item.Image_url}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
