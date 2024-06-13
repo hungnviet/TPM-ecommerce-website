@@ -65,7 +65,7 @@ export default function Page() {
   }
   return (
     <div className="order_management_page_container">
-      <h3>Order management</h3>
+      <h3>注文管理</h3>
 
       <div className="order_management_in4">
         <div className="field_bar_order_management">
@@ -93,7 +93,7 @@ export default function Page() {
           <div className="field_bar_order_management" key={index}>
             <div>{new Date(item.Order_date).toISOString().split("T")[0]}</div>
             <div>{shopNames[item.Seller_ID]}</div>
-            <div>{item.Total_price}</div>
+            <div>{Math.floor(item.Total_price)}円</div>
             <div>{item.Total_quantity}</div>
             <div>{item.Status}</div>
             <div>

@@ -2,7 +2,7 @@
 import "./checkout.css";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Knock } from "@knocklabs/node";
 import { getCognitoUserSub } from "@/config/cognito";
 import { toast, ToastContainer } from "react-toastify";
@@ -376,6 +376,24 @@ export default function CheckoutPage({}) {
 
     route.push(`/homepage/order_managment`);
   }
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    console.log(pathname);
+  }, [pathname]);
+
+  const ref = useRef(pathname);
+  useEffect(() => {
+    console.log(
+      `Previous Pathname: ${ref.current}, Current Pathname: ${pathname}`
+    );
+    if (ref.current !== pathname && ref.current === "/homepage/checkout") {
+      alert("The pathname has changed!");
+    }
+    ref.current = pathname;
+  }, [pathname]);
+
   return (
     <div className="checkout_page_container">
       <ToastContainer />
@@ -387,7 +405,7 @@ export default function CheckoutPage({}) {
             width={20}
             height={20}
           />
-          <p>Dia chi nhan hang</p>
+          <p>配送先住所</p>
         </div>
         <div className="information_address_checkout">
           {isEditing ? (
@@ -454,12 +472,12 @@ export default function CheckoutPage({}) {
       </div>
       <div className="field_bar_checkout">
         <div>
-          <p>San Pham</p>
+          <p>製品</p>
         </div>
         <div>
-          <p>Don gia</p>
-          <p>So luong</p>
-          <p>Thanh tien</p>
+          <p>価格</p>
+          <p>量</p>
+          <p>合計金額</p>
         </div>
       </div>
       {cart.shop &&
@@ -501,9 +519,9 @@ export default function CheckoutPage({}) {
               })}
               <div className="checkout_information_shipping">
                 <div>
-                  <p>Ghi chu</p>
+                  <p>注記</p>
                   <textarea
-                    placeholder="lời nhắn cho người bán"
+                    placeholder="売り手へのメッセージ"
                     maxLength="200"
                     value={notes[index]}
                     onChange={(e) => handleNoteChange(index, e.target.value)}
@@ -511,9 +529,9 @@ export default function CheckoutPage({}) {
                 </div>
                 <div style={{ display: "flext", flexDirection: "column" }}>
                   <div className="shipping_selection">
-                    <p>Đơn vị vận chuyển</p>
+                    <p>出荷単位</p>
                     <button onClick={() => openShipmentModal(index)}>
-                      Chọn vận chuyển
+                      出荷単位の選択
                     </button>
                     <p className="shipment_status">
                       {selectedShipment[index] ? (
@@ -533,9 +551,9 @@ export default function CheckoutPage({}) {
                     </p>
                   </div>
                   <div className="shipping_selection">
-                    <p>Voucher khuyen mai</p>
+                    <p>プロモーション</p>
                     <button onClick={() => openVoucherModal(index)}>
-                      Chọn Voucher
+                      プロモーションを選択する
                     </button>
                     <p className="shipment_status">
                       {selectedVoucher[index] ? (
@@ -554,9 +572,9 @@ export default function CheckoutPage({}) {
                     </p>
                   </div>
                   <div className="shipping_selection">
-                    <p>Phương thức thanh toán</p>
+                    <p>お支払い方法 </p>
                     <button onClick={() => openPaymentModal(index)}>
-                      Chọn phương thức
+                      支払い方法を選んでください
                     </button>
                     <p className="shipment_status">
                       {selectedPaymentMethod[index] ? (
@@ -681,12 +699,12 @@ export default function CheckoutPage({}) {
 
       <div className="checkout_final_step">
         <div>
-          <p>Tong tien hang: </p> <p>{totalPrice} 円</p>
+          <p>商品の総原価: </p> <p>{totalPrice} 円</p>
         </div>
 
-        <button onClick={handle_checkout}>Dat hang</button>
+        <button onClick={handle_checkout}>注文</button>
         <button className="back-button" onClick={handleBack}>
-          Quay lại
+          戻る
         </button>
       </div>
     </div>

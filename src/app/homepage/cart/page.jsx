@@ -424,6 +424,13 @@ export default function Page({}) {
           <button onClick={handle_checkout}>支払う</button>
         </div>
       </div>
+      <button
+        onClick={() => {
+          route.push("/homepage/checkout");
+        }}
+      >
+        Current checkout
+      </button>
       {waiting_for_check && (
         <div className="overlay_cart">
           <div className="checkbox_container_cart">

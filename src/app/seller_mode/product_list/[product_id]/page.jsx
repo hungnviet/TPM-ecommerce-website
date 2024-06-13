@@ -141,6 +141,7 @@ export default function Page({ params }) {
 
   const updateRow2 = (index, field, value) => {
     const newRows = [...rows2];
+    console.log(newRows[index]);
     newRows[index][field] = value;
     setRows2(newRows);
   };
@@ -455,7 +456,7 @@ export default function Page({ params }) {
                           type="text"
                           value={row.Title}
                           onChange={(e) =>
-                            updateRow2(index, "title", e.target.value)
+                            updateRow2(index, "Title", e.target.value)
                           }
                           placeholder="Ex: 100"
                         />
@@ -466,7 +467,7 @@ export default function Page({ params }) {
                           type="text"
                           value={row.Content}
                           onChange={(e) =>
-                            updateRow2(index, "content", e.target.value)
+                            updateRow2(index, "Content", e.target.value)
                           }
                           placeholder="Ex: package of 1.5 kg"
                         />
