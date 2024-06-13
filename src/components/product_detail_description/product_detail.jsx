@@ -114,7 +114,7 @@ export default function Product_detail_description({ product_id }) {
       .then((response) => response.json())
       .then((data) => {
         console.log("Bolero");
-        console.log(data);
+        console.log({ product: data });
         setProduct(data);
         setOption(data.options);
         setSeller(data.seller);
@@ -343,8 +343,13 @@ export default function Product_detail_description({ product_id }) {
               }
               onClick={() => setIndex_option(index)}
             >
-              <p>{option.Option_name}</p>
-              <p>{Math.floor(option.Option_price)}円</p>
+              <p className="option_name_in_detail">{option.Option_name}</p>
+              <div>
+                <p>{Math.floor(option.Option_price)}円</p>
+                <p className="inventory_option_detail">
+                  倉庫: {option.Quantity - option.QuantityOfGoodsSold}製品
+                </p>
+              </div>
             </div>
           );
         })}
@@ -371,19 +376,40 @@ export default function Product_detail_description({ product_id }) {
       </div>
 
       <div className="product_detail_btn">
-        <p style={{ right: "40px", position: "relative", fontWeight: "bold" }}>
-          Total like : {product.likes}
-        </p>
-        <button
-          className="btn_like_product_detail"
-          onClick={liked ? unlikedProduct : handleLikeProduct}
-        >
-          <Image
-            src={liked ? "/heart_liked.png" : "/heart.png"}
-            width={30}
-            height={30}
-          />
-        </button>
+        <div className="like_total_order_container">
+          <div className="like_container_in_detail">
+            <p
+              style={{
+                position: "relative",
+                fontWeight: "bold",
+              }}
+            >
+              Total like : {product.likes}
+            </p>
+            <button
+              className="btn_like_product_detail"
+              onClick={liked ? unlikedProduct : handleLikeProduct}
+            >
+              <Image
+                src={liked ? "/heart_liked.png" : "/heart.png"}
+                width={30}
+                height={30}
+              />
+            </button>
+          </div>
+          <div className="total_order_container_in_detail">
+            <p
+              style={{
+                position: "relative",
+                fontWeight: "bold",
+              }}
+            >
+              Total Order:
+            </p>
+            <p> {product.TotalOrder} orders</p>
+          </div>
+        </div>
+
         <button
           className="product_detail_add_to_cart"
           onClick={handleAddToCart}

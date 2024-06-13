@@ -35,6 +35,7 @@ export async function GET(req) {
     });
   });
 }
+
 /// Create order for user
 export async function POST(req) {
   const data = await req.json();
@@ -71,7 +72,8 @@ export async function POST(req) {
                 product.Product_ID, // Removed parseInt here
                 product.Option_number,
                 product.Quantity,
-                product.Discount_percentage,
+                // product.Discount_percentage,
+                0, /// set tạm cái discount của product = 0 sau này cố sôs liệu thì đổi
                 product.Original_price,
               ],
               (err, result) => {

@@ -119,6 +119,7 @@ CREATE TABLE ORDER_ITEM(
         Product_ID INT,
         Option_number INT,
         Quantity INT,
+        QuantityOfGoodsSold Int,
         Discount_percentage DECIMAL(10,2),
         Original_price DECIMAL(10,2),
         Final_price DECIMAL(10,2)
@@ -831,7 +832,7 @@ BEGIN
         v_Final_price
     );
     --- update quantity of product
-    UPDATE PRODUCT_OPTION SET QuantityOfGoodsSold = QuantityOfGoodsSold - p_Quantity WHERE Product_ID = p_Product_ID AND Option_number = p_Option_number;
+    UPDATE PRODUCT_OPTION SET QuantityOfGoodsSold = QuantityOfGoodsSold + p_Quantity WHERE Product_ID = p_Product_ID AND Option_number = p_Option_number;
     UPDATE PRODUCT SET TotalOrder=TotalOrder+1 Where Product_ID=p_Product_ID;
 END$$
 

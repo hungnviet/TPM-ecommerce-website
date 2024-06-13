@@ -101,7 +101,7 @@ export default function Page({}) {
       body: JSON.stringify({
         operation: "updateQuantity",
         product_id: new_cart.shop[shopIndex].product[productIndex].Product_ID,
-        user_id: user_id_encode, // replace with actual user_id
+        user_id: user_id, // replace with actual user_id
         option_number:
           new_cart.shop[shopIndex].product[productIndex].Option_number, // replace with actual option_number
         quantity: new_cart.shop[shopIndex].product[productIndex].Quantity,
@@ -131,7 +131,7 @@ export default function Page({}) {
       body: JSON.stringify({
         operation: "updateQuantity",
         product_id: new_cart.shop[shopIndex].product[productIndex].Product_ID,
-        user_id: user_id_encode, // replace with actual user_id
+        user_id: user_id, // replace with actual user_id
         option_number:
           new_cart.shop[shopIndex].product[productIndex].Option_number, // replace with actual option_number
         quantity: new_cart.shop[shopIndex].product[productIndex].Quantity,
@@ -162,7 +162,7 @@ export default function Page({}) {
       },
       body: JSON.stringify({
         product_id: cart.shop[shopIndex].product[productIndex].Product_ID,
-        user_id: user_id_encode, // replace with actual user_id
+        user_id: user_id, // replace with actual user_id
         option_number: cart.shop[shopIndex].product[productIndex].Option_number, // replace with actual option_number
       }),
     });
