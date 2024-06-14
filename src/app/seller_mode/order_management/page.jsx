@@ -41,7 +41,6 @@ export default function Page() {
 
   async function onClick(index) {
     if (indexUpdate === index) {
-      await setCustomerid(order[index].Customer_ID);
       //save
       const data = {
         Order_ID: order[index].Order_ID,
@@ -61,7 +60,7 @@ export default function Page() {
       if (response.ok) {
         alert("Update successfully");
         await knockClient.workflows.trigger("updateproduct", {
-          recipients: [customerid],
+          recipients: [order[index].Customer_ID],
           actor: user_id,
         });
       } else {

@@ -268,9 +268,9 @@ export default function CheckoutPage({ params }) {
                     ? "フリーシップ"
                     : "プロモーションはありません"}
                 </td>
-                <td>円</td>
+                <td>{Math.floor(order.Original_price)}円</td>
                 <td>{order.Quantity}</td>
-                <td>{order.Final_price} 円</td>
+                <td>{Math.floor(order.Final_price)} 円</td>
               </tr>
               <td colSpan="6" style={{ textAlign: "center" }}>
                 {iscomplete === "Complete" && (
@@ -355,7 +355,7 @@ export default function CheckoutPage({ params }) {
 
       <div className="checkout_final_step">
         <div>
-          <p>注文総額 </p> <p>{orderDetails?.Total_price} 円</p>
+          <p>注文総額 </p> <p>{Math.floor(orderDetails?.Total_price)} 円</p>
         </div>
         <p>注記</p>
         <div

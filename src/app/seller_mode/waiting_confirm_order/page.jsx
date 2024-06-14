@@ -46,7 +46,7 @@ export default function Page() {
       body: JSON.stringify({
         Status: status,
         Order_ID: orderId,
-        Expected_delivery_date: null,
+        Expected_delivery_date: "2024-04-29",
       }),
     });
 
@@ -107,15 +107,6 @@ export default function Page() {
                 </td>
                 <td>
                   <button
-                    onClick={() => {
-                      route.push(
-                        `/seller_mode/view_order/${order.Order_ID}/${order.Customer_ID}`
-                      );
-                    }}
-                  >
-                    ビュー
-                  </button>
-                  <button
                     onClick={() =>
                       updateOrderStatus(
                         order.Order_ID,
@@ -126,6 +117,16 @@ export default function Page() {
                   >
                     受け入れる
                   </button>
+                  <button
+                    onClick={() => {
+                      route.push(
+                        `/seller_mode/view_order/${order.Order_ID}/${order.Customer_ID}`
+                      );
+                    }}
+                  >
+                    ビュー
+                  </button>
+
                   <button onClick={() => deleteOrder(order.Order_ID)}>
                     拒否する
                   </button>
