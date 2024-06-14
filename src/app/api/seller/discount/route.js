@@ -4,8 +4,8 @@ const db = connectToDatabase();
 
 export async function POST(req) {
   const data = await req.json();
-  const { productID, sellerId, name, type, discountValue, start, end } = data;
-  const sql = `call AddNewProductVoucher('${productID}','${sellerId}','${name}', '${type}', ${discountValue}, '${start}', '${end}')`;
+  const { productID, sellerID, Condition_value } = data;
+  const sql = `INSERT INTO DISCOUNT (Product_ID, Seller_ID, Type, Condition_type, Condition_value) VALUES ('${productID}', '${sellerID}', 'Freeship', 'TotalPrice', '${Condition_value}')`;
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {
       if (err) {
@@ -15,7 +15,7 @@ export async function POST(req) {
         resolve(
           NextResponse.json({
             success: true,
-            message: "Voucher added successfully",
+            message: "Discount added successfully",
           })
         );
       }
@@ -30,6 +30,20 @@ export async function GET(req) {
   const product_id = searchParams.get("product_id");
 
   const sql = `SELECT * FROM DISCOUNT WHERE Product_ID = '${product_id}'`;
+  return new Promise((resolve, reject) => {
+    db.query(sql, (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(NextResponse.json(result));
+    });
+  });
+}
+export async function PUT(req) {
+  const data = await req.json();
+  const { productID, sellerID, Condition_value } = data;
+
+  const sql = `UPDATE DISCOUNT SET  Condition_value = '${Condition_value}' WHERE Product_ID='${productID} AND Seller_ID='${sellerID}'`;
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {
       if (err) {

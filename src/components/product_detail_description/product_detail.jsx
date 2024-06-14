@@ -7,6 +7,34 @@ import ShareOnSocial from "react-share-on-social";
 import Link from "next/link";
 import { BeatLoader } from "react-spinners";
 import { getCognitoUserSub } from "@/config/cognito";
+import {
+  EmailIcon,
+  FacebookIcon,
+  FacebookShareButton,
+  FacebookMessengerIcon,
+  GabIcon,
+  HatenaIcon,
+  InstapaperIcon,
+  LineIcon,
+  LineShareButton,
+  LinkedinIcon,
+  LivejournalIcon,
+  MailruIcon,
+  OKIcon,
+  PinterestIcon,
+  PocketIcon,
+  RedditIcon,
+  TelegramIcon,
+  TumblrIcon,
+  TwitterIcon,
+  ViberIcon,
+  VKIcon,
+  WeiboIcon,
+  WhatsappIcon,
+  TwitterShareButton,
+  WorkplaceIcon,
+  XIcon,
+} from "react-share";
 
 export default function Product_detail_description({ product_id }) {
   const router = useRouter();
@@ -576,7 +604,28 @@ export default function Product_detail_description({ product_id }) {
         </table>
       </div>
       <div>
-        <ShareOnSocial
+        <FacebookShareButton
+          style={{ marginRight: "10px" }}
+          url={window.location.href}
+        >
+          <FacebookIcon
+            style={{ borderRadius: "20px" }}
+            size={40}
+          ></FacebookIcon>
+        </FacebookShareButton>
+        <TwitterShareButton
+          style={{ marginRight: "10px" }}
+          url={window.location.href}
+        >
+          <XIcon style={{ borderRadius: "20px" }} size={40}></XIcon>
+        </TwitterShareButton>
+        <LineShareButton
+          style={{ marginRight: "10px" }}
+          url={window.location.href}
+        >
+          <LineIcon style={{ borderRadius: "20px" }} size={40}></LineIcon>
+        </LineShareButton>
+        {/* <ShareOnSocial
           textToShare={product.Product_title}
           link={window.location.href}
           linkTitle={product.Product_title}
@@ -584,7 +633,7 @@ export default function Product_detail_description({ product_id }) {
           noReferer
         >
           <button className="share">Share this product ↗</button>
-        </ShareOnSocial>
+        </ShareOnSocial> */}
       </div>
       <div className="comments_container">
         <h2>みんなの投稿</h2>

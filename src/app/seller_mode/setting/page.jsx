@@ -52,9 +52,11 @@ export default function Page() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [Discount, setDiscount] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [showDiscount, setShowDiscount] = useState(false);
+  const [modalDiscount, setModalDiscount] = useState(false);
+  const [firstTime, setFirstTime] = useState(true);
 
   const [imageCount, setImageCount] = useState(0);
-
   const [editShop, setEditShop] = useState({
     shopname: "",
     img: "",
@@ -88,6 +90,18 @@ export default function Page() {
           };
           setShop(shopData);
           setEditShop(shopData);
+        })
+        .catch((err) => console.log(err));
+
+      fetch(`/api/seller/discount?product_id="shop"`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data.length > 0) {
+            setDiscount(data[0].Condition_value);
+          } else {
+            setFirstTime(true);
+          }
         })
         .catch((err) => console.log(err));
     }
@@ -411,6 +425,56 @@ export default function Page() {
     handleModalClose2();
   };
 
+  const handleDiscount = () => {
+    setModalDiscount(true);
+  };
+  const handleDiscountClost = () => {
+    setModalDiscount(false);
+  };
+  const handleSaveDiscount = () => {
+    async function addDiscount() {
+      const response = await fetch(`/api/seller/discount`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productID: "shop",
+          sellerID: user_id,
+          Condition_value: Discount,
+        }),
+      });
+      if (!response.ok) {
+        console.log("Failed to add discount");
+      }
+      fetchMethods();
+    }
+    async function updateDiscount() {
+      const response = await fetch(`/api/seller/discount`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productID: "shop",
+          sellerId: user_id,
+          Condition_value: Discount,
+        }),
+      });
+      if (!response.ok) {
+        console.log("Failed to update discount");
+      }
+      fetchMethods();
+    }
+
+    if (firstTime) {
+      addDiscount();
+    } else {
+      updateDiscount();
+    }
+    handleDiscountClost();
+  };
+
   return (
     <div className="container">
       <div className="profile">
@@ -440,6 +504,13 @@ export default function Page() {
       <div className="voucher-section">
         <button onClick={handleAddVoucher} className="add-voucher-button">
           Add New Voucher
+        </button>
+        <button
+          onClick={handleDiscount}
+          style={{ marginLeft: "10px" }}
+          className="add-voucher-button"
+        >
+          Discount
         </button>
         <table className="vouchertable ">
           <thead>
@@ -531,6 +602,20 @@ export default function Page() {
             onChange={(e) =>
               setNewVoucher((prev) => ({ ...prev, end: e.target.value }))
             }
+          />
+        </div>
+      </Modal>
+      <Modal
+        isOpen={modalDiscount}
+        onClose={handleDiscountClost}
+        onSave={handleSaveDiscount}
+      >
+        <div>
+          <label htmlFor="name">Minimum price to get Discount: </label>
+          <input
+            type="number"
+            value={Discount}
+            onChange={(e) => setDiscount(e.target.value)}
           />
         </div>
       </Modal>
