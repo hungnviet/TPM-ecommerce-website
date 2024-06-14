@@ -196,6 +196,7 @@ export default function CheckoutPage({}) {
         console.log(data);
         const cartShopsPromises = data.checkout.map(async (shop) => {
           const sellerId = shop[0].Seller_ID;
+          console.log(shop[0].Shop_condition);
           const shopResponse = await fetch(
             `/api/user/information?user_id=${encodeURIComponent(sellerId)}`
           );
@@ -213,9 +214,15 @@ export default function CheckoutPage({}) {
           const vouchers = await fetch(
             `/api/seller/vouchers?seller_id=${encodeURIComponent(sellerId)}`
           );
+          const freeshipall = await fetch(
+            `/api/seller/discount?seller_id=${encodeURIComponent(sellerId)}`
+          );
           const voucherdata = await vouchers.json();
           const paymentdata = await paymentmethod.json();
           const shippingdata = await shippingmethod.json();
+          const freeshipallData = await freeshipall.json();
+          console.log("Free");
+          console.log(freeshipallData);
 
           let totalshopprice = 0;
           let freeship = 0;
@@ -228,7 +235,10 @@ export default function CheckoutPage({}) {
               total: item.Quantity * parseFloat(item.Option_price),
             };
           });
-          if (priceforfreeship >= 50000) {
+          if (
+            shop[0].Shop_condition > 0 &&
+            priceforfreeship >= shop[0].Shop_condition
+          ) {
             freeship = 1;
           } else {
             products.forEach((product, index) => {

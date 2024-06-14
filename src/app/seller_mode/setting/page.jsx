@@ -50,7 +50,7 @@ export default function Page() {
   const [modalOpen2, setModalOpen2] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [Discount, setDiscount] = useState([]);
+  const [Discount, setDiscount] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [showDiscount, setShowDiscount] = useState(false);
   const [modalDiscount, setModalDiscount] = useState(false);
@@ -93,13 +93,12 @@ export default function Page() {
         })
         .catch((err) => console.log(err));
 
-      fetch(`/api/seller/discount?product_id="shop"`)
+      fetch(`/api/seller/discount?seller_id=${user_id}`)
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
-          if (data.length > 0) {
-            setDiscount(data[0].Condition_value);
-          } else {
+          setDiscount(data[0].Shop_condition);
+          if (data[0].Shop_condition <= 0) {
             setFirstTime(true);
           }
         })
@@ -441,7 +440,7 @@ export default function Page() {
         body: JSON.stringify({
           productID: "shop",
           sellerID: user_id,
-          Condition_value: Discount,
+          Shop_condition: Discount,
         }),
       });
       if (!response.ok) {
@@ -450,6 +449,7 @@ export default function Page() {
       fetchMethods();
     }
     async function updateDiscount() {
+      console.log(Discount);
       const response = await fetch(`/api/seller/discount`, {
         method: "PUT",
         headers: {
@@ -457,17 +457,19 @@ export default function Page() {
         },
         body: JSON.stringify({
           productID: "shop",
-          sellerId: user_id,
-          Condition_value: Discount,
+          sellerID: user_id,
+          Shop_condition: Discount,
         }),
       });
       if (!response.ok) {
-        console.log("Failed to update discount");
+        toast.error("Failed to update discount");
+      } else {
+        toast.success("Discount updated successfully");
       }
       fetchMethods();
     }
 
-    if (firstTime) {
+    if (!firstTime) {
       addDiscount();
     } else {
       updateDiscount();

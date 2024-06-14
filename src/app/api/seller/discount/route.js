@@ -27,9 +27,9 @@ export async function GET(req) {
   const url = new URL(req.url);
 
   const searchParams = new URLSearchParams(url.searchParams);
-  const product_id = searchParams.get("product_id");
+  const seller_ID = searchParams.get("seller_id");
 
-  const sql = `SELECT * FROM DISCOUNT WHERE Product_ID = '${product_id}'`;
+  const sql = `SELECT * FROM DISCOUNT WHERE Seller_ID = '${seller_ID}' AND Product_ID = 'shop'`;
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {
       if (err) {
@@ -41,9 +41,9 @@ export async function GET(req) {
 }
 export async function PUT(req) {
   const data = await req.json();
-  const { productID, sellerID, Condition_value } = data;
+  const { productID, sellerID, Shop_condition } = data;
 
-  const sql = `UPDATE DISCOUNT SET  Condition_value = '${Condition_value}' WHERE Product_ID='${productID} AND Seller_ID='${sellerID}'`;
+  const sql = `UPDATE DISCOUNT SET Shop_condition = '${Shop_condition}' WHERE Product_ID='${productID}' AND Seller_ID='${sellerID}'`;
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {
       if (err) {
