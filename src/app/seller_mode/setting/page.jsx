@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import AWS from "aws-sdk";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import "./setting.css";
 import Image from "next/image";
@@ -114,7 +116,8 @@ export default function Page() {
     setShippingMethods(shippingData);
   }
   const checkAndGenerateFileName = async (s3, bucket, originalName, index) => {
-    let newName = `tpmec${imageCount + index + 1}`;
+    let extension = originalName.split(".").pop();
+    let newName = user_id.substring(0, 6) + "." + extension;
     return newName;
   };
   const handleImageChange = (e) => {
@@ -228,6 +231,29 @@ export default function Page() {
     setModalOpenVoucher(false);
   };
   async function updateUserInformation() {
+    if (selectedFiles) {
+      const deleteParams = {
+        Bucket: "tpms3",
+        Key: user_id.substring(0, 6),
+      };
+
+      try {
+        await new Promise((resolve, reject) => {
+          s3.deleteObject(deleteParams, function (err, data) {
+            if (err) {
+              console.log(err, err.stack); // an error occurred
+              reject(err);
+            } else {
+              console.log(data); // successful response
+              resolve(data);
+            }
+          });
+        });
+      } catch (error) {
+        console.error("Error deleting file:", error);
+        return;
+      }
+    }
     const imageUrls = await Promise.all(
       selectedFiles.map(async (file, index) => {
         const newName = await checkAndGenerateFileName(
@@ -268,8 +294,11 @@ export default function Page() {
       }),
     });
     if (!response.ok) {
-      console.log("Failed to update shop information");
+      toast.error("Failed to update shop information");
     }
+    toast.success(
+      "Successfully updated shop information! It will take a time for the information to be updated on the website."
+    );
     setSelectedFiles([]);
   }
 
@@ -385,6 +414,8 @@ export default function Page() {
   return (
     <div className="container">
       <div className="profile">
+        <ToastContainer />
+
         <div
           style={{
             width: "100px",

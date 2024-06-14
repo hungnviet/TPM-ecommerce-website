@@ -91,22 +91,23 @@ export default function CheckoutPage({ params }) {
           <p>{address}</p>
         </div>
       </div>
-      <table>
+      <table className="orderdetailtable">
         <thead>
           <tr>
-            <th style={{ padding: "0 60px" }}>Hình ảnh</th>
-            <th style={{ padding: "0 60px" }}>Tên</th>
-            <th style={{ padding: "0 60px" }}>Option</th>
-            <th style={{ padding: "0 60px" }}>Đơn giá</th>
-            <th style={{ padding: "0 60px" }}>Số lượng</th>
-            <th style={{ padding: "0 60px" }}>Thành tiền</th>
+            <th>画像</th>
+            <th>名前</th>
+            <th>オプション</th>
+            <th>アイテムの数量</th>
+            <th>単価</th>
+            <th>量</th>
+            <th>合計金額</th>
           </tr>
         </thead>
         <tbody>
           {orderDetails?.orderItems?.map((order, index) => (
             <>
               <tr key={index}>
-                <td style={{ padding: "0 60px" }}>
+                <td>
                   <Image
                     src={order.productDetails.images[0].Image_url}
                     alt="product_img"
@@ -114,20 +115,30 @@ export default function CheckoutPage({ params }) {
                     height={100}
                   />
                 </td>
-                <td style={{ padding: "0 60px" }}>
+                <td>
                   <div>
                     <p>{order.productDetails.Product_title}</p>
                   </div>
                 </td>
-                <td style={{ padding: "0 60px" }}>
+                <td>
                   {
                     order.productDetails.options[order.Option_number]
                       .Option_name
                   }
                 </td>
-                <td style={{ padding: "0 60px" }}>{order.Original_price} 円</td>
-                <td style={{ padding: "0 60px" }}>{order.Quantity}</td>
-                <td style={{ padding: "0 60px" }}>{order.Final_price} 円</td>
+                <td>
+                  {orderDetails.DiscountType === "Discount"
+                    ? `${Math.floor(
+                        orderDetails.Discount_percentage
+                      )}% プロモーション`
+                    : orderDetails.DiscountType === "Freeship"
+                    ? "フリーシップ"
+                    : "プロモーションはありません"}
+                </td>
+                <td>円</td>
+
+                <td>{order.Quantity}</td>
+                <td>{order.Final_price} 円</td>
               </tr>
             </>
           ))}
