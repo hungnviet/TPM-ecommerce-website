@@ -14,7 +14,15 @@ export default function CheckoutPage({}) {
 
   const [user_id, setUser_id] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [isAddNewAddress, setIsAddNewAddress] = useState(false);
+
+  const [listRegion, setListRegion] = useState([]);
+  const [listProvince, setListProvince] = useState([]);
+  const [listProvinceByRegion, setListProvinceByRegion] = useState([]);
+  const [selectedRegionIndex, setSelectedRegionIndex] = useState(0);
+  const [selectedProvinceIndex, setSelectedProvinceIndex] = useState(0);
+  const [detaiNewAddress, setDetailNewAddress] = useState("");
+  const [newAddress, setNewAddress] = useState("");
 
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState({});
@@ -34,6 +42,58 @@ export default function CheckoutPage({}) {
     user_phone: "",
     user_address: [],
   });
+
+  async function fetchRegion() {
+    const response = await fetch("/api/general/regions", { method: "GET" });
+    if (response.ok) {
+      const data = await response.json();
+      setListRegion(data);
+      setSelectedRegionIndex(0); // This might be redundant if the initial state is already 0
+    } else {
+      console.error("Failed to fetch regions");
+    }
+  }
+
+  async function fetchProvince() {
+    const response = await fetch("/api/general/provinces", { method: "GET" });
+    if (response.ok) {
+      const data = await response.json();
+      setListProvince(data);
+    } else {
+      console.error("Failed to fetch provinces");
+    }
+  }
+
+  useEffect(() => {
+    if (listRegion.length > 0 && listProvince.length > 0) {
+      const filteredProvinces = listProvince.filter(
+        (province) =>
+          province.Region_id === listRegion[selectedRegionIndex].Region_id
+      );
+      setListProvinceByRegion(filteredProvinces);
+      setNewAddress(
+        listRegion[selectedRegionIndex].Region_name +
+          " " +
+          filteredProvinces[selectedProvinceIndex].Province_name
+      );
+    }
+  }, [selectedRegionIndex, listProvince, listRegion, selectedProvinceIndex]);
+
+  function handleRegionChange(e) {
+    setSelectedRegionIndex(e.target.value);
+  }
+
+  useEffect(() => {
+    if (listProvince.length > 0 && listRegion.length > 0) {
+      setListProvinceByRegion(
+        listProvince.filter(
+          (province) =>
+            province.Region_id === listRegion[selectedRegionIndex].Region_id
+        )
+      );
+      console.log(listProvinceByRegion);
+    }
+  }, [selectedRegionIndex]);
 
   /// use userID to get the data that user have checkout
   const [cart, setCart] = useState({});
@@ -113,6 +173,14 @@ export default function CheckoutPage({}) {
 
     return productTotal + shipmentPrice - discount;
   }
+
+  useEffect(() => {
+    function fetchLocation() {
+      fetchRegion();
+      fetchProvince();
+    }
+    fetchLocation();
+  }, []);
 
   useEffect(() => {
     getCognitoUserSub().then((user_id) => setUser_id(user_id));
@@ -463,13 +531,68 @@ export default function CheckoutPage({}) {
                 }
                 placeholder="So dien thoai"
               />
-              {isEditingAddress ? (
-                <input
-                  type="text"
-                  value={address}
-                  style={{ width: "350px" }}
-                  onChange={(e) => setAddress(e.target.value)}
-                />
+
+              {isAddNewAddress ? (
+                <div className="add_new_address_container_checkout">
+                  <div className="select_province_region_for_adding_address">
+                    <div>
+                      <p>Regions</p>
+                      {listRegion.length > 0 ? (
+                        <select
+                          onChange={handleRegionChange}
+                          value={selectedRegionIndex}
+                        >
+                          {listRegion.map((region, index) => (
+                            <option key={index} value={index}>
+                              {region.Region_name}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <p>loading...</p>
+                      )}
+                    </div>
+                    <div>
+                      <p>Provinces</p>
+                      {listProvinceByRegion.length > 0 ? (
+                        <select
+                          value={selectedProvinceIndex}
+                          onChange={(e) =>
+                            setSelectedProvinceIndex(e.target.value)
+                          }
+                        >
+                          {listProvinceByRegion.map((province, index) => (
+                            <option key={index} value={index}>
+                              {province.Province_name}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <p>loading...</p>
+                      )}
+                    </div>
+                  </div>
+                  <input
+                    placeholder="Detail Address"
+                    value={detaiNewAddress}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      setDetailNewAddress(e.target.value);
+                    }}
+                  ></input>
+                  <p>
+                    {newAddress} {detaiNewAddress}
+                  </p>
+                  <button
+                    onClick={() => {
+                      setAddress(newAddress + " " + detaiNewAddress);
+                      setIsAddNewAddress(false);
+                      setIsEditing(false);
+                    }}
+                  >
+                    Add
+                  </button>
+                </div>
               ) : (
                 <select
                   value={address}
@@ -482,14 +605,10 @@ export default function CheckoutPage({}) {
                   ))}
                 </select>
               )}
-              <Image
-                src="/edit_user_in4.png"
-                alt="Edit"
-                width={20}
-                height={20}
-                onClick={() => setIsEditingAddress(!isEditingAddress)}
-                style={{ cursor: "pointer" }}
-              />
+
+              <button onClick={() => setIsAddNewAddress(!isAddNewAddress)}>
+                {isAddNewAddress ? "close" : "Add New Address"}
+              </button>
             </>
           ) : (
             <>

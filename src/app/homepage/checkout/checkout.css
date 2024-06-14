@@ -383,3 +383,17 @@
   background-color: #f8f8f8;
   resize: none;
 }
+
+.select_province_region_for_adding_address {
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  align-items: center;
+}
+
+.add_new_address_container_checkout {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  width: max-content;
+}
