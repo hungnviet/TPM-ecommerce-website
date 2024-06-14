@@ -23,6 +23,7 @@ export default function CheckoutPage({ params }) {
   const [iscomplete, setIsComplete] = useState("");
   const [activeCommentId, setActiveCommentId] = useState(null);
   const Order_ID = params.order_id;
+  const [orderPrice, setorderPrice] = useState(0);
   const [note, setNote] = useState("");
   const [user_information, setUserInformation] = useState({
     user_name: "",
@@ -269,7 +270,7 @@ export default function CheckoutPage({ params }) {
                 </td>
                 <td>円</td>
                 <td>{order.Quantity}</td>
-                <td>{orderDetails.Total_price} 円</td>
+                <td>{order.Final_price} 円</td>
               </tr>
               <td colSpan="6" style={{ textAlign: "center" }}>
                 {iscomplete === "Complete" && (
@@ -354,7 +355,7 @@ export default function CheckoutPage({ params }) {
 
       <div className="checkout_final_step">
         <div>
-          <p>注文総額 </p> <p>{totalPrice} 円</p>
+          <p>注文総額 </p> <p>{orderDetails?.Total_price} 円</p>
         </div>
         <p>注記</p>
         <div
