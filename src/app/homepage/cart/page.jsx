@@ -21,7 +21,10 @@ export default function Page({}) {
       );
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        if (data.checkout.length > 0) {
+          route.push("/homepage/checkout");
+          return;
+        }
         if (data.cart.length === 0) {
           setIsLoading(false);
           return;
@@ -424,13 +427,6 @@ export default function Page({}) {
           <button onClick={handle_checkout}>支払う</button>
         </div>
       </div>
-      <button
-        onClick={() => {
-          route.push("/homepage/checkout");
-        }}
-      >
-        Current checkout
-      </button>
       {waiting_for_check && (
         <div className="overlay_cart">
           <div className="checkbox_container_cart">

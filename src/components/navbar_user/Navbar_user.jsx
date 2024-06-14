@@ -157,8 +157,9 @@ export default function NavbarUser({}) {
   }
   async function handle_search(e) {
     e.preventDefault();
-    set_search_input("");
+    if (search_input === "") return;
     router.push(`/homepage/search_result/${search_input}`);
+    set_search_input("");
   }
   function signOutUser() {
     handleClose();
