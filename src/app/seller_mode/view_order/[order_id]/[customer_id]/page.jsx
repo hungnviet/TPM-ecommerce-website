@@ -138,7 +138,7 @@ export default function CheckoutPage({ params }) {
                 <td>円</td>
 
                 <td>{order.Quantity}</td>
-                <td>{order.Final_price} 円</td>
+                <td>{orderDetails.Total_price} 円</td>
               </tr>
             </>
           ))}

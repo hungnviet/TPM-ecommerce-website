@@ -269,7 +269,7 @@ export default function CheckoutPage({ params }) {
                 </td>
                 <td>円</td>
                 <td>{order.Quantity}</td>
-                <td>{order.Final_price} 円</td>
+                <td>{orderDetails.Total_price} 円</td>
               </tr>
               <td colSpan="6" style={{ textAlign: "center" }}>
                 {iscomplete === "Complete" && (
