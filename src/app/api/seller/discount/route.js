@@ -4,8 +4,8 @@ const db = connectToDatabase();
 
 export async function POST(req) {
   const data = await req.json();
-  const { productID, sellerID, Condition_value } = data;
-  const sql = `INSERT INTO DISCOUNT (Product_ID, Seller_ID, Type, Condition_type, Condition_value) VALUES ('${productID}', '${sellerID}', 'Freeship', 'TotalPrice', '${Condition_value}')`;
+  const { productID, sellerID, Shop_condition } = data;
+  const sql = `INSERT INTO DISCOUNT (Product_ID, Seller_ID, Type, Condition_type, Shop_condition) VALUES ('${productID}', '${sellerID}', 'Freeship', 'TotalPrice', '${Shop_condition}')`;
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {
       if (err) {
