@@ -54,7 +54,7 @@ export default function Page() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [showDiscount, setShowDiscount] = useState(false);
   const [modalDiscount, setModalDiscount] = useState(false);
-  const [firstTime, setFirstTime] = useState(true);
+  const [firstTime, setFirstTime] = useState(false);
 
   const [imageCount, setImageCount] = useState(0);
   const [editShop, setEditShop] = useState({
@@ -97,8 +97,12 @@ export default function Page() {
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
+          if (data.length == 0) {
+            setDiscount(0);
+            setFirstTime(true);
+          }
           setDiscount(data[0].Shop_condition);
-          if (data[0].Shop_condition <= 0) {
+          if (data[0].Shop_condition <= 0 || !data[0].Shop_condition || !data) {
             setFirstTime(true);
           }
         })
@@ -438,13 +442,14 @@ export default function Page() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          productID: "shop",
           sellerID: user_id,
           Shop_condition: Discount,
         }),
       });
       if (!response.ok) {
-        console.log("Failed to add discount");
+        toast.error("Failed to add discount");
+      } else {
+        toast.success("Discount added successfully");
       }
       fetchMethods();
     }
@@ -456,7 +461,6 @@ export default function Page() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          productID: "shop",
           sellerID: user_id,
           Shop_condition: Discount,
         }),
@@ -469,7 +473,9 @@ export default function Page() {
       fetchMethods();
     }
 
-    if (!firstTime) {
+    if (firstTime == true) {
+      console.log("Add");
+      console.log(firstTime);
       addDiscount();
     } else {
       updateDiscount();

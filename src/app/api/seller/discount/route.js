@@ -4,8 +4,8 @@ const db = connectToDatabase();
 
 export async function POST(req) {
   const data = await req.json();
-  const { productID, sellerID, Shop_condition } = data;
-  const sql = `INSERT INTO DISCOUNT (Product_ID, Seller_ID, Type, Condition_type, Shop_condition) VALUES ('${productID}', '${sellerID}', 'Freeship', 'TotalPrice', '${Shop_condition}')`;
+  const { sellerID, Shop_condition } = data;
+  const sql = `INSERT INTO DISCOUNT (Product_ID, Seller_ID, Type, Condition_type, Shop_condition) VALUES ('shop', '${sellerID}', 'Freeship', 'TotalPrice', '${Shop_condition}')`;
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {
       if (err) {
@@ -43,7 +43,7 @@ export async function PUT(req) {
   const data = await req.json();
   const { productID, sellerID, Shop_condition } = data;
 
-  const sql = `UPDATE DISCOUNT SET Shop_condition = '${Shop_condition}' WHERE Product_ID='${productID}' AND Seller_ID='${sellerID}'`;
+  const sql = `UPDATE DISCOUNT SET Shop_condition = '${Shop_condition}' WHERE Product_ID='shop' AND Seller_ID='${sellerID}'`;
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {
       if (err) {
