@@ -347,6 +347,7 @@ export default function NavbarUser({}) {
                     onClick={() => {
                       handleSelectCategory(index + 1);
                     }}
+                    key={index}
                   >
                     <div className="btn_img_category">
                       <Image
