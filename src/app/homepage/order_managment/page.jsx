@@ -93,7 +93,9 @@ export default function Page() {
                     {new Date(item.Order_date).toISOString().split("T")[0]}
                   </td>
                   <td>{shopNames[item.Seller_ID] || "Loading..."}</td>
-                  <td>{Math.floor(item.Total_price)}円</td>
+                  <td>
+                    {Math.floor(item.Total_price).toLocaleString("en-US")}円
+                  </td>
                   <td>{item.Total_quantity}</td>
                   <td>{item.Status}</td>
                   <td>

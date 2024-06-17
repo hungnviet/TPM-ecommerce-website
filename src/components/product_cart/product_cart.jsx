@@ -149,7 +149,10 @@ export default function Product_cart({ product, userID, freeship }) {
               <p>{product.First_Option_Name}</p>
             </div>
             <div>
-              <p>{Math.floor(product.First_Option_Price)}円</p>
+              <p>
+                {Math.floor(product.First_Option_Price).toLocaleString("en-US")}
+                円
+              </p>
             </div>
           </div>
         </div>

@@ -185,12 +185,6 @@
   background-color: #f8f9fa; /* Light grey background on hover */
 }
 
-.btn_show_category_navbar {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  color: #38b000;
-}
 .category_list_contianer {
   position: absolute;
   z-index: 99999;
@@ -244,21 +238,6 @@
   height: 550px;
 }
 
-.btn_category_navbar {
-  background-color: transparent !important;
-  border: none !important;
-  cursor: pointer !important;
-  margin: 5px 0 !important;
-  width: 90% !important;
-  border-bottom: 1px solid #ccc !important;
-  display: flex !important;
-  flex-direction: row !important;
-  justify-content: flex-start !important;
-  align-items: center !important;
-  column-gap: 10px !important;
-  height: 50px;
-}
-
 .btn_category_navbar_img {
   width: 40px;
   height: 40px;
@@ -267,19 +246,114 @@
   position: relative;
 }
 
-.btn_search {
+.btn_show_category_navbar {
+  height: 40px;
+  width: 40px;
   background-color: transparent;
-  border: none;
-  cursor: pointer;
   display: flex !important;
   justify-content: center;
   align-items: center;
-  height: 40px;
-  width: 40px;
-  position: absolute !important;
-  right: 10px;
+  border: none;
+  border-radius: 50%;
 }
-.btn_search:hover {
-  background-color: #f6f6f6 !important;
-  border-bottom: none !important;
+.btn_show_category_navbar:hover {
+  cursor: pointer;
+  background-color: #f6f6f6;
+}
+.navbar_user_container button:hover::after {
+  width: 0; /* Prevents the ::after element from expanding */
+}
+
+.show_category_screen_navbar {
+  position: absolute;
+  background-color: white;
+  left: 0;
+  right: 0;
+  top: 60px;
+  height: calc(100vh - 60px);
+  display: flex;
+  padding: 20px;
+  flex-direction: column;
+}
+
+.list_category_navbar {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  row-gap: 20px;
+  justify-content: start;
+  column-gap: 20px;
+  align-items: stretch; /* Ensure items are aligned nicely */
+  width: 100%;
+  margin: 0 auto;
+  justify-self: center;
+}
+
+.list_category_navbar button {
+  width: 280px;
+  height: 60px;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  column-gap: 10px;
+  align-items: center;
+  border: none;
+  margin-left: 10px;
+}
+.btn_img_category {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+}
+
+.list_category_navbar button:hover {
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+.btn_close_category_container {
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn_close_category {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: red;
+  width: max-content;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn_close_category:hover {
+  font-size: larger;
+}
+
+.btnSearch {
+  position: absolute !important;
+  right: 0px;
+  height: 40px;
+  border: none;
+  background-color: #ccc;
+  width: 70px;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+  color: white;
+}
+.btnSearchActive {
+  position: absolute !important;
+  right: 0px;
+  height: 40px;
+  border: none;
+  background-color: rgb(5, 125, 188);
+  width: 70px;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+  color: white;
 }

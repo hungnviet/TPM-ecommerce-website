@@ -279,7 +279,7 @@ export default function Page({ params }) {
                     <div>
                       <input
                         type="Number"
-                        value={row.Option_price}
+                        value={Math.floor(row.Option_price)}
                         onChange={(e) =>
                           updateRow(index, "Option_price", e.target.value)
                         }

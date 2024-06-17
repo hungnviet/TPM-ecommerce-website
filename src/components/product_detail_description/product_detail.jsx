@@ -380,7 +380,9 @@ export default function Product_detail_description({ product_id }) {
             >
               <p className="option_name_in_detail">{option.Option_name}</p>
               <div>
-                <p>{Math.floor(option.Option_price)}円</p>
+                <p>
+                  {Math.floor(option.Option_price).toLocaleString("en-US")}円
+                </p>
                 <p className="inventory_option_detail">
                   倉庫: {option.Quantity - option.QuantityOfGoodsSold}製品
                 </p>

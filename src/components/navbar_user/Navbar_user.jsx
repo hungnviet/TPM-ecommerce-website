@@ -170,9 +170,9 @@ export default function NavbarUser({}) {
       router.push("/sign_in");
     }
   }
-  async function handleSelectCategory(category) {
-    await setIsShowCategory(false);
+  function handleSelectCategory(category) {
     router.push(`/homepage/category/${category}`);
+    setIsShowCategory(false);
   }
   return (
     <KnockProvider
@@ -190,19 +190,23 @@ export default function NavbarUser({}) {
             <form onSubmit={handle_search}>
               <input
                 type="text"
-                placeholder="商品名またはショップ名を入力して検索してください"
+                placeholder="食材名や生産者名で検索"
                 value={search_input}
                 onChange={(e) => set_search_input(e.target.value)}
               />
-              <button className="btn_search">
-                <MagnifyingGlassIcon />
+              <button
+                className={
+                  search_input.length > 0 ? "btnSearchActive" : "btnSearch"
+                }
+              >
+                検索
               </button>
             </form>
             <button
-              onClick={() => setIsShowCategory(true)}
               className="btn_show_category_navbar"
+              onClick={() => setIsShowCategory(!isShowCategory)}
             >
-              カテゴリー
+              <MagnifyingGlassIcon />
             </button>
           </div>
           {(!cognitoUser || userID === "guest") && (
@@ -336,35 +340,32 @@ export default function NavbarUser({}) {
           )}
           {/* list category */}
           {isShowCategory && (
-            <div className="category_list_contianer">
-              <div className="category_list_overlay">
-                <div className="list_category">
-                  <div className="header_close_show_category">
-                    <button onClick={() => setIsShowCategory(false)}>
-                      近い
-                    </button>
-                  </div>
-                  <div className="list_btn_category_navbar">
-                    {categories.map((category, index) => {
-                      return (
-                        <button
-                          className="btn_category_navbar"
-                          key={index}
-                          onClick={() => handleSelectCategory(index + 1)}
-                        >
-                          <div className="btn_category_navbar_img">
-                            <Image
-                              src={category.image}
-                              fill="true"
-                              alt="icon category"
-                            />
-                          </div>
-                          <div>{category.name}</div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+            <div className="show_category_screen_navbar">
+              <div className="list_category_navbar">
+                {categories.map((category, index) => (
+                  <button
+                    onClick={() => {
+                      handleSelectCategory(index + 1);
+                    }}
+                  >
+                    <div className="btn_img_category">
+                      <Image
+                        src={category.image}
+                        alt="image category"
+                        fill="true"
+                      />
+                    </div>
+                    <div>{category.name}</div>
+                  </button>
+                ))}
+              </div>
+              <div className="btn_close_category_container">
+                <button
+                  className="btn_close_category"
+                  onClick={() => setIsShowCategory(false)}
+                >
+                  閉じる
+                </button>
               </div>
             </div>
           )}

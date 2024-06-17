@@ -164,7 +164,9 @@ export default function Page() {
                       item.Status
                     )}
                   </td>
-                  <td>{item.Total_price}</td>
+                  <td>
+                    {Math.floor(item.Total_price).toLocaleString("en-US")}円
+                  </td>
                   <td>
                     {indexUpdate === index ? (
                       <input

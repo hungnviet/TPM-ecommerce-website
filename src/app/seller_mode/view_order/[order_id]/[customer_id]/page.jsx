@@ -135,10 +135,14 @@ export default function CheckoutPage({ params }) {
                     ? "フリーシップ"
                     : "プロモーションはありません"}
                 </td>
-                <td>{Math.floor(order.Original_price)}円</td>
+                <td>
+                  {Math.floor(order.Original_price).toLocaleString("en-US")}円
+                </td>
 
                 <td>{order.Quantity}</td>
-                <td>{Math.floor(order.Final_price)} 円</td>
+                <td>
+                  {Math.floor(order.Final_price).toLocaleString("en-US")} 円
+                </td>
               </tr>
             </>
           ))}
@@ -148,7 +152,9 @@ export default function CheckoutPage({ params }) {
       <div className="checkout_final_step">
         <div>
           <p>Tong tien hang: </p>
-          <p>{Math.floor(orderDetails?.Total_price)} 円</p>
+          <p>
+            {Math.floor(orderDetails?.Total_price).toLocaleString("en-US")} 円
+          </p>
         </div>
         <p>Ghi chu</p>
         <div

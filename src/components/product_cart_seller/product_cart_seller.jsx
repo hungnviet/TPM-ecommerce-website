@@ -39,7 +39,9 @@ export default function Product_cart({ product }) {
               <p>{product.First_Option_Name}</p>
             </div>
             <div>
-              <p>{product.First_Option_Price}</p>
+              <p>
+                {Math.floor(product.First_Option_Price).toLocaleString("en-US")}
+              </p>
             </div>
           </div>
         </div>
