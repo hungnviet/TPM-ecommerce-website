@@ -38,3 +38,21 @@ export async function GET(req) {
     });
   });
 }
+export async function DELETE(req) {
+  const data = await req.json();
+  const { voucherId } = data;
+  const sql = `DELETE FROM SHOP_VOUCHER WHERE Voucher_ID = '${voucherId}'`;
+  return new Promise((resolve, reject) => {
+    db.query(sql, (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(
+        NextResponse.json({
+          success: true,
+          message: "Voucher deleted successfully",
+        })
+      );
+    });
+  });
+}

@@ -334,7 +334,6 @@ export default function Page() {
                 <th>¥ per</th>
                 <th>Option</th>
                 <th>Quantity</th>
-                <th>Freeship Condition</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -379,28 +378,23 @@ export default function Page() {
                       />
                     </div>
                   </td>
-                  <td>
-                    <div>
-                      <input
-                        type="text"
-                        value={row.freeshipCondition}
-                        onChange={(e) =>
-                          updateRow(index, "freeshipCondition", e.target.value)
-                        }
-                        placeholder="Ex: 100"
-                      />
-                    </div>
-                  </td>
 
                   <td>
-                    <button onClick={() => deleteRow(index)}>Delete</button>
+                    <button
+                      className="addrowbutton"
+                      onClick={() => deleteRow(index)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <button onClick={addRow}>Add row</button>
+          <button className="addrowbutton" onClick={addRow}>
+            Add row
+          </button>
         </div>
         <div className="input_description">
           <h3>General Description</h3>
@@ -445,13 +439,20 @@ export default function Page() {
                       />
                     </td>
                     <td>
-                      <button onClick={() => deleteRow2(index)}>Delete</button>
+                      <button
+                        className="addrowbutton"
+                        onClick={() => deleteRow2(index)}
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <button onClick={addRow2}>Add row</button>
+            <button className="addrowbutton" onClick={addRow2}>
+              Add row
+            </button>
           </div>
         </div>
         <div>

@@ -234,7 +234,7 @@ export default function Page({ params }) {
                     <td>
                       <div>
                         The customer will get Freeship if they buy{" "}
-                        {row.Condition_value} or more!
+                        {row.Condition_value} or more! Set to 0 to disable this
                       </div>
                     </td>
 

@@ -57,11 +57,7 @@
   border-radius: 5px;
   border: 1px solid #e7e7e3;
 }
-.input_price button {
-  color: red;
-  border: none;
-  background-color: transparent;
-}
+
 .input_price button:hover {
   text-decoration: underline;
   cursor: pointer;
@@ -72,11 +68,7 @@
   border-radius: 5px;
   border: 1px solid #e7e7e3;
 }
-.input_price2 button {
-  color: red;
-  border: none;
-  background-color: transparent;
-}
+
 .input_price2 button:hover {
   text-decoration: underline;
   cursor: pointer;
@@ -159,4 +151,14 @@
 
 .sellerproduct div {
   margin-bottom: 10px; /* Adds space between the input groups */
+}
+.addrowbutton {
+  background-color: #f0c14b;
+  color: black;
+  font-weight: 700;
+  margin-top: 5px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
 }

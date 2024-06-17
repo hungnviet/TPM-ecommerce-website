@@ -225,10 +225,12 @@ export default function CheckoutPage({}) {
           console.log(freeshipallData);
 
           let totalshopprice = 0;
+          let reason = "";
           let freeship = 0;
           let priceforfreeship = 0;
           const products = shop.map((item) => {
             priceforfreeship += item.Quantity * parseFloat(item.Option_price);
+
             return {
               ...item,
               check: false,
@@ -240,6 +242,7 @@ export default function CheckoutPage({}) {
             priceforfreeship >= shop[0].Shop_condition
           ) {
             freeship = 1;
+            reason = "condition";
           } else {
             products.forEach((product, index) => {
               if (
@@ -256,6 +259,7 @@ export default function CheckoutPage({}) {
                   vouchers: voucherdata,
                   totalshopprice,
                   freeship: 1,
+                  reason: "product",
                 };
                 extraShops.push(newShop);
                 products.splice(index, 1);
@@ -273,6 +277,7 @@ export default function CheckoutPage({}) {
             vouchers: voucherdata,
             totalshopprice,
             freeship: freeship,
+            reason: reason,
           };
         });
 
@@ -389,6 +394,11 @@ export default function CheckoutPage({}) {
       });
     }
     return total;
+  }
+  function calculateOriginalShopTotalPrice(shop) {
+    return shop.product.reduce((total, product) => {
+      return total + product.Option_price * product.Quantity;
+    }, 0);
   }
 
   const handleUserInfoChange = (key, value) => {
@@ -655,7 +665,7 @@ export default function CheckoutPage({}) {
                 <p className="s ">{shop.Shop_name}</p>
                 {shop.freeship === 1 && (
                   <p style={{ color: "red" }}>
-                    You get freeship for products in this order
+                    この注文の商品は送料無料となります
                   </p>
                 )}
               </div>
@@ -808,26 +818,34 @@ export default function CheckoutPage({}) {
                   <div className="modal-content">
                     <h3>Chọn Voucher</h3>
                     <ul>
-                      {currentVoucher.map((option, index) => (
-                        <li
-                          key={index}
-                          onClick={() => {
-                            handleVoucherSelect(
-                              option.Voucher_Name,
-                              option.Discount_Value,
-                              option.Type
-                            );
-                          }}
-                        >
-                          <strong>{option.Voucher_Name}</strong>
-                          <div>{option.Type}</div>
-                          <div>
-                            {option.Type !== "Freeship"
-                              ? option.Discount_Value + "%"
-                              : ""}
-                          </div>
-                        </li>
-                      ))}
+                      {currentVoucher
+                        .filter((option) => {
+                          const currentTime = new Date();
+                          return (
+                            new Date(option.Start) <= currentTime &&
+                            currentTime <= new Date(option.End)
+                          );
+                        })
+                        .map((option, index) => (
+                          <li
+                            key={index}
+                            onClick={() => {
+                              handleVoucherSelect(
+                                option.Voucher_Name,
+                                option.Discount_Value,
+                                option.Type
+                              );
+                            }}
+                          >
+                            <strong>{option.Voucher_Name}</strong>
+                            <div>{option.Type}</div>
+                            <div>
+                              {option.Type !== "Freeship"
+                                ? option.Discount_Value + "%"
+                                : ""}
+                            </div>
+                          </li>
+                        ))}
                     </ul>
                     <button onClick={() => setshowVoucherModal(false)}>
                       Đóng
@@ -865,10 +883,55 @@ export default function CheckoutPage({}) {
                 </div>
               )}
 
-              <div>
-                <p>
-                  <p>{calculateShopTotalPrice(shop, index)} 円</p>
-                </p>
+              <div className="price-checkout-container">
+                <div className="price-check-text">
+                  <span className="price-label">商品合計金額</span>
+                  <span className="price-value">
+                    {calculateOriginalShopTotalPrice(shop)} 円
+                  </span>
+                </div>
+                <div className="price-check-text">+</div>
+                <div className="price-check-text">
+                  <span className="price-label">輸送費:</span>
+                  <span className="price-value">
+                    {shop.freeship === 1 ||
+                    selectedVoucher[index]?.type === "Freeship"
+                      ? "送料無料" +
+                        (shop.reason === "product"
+                          ? "：購入商品の合計がプロモーション条件を満たしています"
+                          : shop.reason === "condition"
+                          ? "：注文金額が送料無料の条件を満たしています"
+                          : "")
+                      : selectedShipment[index]
+                      ? selectedShipment[index].price + " 円"
+                      : 0 + " 円"}
+                  </span>
+                </div>
+                {selectedVoucher[index] && (
+                  <>
+                    <div className="price-check-text">-</div>
+                    <div className="price-check-text">
+                      <span className="price-label">プロモーション:</span>
+                      <span className="price-value">
+                        {selectedVoucher[index].type === "Freeship"
+                          ? "Free shipping"
+                          : (
+                              (selectedVoucher[index].discount / 100) *
+                              calculateOriginalShopTotalPrice(shop)
+                            ).toFixed(1) + " 円"}
+                      </span>
+                    </div>
+                  </>
+                )}
+                <div className="price-check-text separator">
+                  --------------------
+                </div>
+                <div className="price-check-text">
+                  <span className="price-label">Total:</span>
+                  <span className="price-value">
+                    {calculateShopTotalPrice(shop, index)} 円
+                  </span>
+                </div>
               </div>
             </div>
           );

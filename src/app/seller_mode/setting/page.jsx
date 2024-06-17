@@ -482,7 +482,22 @@ export default function Page() {
     }
     handleDiscountClost();
   };
+  const deletevoucher = async (voucher_id) => {
+    const response = await fetch(`/api/seller/vouchers`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        voucherId: [voucher_id],
+      }),
+    });
+    if (!response.ok) {
+      console.log("Failed to delete voucher");
+    }
 
+    fetchVouchers();
+  };
   return (
     <div className="container">
       <div className="profile">
@@ -528,6 +543,7 @@ export default function Page() {
               <th>Discount</th>
               <th>Start</th>
               <th>End</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -538,6 +554,14 @@ export default function Page() {
                 <td>{voucher.Discount_Value}%</td>
                 <td>{new Date(voucher.Start).toISOString().split("T")[0]}</td>
                 <td>{new Date(voucher.End).toISOString().split("T")[0]}</td>
+                <td>
+                  <button
+                    className="deletavoucher"
+                    onClick={() => deletevoucher(voucher.Voucher_ID)}
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
