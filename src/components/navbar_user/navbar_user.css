@@ -16,6 +16,7 @@
   box-sizing: border-box; /* Include padding in width calculation */
   padding-bottom: 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  padding-top: 10px;
 }
 .uppper_container_navbar {
   display: flex;
@@ -23,6 +24,7 @@
   justify-content: space-between;
   width: 100%;
   align-items: center;
+  height: 50px;
 }
 .left_section_navbar_container {
   display: flex;
@@ -139,9 +141,8 @@
   align-items: center;
 }
 .right_section_navbar_container2 {
-  width: 20vw;
   display: flex;
-  justify-content: space-around;
+  flex-direction: row;
   column-gap: 10px;
 }
 .right_section_navbar_container2 button {
@@ -265,7 +266,7 @@
 }
 
 .btn_show_category_navbar {
-  height: 40px;
+  height: 50px;
   width: 40px;
   background-color: transparent;
   display: flex !important;
@@ -287,11 +288,12 @@
   background-color: white;
   left: 0;
   right: 0;
-  top: 60px;
+  top: 100px;
   height: calc(100vh - 60px);
   display: flex;
   padding: 20px;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .list_category_navbar {
@@ -305,10 +307,24 @@
   width: 100%;
   margin: 0 auto;
   justify-self: center;
+
+  overflow-y: auto;
+}
+@media (max-width: 500px) {
+  .list_category_navbar {
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: nowrap;
+    max-height: 70%;
+  }
+  .list_category_navbar button {
+    width: 80% !important;
+    height: 100px !important;
+  }
 }
 
 .list_category_navbar button {
-  width: 280px;
+  width: 300px;
   height: 60px;
   border-radius: 30px;
   display: flex;
@@ -356,7 +372,7 @@
 .btnSearch {
   position: absolute !important;
   right: 0px;
-  height: 40px;
+  height: 50px;
   border: none;
   background-color: #ccc;
   width: 70px;
@@ -367,11 +383,15 @@
 .btnSearchActive {
   position: absolute !important;
   right: 0px;
-  height: 40px;
+  height: 50px;
   border: none;
   background-color: rgb(5, 125, 188);
   width: 70px;
   border-top-right-radius: 30px;
   border-bottom-right-radius: 30px;
   color: white;
+}
+
+.btn_login_signup {
+  width: 100px !important;
 }

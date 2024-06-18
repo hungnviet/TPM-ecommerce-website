@@ -7,6 +7,13 @@
   flex: 0 0 auto;
   margin-left: 30px;
 }
+@media (max-width: 800px) {
+  .advertisement_cart_container {
+    width: 90vw;
+    height: 60vw;
+    margin-left: 30;
+  }
+}
 @keyframes slideInFromRight {
   0% {
     transform: translateX(30vw);

@@ -190,12 +190,18 @@ export default function NavbarUser({}) {
             {(!cognitoUser || userID === "guest") && (
               <div className="right_section_navbar_container2">
                 <div>
-                  <button onClick={() => router.push("/sign_in")}>
+                  <button
+                    onClick={() => router.push("/sign_in")}
+                    className="btn_login_signup"
+                  >
                     ログイン
                   </button>
                 </div>
                 <div>
-                  <button onClick={() => router.push("/sign_up_1")}>
+                  <button
+                    className="btn_login_signup"
+                    onClick={() => router.push("/sign_up_1")}
+                  >
                     新規登録
                   </button>
                 </div>
