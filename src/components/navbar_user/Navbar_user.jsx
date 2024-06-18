@@ -181,10 +181,120 @@ export default function NavbarUser({}) {
     >
       <KnockFeedProvider feedId={"5dc457d4-da3f-46ec-b7fa-89db6fcf582c"}>
         <div className="navbar_user_container">
-          <div className="left_section_navbar_container">
-            <button onClick={() => router.push(`/homepage`)}>
-              <h3>TPM</h3>
-            </button>
+          <div className="uppper_container_navbar">
+            <div className="left_section_navbar_container">
+              <button onClick={() => router.push(`/homepage`)}>
+                <h3>TPM</h3>
+              </button>
+            </div>
+            {(!cognitoUser || userID === "guest") && (
+              <div className="right_section_navbar_container2">
+                <div>
+                  <button onClick={() => router.push("/sign_in")}>
+                    ログイン
+                  </button>
+                </div>
+                <div>
+                  <button onClick={() => router.push("/sign_up_1")}>
+                    新規登録
+                  </button>
+                </div>
+              </div>
+            )}
+            {cognitoUser && userID != "guest" && (
+              <div className="right_section_navbar_container">
+                <div>
+                  <button
+                    className="icon_navbar_container"
+                    onClick={() => {
+                      router.push(`/homepage/cart`);
+                    }}
+                  >
+                    <Image
+                      src="/cart_icon.png"
+                      width={25}
+                      height={25}
+                      alt="cart_icon"
+                    />
+                  </button>
+                  <p>
+                    {user.Total_Quantity ? user.Total_Quantity : "loading.."}
+                  </p>
+                </div>
+                <div>
+                  <button
+                    className="icon_navbar_container"
+                    onClick={() => {
+                      router.push("/homepage/like_product");
+                    }}
+                  >
+                    <Image
+                      src="/heart_nav.png"
+                      width={25}
+                      height={25}
+                      alt="cart_icon"
+                    />
+                  </button>
+                  <p>{numliked}</p>
+                </div>
+                <div className="notificationknock">
+                  {/* <button
+                  ref={notifButtonRef}
+                  className="icon_navbar_container"
+                  onClick={() => setIsVisible(!isVisible)}
+                >
+                  <Image
+                    src="/notification.png"
+                    width={25}
+                    height={25}
+                    alt="Notification Icon"
+                  />
+                </button> */}
+                  <div style={{ marginTop: "5px" }}>
+                    <NotificationIconButton
+                      ref={notifButtonRef}
+                      onClick={(e) => setIsVisible(!isVisible)}
+                    />
+                  </div>
+                  <NotificationFeedPopover
+                    buttonRef={notifButtonRef}
+                    isVisible={isVisible}
+                    onClose={() => setIsVisible(false)}
+                  />
+                </div>
+                <div>
+                  <button
+                    className="icon_navbar_container"
+                    onClick={() => {
+                      router.push("/homepage/like_product");
+                    }}
+                  >
+                    <div className="icon_navbar_container">
+                      <Image
+                        src="/user_icon.png"
+                        width={25}
+                        height={25}
+                        alt="cart_icon"
+                      />
+                    </div>
+                  </button>
+                  <p>{user.LName ? user.LName : "loading..."}</p>
+                </div>
+                <div>
+                  <button
+                    className="icon_navbar_container"
+                    onClick={handle_show_option}
+                  >
+                    <Image
+                      src="/menu_icon.png"
+                      width={20}
+                      height={20}
+                      alt="cart_icon"
+                    />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
           <div className="middle_section_navbar_container">
             <form onSubmit={handle_search}>
@@ -209,112 +319,7 @@ export default function NavbarUser({}) {
               <MagnifyingGlassIcon />
             </button>
           </div>
-          {(!cognitoUser || userID === "guest") && (
-            <div className="right_section_navbar_container2">
-              <div>
-                <button onClick={() => router.push("/sign_in")}>
-                  ログイン
-                </button>
-              </div>
-              <div>
-                <button onClick={() => router.push("/sign_up_1")}>
-                  新規登録
-                </button>
-              </div>
-            </div>
-          )}
-          {cognitoUser && userID != "guest" && (
-            <div className="right_section_navbar_container">
-              <div>
-                <button
-                  className="icon_navbar_container"
-                  onClick={() => {
-                    router.push(`/homepage/cart`);
-                  }}
-                >
-                  <Image
-                    src="/cart_icon.png"
-                    width={25}
-                    height={25}
-                    alt="cart_icon"
-                  />
-                </button>
-                <p>{user.Total_Quantity ? user.Total_Quantity : "loading.."}</p>
-              </div>
-              <div>
-                <button
-                  className="icon_navbar_container"
-                  onClick={() => {
-                    router.push("/homepage/like_product");
-                  }}
-                >
-                  <Image
-                    src="/heart_nav.png"
-                    width={25}
-                    height={25}
-                    alt="cart_icon"
-                  />
-                </button>
-                <p>{numliked}</p>
-              </div>
-              <div className="notificationknock">
-                {/* <button
-                  ref={notifButtonRef}
-                  className="icon_navbar_container"
-                  onClick={() => setIsVisible(!isVisible)}
-                >
-                  <Image
-                    src="/notification.png"
-                    width={25}
-                    height={25}
-                    alt="Notification Icon"
-                  />
-                </button> */}
-                <div style={{ marginTop: "5px" }}>
-                  <NotificationIconButton
-                    ref={notifButtonRef}
-                    onClick={(e) => setIsVisible(!isVisible)}
-                  />
-                </div>
-                <NotificationFeedPopover
-                  buttonRef={notifButtonRef}
-                  isVisible={isVisible}
-                  onClose={() => setIsVisible(false)}
-                />
-              </div>
-              <div>
-                <button
-                  className="icon_navbar_container"
-                  onClick={() => {
-                    router.push("/homepage/like_product");
-                  }}
-                >
-                  <div className="icon_navbar_container">
-                    <Image
-                      src="/user_icon.png"
-                      width={25}
-                      height={25}
-                      alt="cart_icon"
-                    />
-                  </div>
-                </button>
-                <p>{user.LName ? user.LName : "loading..."}</p>
-              </div>
-              <div>
-                <button
-                  className="icon_navbar_container"
-                  onClick={handle_show_option}
-                >
-                  <Image
-                    src="/menu_icon.png"
-                    width={20}
-                    height={20}
-                    alt="cart_icon"
-                  />
-                </button>
-              </div>
-            </div>
-          )}
+
           {show_option && (
             <div className="list_option">
               <Link href={`/homepage/user_information`} onClick={handleClose}>

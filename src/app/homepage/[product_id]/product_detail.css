@@ -1,7 +1,7 @@
 .product_detail_page {
   width: 100%;
   height: max-content;
-  margin-top: 60px;
+  margin-top: 110px;
   display: flex;
   flex-direction: column;
 }

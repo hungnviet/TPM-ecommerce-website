@@ -65,6 +65,28 @@
   border-radius: 10px;
   cursor: pointer;
 }
+.option_sold_out {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  border: 1px solid #ced4da;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #495057;
+  color: white;
+  position: relative;
+}
+.sold_out_tag {
+  background-color: red;
+  position: absolute;
+  top: -6px;
+  right: 0;
+  border-radius: 5px;
+  padding: 3px;
+}
 .product_detail_option_active {
   display: flex;
   flex-direction: row;

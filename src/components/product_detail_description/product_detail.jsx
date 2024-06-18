@@ -368,7 +368,20 @@ export default function Product_detail_description({ product_id }) {
             </div>
           )}
         {option.map((option, index) => {
-          return (
+          return option.Quantity === option.QuantityOfGoodsSold ? (
+            <div key={index} className="option_sold_out">
+              <p className="option_name_in_detail">{option.Option_name}</p>
+              <div>
+                <p>
+                  {Math.floor(option.Option_price).toLocaleString("en-US")}円
+                </p>
+                <p className="inventory_option_detail">
+                  倉庫: {option.Quantity - option.QuantityOfGoodsSold}製品
+                </p>
+              </div>
+              <div className="sold_out_tag"> 売り切れ</div>
+            </div>
+          ) : (
             <div
               key={index}
               className={

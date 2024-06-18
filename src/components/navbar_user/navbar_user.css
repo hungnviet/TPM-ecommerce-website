@@ -1,8 +1,8 @@
 .navbar_user_container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0 20px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -11,7 +11,18 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  height: 60px;
+  height: 100px; /* You might want to adjust this on smaller screens */
+  width: 100%; /* Explicitly set width to 100% */
+  box-sizing: border-box; /* Include padding in width calculation */
+  padding-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+.uppper_container_navbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
 }
 .left_section_navbar_container {
   display: flex;
@@ -25,8 +36,8 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 1fr;
-  height: 100%;
+  width: 100%;
+  height: 50px;
   flex-grow: 1; /* Takes the remaining space */
   margin: 0 20px; /* Adds a gap of 20px to the left and right */
 }
@@ -47,9 +58,9 @@
 }
 .middle_section_navbar_container form input {
   width: 100%;
-  height: 70%;
+  height: 100%;
   padding: 0 10px;
-  border: none;
+  border: 1px solid #ccc;
   outline: none;
   background-color: #f6f6f6;
   border-radius: 30px;
@@ -76,6 +87,13 @@
 .right_section_navbar_container p {
   margin: 0;
 }
+@media (max-width: 500px) {
+  /* Hide all divs except the last two */
+  .right_section_navbar_container > div:not(:nth-last-child(-n + 2)) {
+    display: none;
+  }
+}
+
 .list_option {
   display: flex;
   flex-direction: column;

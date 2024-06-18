@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
     <div>
       <NavbarUser />
       {children}
-      <Footer />
+      {/* // <Footer /> */}
     </div>
   );
 }

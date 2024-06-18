@@ -1,7 +1,7 @@
 .homepage_container {
   position: relative;
   width: 100%;
-  margin-top: 60px;
+  margin-top: 100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -102,18 +102,24 @@
   justify-content: center;
   align-items: center;
   padding-top: 20px;
-  width: 80%;
+  width: 100%; /* Full width */
+  margin: 0 auto; /* Center the container */
 }
+
 .category_title {
   font-size: xx-large;
+  text-align: center; /* Ensure the title is centered */
 }
+
 .category_list {
   display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  column-gap: 50px;
-  row-gap: 10px;
+  flex-wrap: nowrap; /* No wrapping to ensure horizontal layout */
+  overflow-x: auto; /* Enables horizontal scrolling */
+  -webkit-overflow-scrolling: touch; /* Improves scrolling on iOS devices */
+  scrollbar-width: thin; /* Optional: thins the scrollbar on supporting browsers */
+  scrollbar-color: #888 #e0e0e0; /* Optional: customizes the scrollbar color */
 }
+
 .morebutton {
   justify-content: center;
   align-items: center;
@@ -133,4 +139,78 @@
 .morebutton:hover {
   background-color: rgb(5, 125, 188);
   color: rgb(255, 255, 255);
+}
+
+@media (max-width: 500px) {
+  .best_seller_container {
+    width: 100%; /* Set the width to match the screen size */
+    padding: 0; /* Remove padding to utilize the full width */
+    margin: 0; /* Ensure there's no margin that could cause the container to overflow the viewport */
+  }
+
+  .best_seller_title {
+    text-align: center; /* Center the title text within the container */
+    padding: 10px; /* Add padding for better spacing */
+  }
+
+  .big_best_seller_container {
+    width: 100%; /* Ensure the container fits within the viewport width */
+    justify-content: center; /* Center the content within the container */
+    padding: 0 10px; /* Add horizontal padding to prevent content from touching the edges */
+  }
+
+  .product_list {
+    flex-direction: row; /* Keep the list in a row for horizontal scrolling */
+    overflow-x: scroll; /* Enable horizontal scrolling */
+    width: calc(
+      100% - 20px
+    ); /* Adjust width to prevent overflow, accounting for padding */
+    padding: 10px 10px; /* Vertical and horizontal padding */
+    box-sizing: border-box; /* Include padding in the width calculation */
+    white-space: nowrap; /* Keep all items in a single line */
+    flex-wrap: nowrap;
+  }
+
+  .product_list > * {
+    flex: 0 0 auto; /* Ensure items don't grow or shrink and are not forced onto new lines */
+    margin-right: 10px; /* Margin between items */
+  }
+
+  .morebutton {
+    display: block; /* Make the button a block element to fit the width */
+    margin: 10px auto; /* Center the button horizontally */
+    width: 90%; /* Adjust the button width to be less than the container for aesthetics */
+  }
+}
+
+@media (max-width: 500px) {
+  .category_container {
+    width: 100%; /* Set the width to match the screen size */
+    padding: 0; /* Remove padding to utilize the full width */
+    margin: 0 auto; /* Ensure the container is centered */
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; /* Center the content vertically */
+  }
+
+  .category_title {
+    text-align: center; /* Center the title text within the container */
+    padding: 10px; /* Add padding for better spacing */
+    width: 100%; /* Ensure the title spans the full width of the container */
+  }
+
+  .category_list {
+    width: calc(
+      100% - 40px
+    ); /* Set width slightly less than the container to allow horizontal scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    padding: 10px 20px; /* Padding to keep content from touching the edges */
+    box-sizing: border-box; /* Include padding in the width calculation */
+    white-space: nowrap; /* Keep all items in a single line */
+    justify-content: flex-start; /* Align items to the start */
+  }
+
+  .category_list > * {
+    flex: 0 0 auto; /* Ensure items don't grow or shrink and are not forced onto new lines */
+    margin-right: 20px; /* Margin between items */
+  }
 }
