@@ -2,8 +2,7 @@
 import "./product_detail.css";
 import Product_detail_img from "@/components/product_detail_image/product_detail_img";
 import Product_detail_description from "@/components/product_detail_description/product_detail";
-import Product_voucher from "@/components/product_voucher/product_voucher";
-import RealtedProduct from "@/components/related_product/page";
+import Header_name_for_mobile from "@/components/header_name_for_mobile/header_name_for_mobile";
 import { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import { getCognitoUserSub } from "@/config/cognito";
@@ -53,6 +52,9 @@ export default function Page({ params }) {
       <div className="product_detail_content">
         {product_id && user_id && (
           <>
+            <div className="display_only_for_mobile_product_Detail">
+              <Header_name_for_mobile product_id={product_id} />
+            </div>
             <div className="left_section_product_detail">
               <Product_detail_img product_id={product_id} />
             </div>

@@ -57,3 +57,23 @@
 .img_product_detail:hover {
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
+
+@media (max-width: 768px) {
+  .big_img_container {
+    height: 50vw;
+  }
+  .list_img_product_detail {
+    padding-left: 20px;
+  }
+  .img_container_product_detail {
+    width: 100%;
+  }
+  .img_product_detail_active {
+    height: 50px;
+    width: 70px;
+  }
+  .img_product_detail {
+    height: 50px;
+    width: 70px;
+  }
+}
