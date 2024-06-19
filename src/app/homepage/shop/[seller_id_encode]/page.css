@@ -11,11 +11,11 @@
 .productList {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: start;
 }
 
 .shopNameContainerShopScreen {
-  width: 90%;
+  width: 100%;
   justify-content: center;
   align-items: center;
   display: flex;
@@ -23,6 +23,9 @@
   column-gap: 20px;
   background-color: #1a1f35;
   margin-top: 10px;
+}
+.productList_mobile {
+  display: none;
 }
 
 .imageSellerContainer {
@@ -37,4 +40,29 @@
 }
 .textContainerShopScreen {
   color: white;
+}
+
+@media (max-width: 760px) {
+  .productList {
+    display: none;
+  }
+
+  .productList_mobile {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Ensure the main container takes full width of the screen */
+    overflow: hidden; /* Prevents scrolling of the entire screen */
+  }
+
+  .productList_mobile .row {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto; /* Enables horizontal scrolling */
+    overflow-y: hidden; /* Prevents vertical scrolling within the rows */
+    width: 100%; /* Each row takes the full width of the container */
+    padding: 10px 0; /* Add vertical padding if needed, remove horizontal padding */
+    box-sizing: border-box;
+    white-space: nowrap; /* Keeps items in a single line */
+    flex-wrap: nowrap; /* Ensures no wrapping of items within a row */
+  }
 }

@@ -4,6 +4,9 @@
   gap: 20px;
   margin-top: 20px;
 }
+.category_product_container_mobile {
+  display: none;
+}
 .category_page {
   margin-top: 100px;
 }
@@ -43,4 +46,27 @@
 /* Disable text selection for buttons */
 .pagination button {
   user-select: none;
+}
+
+@media (max-width: 768px) {
+  .category_product_container {
+    display: none;
+  }
+  .category_product_container_mobile {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Ensure the main container takes full width of the screen */
+    overflow: hidden;
+  }
+  .category_product_container_mobile .rowProduct {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto; /* Enables horizontal scrolling */
+    overflow-y: hidden; /* Prevents vertical scrolling within the rows */
+    width: 100%; /* Each row takes the full width of the container */
+    padding: 10px 0; /* Add vertical padding if needed, remove horizontal padding */
+    box-sizing: border-box;
+    white-space: nowrap; /* Keeps items in a single line */
+    flex-wrap: nowrap;
+  }
 }

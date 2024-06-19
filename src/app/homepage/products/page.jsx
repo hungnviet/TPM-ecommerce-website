@@ -93,6 +93,62 @@ export default function Page({}) {
           />
         ))}
       </div>
+      <div className="category_product_container_mobile">
+        <div className="rowProduct">
+          {currentProducts
+            .slice(0, Math.ceil(currentProducts.length / 4))
+            .map((product, index) => (
+              <Product_cart
+                key={index}
+                product={product}
+                userID={user_id}
+                freeship={hasFreeShipping(product.Vouchers)}
+              />
+            ))}
+        </div>
+        <div className="rowProduct">
+          {currentProducts
+            .slice(
+              Math.ceil(currentProducts.length / 4),
+              2 * Math.ceil(currentProducts.length / 4)
+            )
+            .map((product, index) => (
+              <Product_cart
+                key={index}
+                product={product}
+                userID={user_id}
+                freeship={hasFreeShipping(product.Vouchers)}
+              />
+            ))}
+        </div>
+        <div className="rowProduct">
+          {currentProducts
+            .slice(
+              2 * Math.ceil(currentProducts.length / 4),
+              3 * Math.ceil(currentProducts.length / 4)
+            )
+            .map((product, index) => (
+              <Product_cart
+                key={index}
+                product={product}
+                userID={user_id}
+                freeship={hasFreeShipping(product.Vouchers)}
+              />
+            ))}
+        </div>
+        <div className="rowProduct">
+          {currentProducts
+            .slice(3 * Math.ceil(currentProducts.length / 4))
+            .map((product, index) => (
+              <Product_cart
+                key={index}
+                product={product}
+                userID={user_id}
+                freeship={hasFreeShipping(product.Vouchers)}
+              />
+            ))}
+        </div>
+      </div>
       <div className="pagination">{renderPageNumbers()}</div>
     </div>
   );

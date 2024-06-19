@@ -60,6 +60,32 @@ export default function Seller_shop({ params }) {
           />
         ))}
       </div>
+      <div className="productList_mobile">
+        <div className="row">
+          {products
+            .slice(0, Math.ceil(products.length / 2))
+            .map((product, index) => (
+              <Product_cart
+                key={index}
+                product={product}
+                userID={user_id}
+                freeship={hasFreeShipping(product.Vouchers)}
+              />
+            ))}
+        </div>
+        <div className="row">
+          {products
+            .slice(Math.ceil(products.length / 2))
+            .map((product, index) => (
+              <Product_cart
+                key={index}
+                product={product}
+                userID={user_id}
+                freeship={hasFreeShipping(product.Vouchers)}
+              />
+            ))}
+        </div>
+      </div>
     </div>
   );
 }
