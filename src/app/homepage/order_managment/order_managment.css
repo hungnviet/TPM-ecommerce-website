@@ -102,3 +102,60 @@
   align-items: center;
   height: 300px; /* Space for the loader */
 }
+
+@media (max-width: 768px) {
+  .order_management_page_container {
+    width: 100vw; /* Full viewport width */
+    height: 80vh; /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center children horizontally */
+    justify-content: center; /* Center children vertically */
+    padding: 10px; /* Padding to prevent content from touching the edges */
+    box-sizing: border-box; /* Includes padding in width and height */
+  }
+
+  /* Centering the header and ensuring it's at the top */
+  h3 {
+    text-align: center; /* Center the text */
+    margin-top: 20px; /* Add top margin for spacing */
+    width: 100%; /* Full width to enforce centering text */
+  }
+
+  /* Scrollable table container */
+  .table_scrollable {
+    width: 100%; /* Fit inside the parent container */
+    max-height: calc(100% - 60px); /* Subtract height of h3 and some margin */
+    overflow: auto; /* Enables scrolling on x and y if needed */
+    margin-top: 20px; /* Space between h3 and table */
+  }
+
+  /* Table styling for better readability */
+  .order_table {
+    width: 100%; /* Full width of its container */
+    border-collapse: collapse; /* Ensures borders between cells are merged */
+  }
+
+  .order_table th,
+  .order_table td {
+    text-align: left; /* Align text to the left */
+    padding: 8px; /* Padding for table cells */
+    border-bottom: 1px solid #ccc; /* Light border for each row */
+  }
+
+  .loader_container {
+    display: flex;
+    justify-content: center; /* Center loader horizontally */
+    align-items: center; /* Center loader vertically */
+    height: 100%; /* Full height to center vertically */
+  }
+
+  button {
+    cursor: pointer; /* Cursor indicates clickable button */
+    padding: 8px 16px; /* Padding around text in button */
+    background-color: #36d7b7; /* Background color from your loader */
+    border: none; /* No border */
+    color: white; /* White text */
+    border-radius: 4px; /* Rounded corners */
+  }
+}
