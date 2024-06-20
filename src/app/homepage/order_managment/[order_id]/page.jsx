@@ -1,5 +1,5 @@
 "use client";
-import "../../checkout/checkout.css";
+import "./order_detail.css";
 import { useEffect, useState, React } from "react";
 import Image from "next/image";
 import AWS from "aws-sdk";
@@ -194,9 +194,9 @@ export default function CheckoutPage({ params }) {
 
   const totalPrice = calculateTotalPrice();
   return (
-    <div className="checkout_page_container">
-      <div className="address_checkout_page">
-        <div className="header_address_checkout">
+    <div className="order_detail_container">
+      <div className="address_order_detail">
+        <div className="header_address_order_detail">
           <Image
             src="/location_checkout.png"
             alt="location icon"
@@ -205,7 +205,7 @@ export default function CheckoutPage({ params }) {
           />
           <p>配送先住所</p>
         </div>
-        <div className="information_address_checkout">
+        <div className="information_address_order_detail">
           <p>{address}</p>
           <p>
             {user_information.user_name} {user_information.user_phone}
@@ -223,141 +223,141 @@ export default function CheckoutPage({ params }) {
         {" "}
         <BeatLoader color={"#36d7b7"} loading={isLoading} size={15} />
       </div>
-      <table className="orderdetailtable">
-        <thead>
-          <tr>
-            <th>画像</th>
-            <th>名前</th>
-            <th>オプション</th>
-            <th>アイテムの数量</th>
-            <th>単価</th>
-            <th>量</th>
-            <th>合計金額</th>
-          </tr>
-        </thead>
+      <div className="scroll_table_order_detail">
+        <table className="orderdetailtable">
+          <thead>
+            <tr>
+              <th>画像</th>
+              <th>名前</th>
+              <th>オプション</th>
+              <th>アイテムの数量</th>
+              <th>単価</th>
+              <th>量</th>
+              <th>合計金額</th>
+            </tr>
+          </thead>
 
-        <tbody>
-          {orderDetails?.orderItems?.map((order, index) => (
-            <>
-              <tr key={index}>
-                <td>
-                  <Image
-                    src={order.productDetails.images[0].Image_url}
-                    alt="product_img"
-                    width={100}
-                    height={100}
-                  />
-                </td>
-                <td>
-                  <div>
+          <tbody>
+            {orderDetails?.orderItems?.map((order, index) => (
+              <>
+                <tr key={index}>
+                  <td>
+                    <Image
+                      src={order.productDetails.images[0].Image_url}
+                      alt="product_img"
+                      width={100}
+                      height={100}
+                    />
+                  </td>
+                  <td>
                     <p>{order.productDetails.Product_title}</p>
-                  </div>
-                </td>
-                <td>
-                  {
-                    order.productDetails.options[order.Option_number]
-                      .Option_name
-                  }
-                </td>
-                <td>
-                  {orderDetails.DiscountType === "Discount"
-                    ? `${Math.floor(
-                        orderDetails.Discount_percentage
-                      )}% プロモーション`
-                    : orderDetails.DiscountType === "Freeship"
-                    ? "フリーシップ"
-                    : "プロモーションはありません"}
-                </td>
-                <td>
-                  {Math.floor(order.Original_price).toLocaleString("en-US")}円
-                </td>
-                <td>{order.Quantity}</td>
-                <td>
-                  {Math.floor(order.Final_price).toLocaleString("en-US")} 円
-                </td>
-              </tr>
-              <td colSpan="6" style={{ textAlign: "center" }}>
-                {iscomplete === "Complete" && (
-                  <button
-                    onClick={() => openCommentModal(order.Product_ID)}
-                    className="comment_button"
-                  >
-                    この商品についてのコメント
-                  </button>
-                )}
-              </td>
-
-              {activeCommentId === order.Product_ID && (
-                <tr>
-                  <td colSpan="6">
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: "200px",
-                      }}
-                    >
-                      <textarea
-                        placeholder="Comment"
-                        style={{
-                          width: "500px",
-                          height: "100px",
-                          marginRight: "20px",
-                        }}
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                      ></textarea>
-                      <div className="choose_shop_image_container">
-                        <h3> 写真をもっと見る</h3>
-                        {images.length === 0 && (
-                          <input
-                            type="file"
-                            multiple
-                            onChange={handleImageChange}
-                          />
-                        )}
-                        <div className="img_array_choose_seller_image">
-                          {images.map((image, index) => (
-                            <div
-                              className="img_container_choose_seller_image"
-                              key={index}
-                            >
-                              <Image
-                                src={image}
-                                alt={`Product ${index + 1}`}
-                                width={120}
-                                height={120}
-                              />
-                              <button
-                                onClick={() =>
-                                  setImages(
-                                    images.filter((_, i) => i !== index)
-                                  )
-                                }
-                                className="btn_delete_image"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <button
-                      style={{ marginTop: "20px", marginLeft: "200px" }}
-                      onClick={handleComment}
-                    >
-                      コメントを追加する
-                    </button>
+                  </td>
+                  <td>
+                    {
+                      order.productDetails.options[order.Option_number]
+                        .Option_name
+                    }
+                  </td>
+                  <td>
+                    {orderDetails.DiscountType === "Discount"
+                      ? `${Math.floor(
+                          orderDetails.Discount_percentage
+                        )}% プロモーション`
+                      : orderDetails.DiscountType === "Freeship"
+                      ? "フリーシップ"
+                      : "プロモーションはありません"}
+                  </td>
+                  <td>
+                    {Math.floor(order.Original_price).toLocaleString("en-US")}円
+                  </td>
+                  <td>{order.Quantity}</td>
+                  <td>
+                    {Math.floor(order.Final_price).toLocaleString("en-US")} 円
                   </td>
                 </tr>
-              )}
-            </>
-          ))}
-        </tbody>
-      </table>
+                <td colSpan="6" style={{ textAlign: "center" }}>
+                  {iscomplete === "Complete" && (
+                    <button
+                      onClick={() => openCommentModal(order.Product_ID)}
+                      className="comment_button"
+                    >
+                      この商品についてのコメント
+                    </button>
+                  )}
+                </td>
 
-      <div className="checkout_final_step">
+                {activeCommentId === order.Product_ID && (
+                  <tr>
+                    <td colSpan="6">
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: "200px",
+                        }}
+                      >
+                        <textarea
+                          placeholder="Comment"
+                          style={{
+                            width: "500px",
+                            height: "100px",
+                            marginRight: "20px",
+                          }}
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                        ></textarea>
+                        <div className="choose_shop_image_container">
+                          <h3> 写真をもっと見る</h3>
+                          {images.length === 0 && (
+                            <input
+                              type="file"
+                              multiple
+                              onChange={handleImageChange}
+                            />
+                          )}
+                          <div className="img_array_choose_seller_image">
+                            {images.map((image, index) => (
+                              <div
+                                className="img_container_choose_seller_image"
+                                key={index}
+                              >
+                                <Image
+                                  src={image}
+                                  alt={`Product ${index + 1}`}
+                                  width={120}
+                                  height={120}
+                                />
+                                <button
+                                  onClick={() =>
+                                    setImages(
+                                      images.filter((_, i) => i !== index)
+                                    )
+                                  }
+                                  className="btn_delete_image"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        style={{ marginTop: "20px", marginLeft: "200px" }}
+                        onClick={handleComment}
+                      >
+                        コメントを追加する
+                      </button>
+                    </td>
+                  </tr>
+                )}
+              </>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="order_detail_footer">
         <div>
           <p>注文総額 </p>{" "}
           <p>
@@ -365,15 +365,7 @@ export default function CheckoutPage({ params }) {
           </p>
         </div>
         <p>注記</p>
-        <div
-          style={{
-            border: "1px solid black",
-            width: "400px",
-            padding: "10px 20px",
-          }}
-        >
-          {note}
-        </div>
+        <div className="note_order_detail">{note}</div>
       </div>
     </div>
   );
