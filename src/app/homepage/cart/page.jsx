@@ -354,13 +354,16 @@ export default function Page({}) {
                         check_product_item(shopIndex, productIndex)
                       }
                     ></input>
-                    <Image
-                      src={product.Image_url}
-                      alt="product_img"
-                      width={100}
-                      height={100}
-                    ></Image>
-                    <p>{product.Product_title}</p>
+                    <div className="img_container_in_cart">
+                      <Image
+                        src={product.Image_url}
+                        alt="product_img"
+                        fill="true"
+                      ></Image>
+                    </div>
+                    <div className="product_name_in_cart">
+                      <p>{product.Product_title}</p>
+                    </div>
                   </div>
                   <div className="cart_prodcut_container_right_section">
                     <p>

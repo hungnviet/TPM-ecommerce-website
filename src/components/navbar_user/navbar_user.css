@@ -321,6 +321,9 @@
     width: 80% !important;
     height: 100px !important;
   }
+  .btn_visit_shop {
+    display: none !important;
+  }
 }
 
 .list_category_navbar button {

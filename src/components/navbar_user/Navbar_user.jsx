@@ -338,7 +338,10 @@ export default function NavbarUser({}) {
                 注文管理
               </Link>
               {isSeller ? (
-                <button onClick={() => router.push(`/seller_mode/dashboard`)}>
+                <button
+                  className="btn_visit_shop"
+                  onClick={() => router.push(`/seller_mode/dashboard`)}
+                >
                   私の店
                 </button>
               ) : (
