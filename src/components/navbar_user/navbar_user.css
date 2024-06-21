@@ -91,7 +91,7 @@
 }
 @media (max-width: 500px) {
   /* Hide all divs except the last two */
-  .right_section_navbar_container > div:not(:nth-last-child(-n + 2)) {
+  .right_section_navbar_container > div:not(:nth-last-child(-n + 3)) {
     display: none;
   }
 }
