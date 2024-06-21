@@ -224,7 +224,7 @@ export default function NavbarUser({}) {
                     />
                   </button>
                   <p>
-                    {user.Total_Quantity ? user.Total_Quantity : "loading.."}
+                    {user?.Total_Quantity ? user.Total_Quantity : "loading.."}
                   </p>
                 </div>
                 <div>
@@ -284,7 +284,7 @@ export default function NavbarUser({}) {
                       />
                     </div>
                   </button>
-                  <p>{user.LName ? user.LName : "loading..."}</p>
+                  <p>{user?.LName ? user.LName : "loading..."}</p>
                 </div>
                 <div>
                   <button

@@ -6,6 +6,8 @@ import "./register_seller.css";
 import { useRouter } from "next/navigation";
 import { Allerta } from "next/font/google";
 import { getCognitoUserSub } from "@/config/cognito";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Image from "next/image";
 AWS.config.update({
@@ -123,46 +125,48 @@ export default function Page() {
       );
       const validImageUrls = imageUrls.filter((url) => url !== null);
       console.log("Image URLs:", validImageUrls);
-      alert("Create shop success");
       const shopName_encode = encodeURIComponent(shopName.replace(/\s/g, ""));
-      const res = await fetch("/api/seller/information", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          shopName: shopName,
-          User_ID: user_id,
-          shippingCompanyList: [
-            "Default Shipping Company 1",
-            "Default Shipping Company 2",
-          ],
-          shopImg: validImageUrls[0],
-          shopAddress: shopAddress,
-        }),
-      });
-      if (res.ok) {
-        const params = {
-          UserPoolId: process.env.NEXT_PUBLIC_AWS_Userpool_ID, // replace with your User Pool ID
-          Username: user_id, // replace with the username of the user
-          GroupName: "seller",
-        };
+      // const res = await fetch("/api/seller/information", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     shopName: shopName,
+      //     User_ID: user_id,
+      //     shippingCompanyList: [
+      //       "Default Shipping Company 1",
+      //       "Default Shipping Company 2",
+      //     ],
+      //     shopImg: validImageUrls[0],
+      //     shopAddress: shopAddress,
+      //   }),
+      // });
+      // if (res.ok) {
+      //   const params = {
+      //     UserPoolId: process.env.NEXT_PUBLIC_AWS_Userpool_ID, // replace with your User Pool ID
+      //     Username: user_id, // replace with the username of the user
+      //     GroupName: "seller",
+      //   };
 
-        cognitoidentityserviceprovider.adminAddUserToGroup(
-          params,
-          function (err, data) {
-            console.log(data); // successful response
-            if (err) console.log(err, err.stack); // an error occurred
-            else console.log(data); // successful response
-          }
-        );
-      }
-      route.push(`/seller_mode/dashboard`);
+      //   cognitoidentityserviceprovider.adminAddUserToGroup(
+      //     params,
+      //     function (err, data) {
+      //       console.log(data); // successful response
+      //       if (err) console.log(err, err.stack); // an error occurred
+      //       else console.log(data); // successful response
+      //     }
+      //   );
+      // }
+      // route.push(`/seller_mode/dashboard`);
+      toast.success("We have received your request. Please wait for approval.");
     }
   }
 
   return (
     <div className="regiester_as_seller_page_container">
+      <ToastContainer />
+
       <div className="header_register_as_seller">
         <h3>TPM</h3>
       </div>
