@@ -284,13 +284,13 @@ export default function Product_detail_description({ product_id }) {
           <p>{message}</p>
           <div className="modal_actions">
             <button className="btn_continue" onClick={onClose}>
-              Continue Shopping
+              ショッピングを続ける
             </button>
             <button
               className="btn_to_cart"
               onClick={() => router.push(`/homepage/cart`)}
             >
-              Go to My Cart
+              カートへ移動
             </button>
           </div>
         </div>
@@ -364,7 +364,10 @@ export default function Product_detail_description({ product_id }) {
           product.discount.length > 0 &&
           product.discount[0].Condition_value > 0 && (
             <div className="product_detail_discount">
-              <p>Buy {product.discount[0].Condition_value} to get Freeship!</p>
+              <p>
+                {product.discount[0].Condition_value}
+                個購入すると送料無料になります!
+              </p>
             </div>
           )}
         {option.map((option, index) => {
@@ -454,7 +457,7 @@ export default function Product_detail_description({ product_id }) {
                 fontWeight: "bold",
               }}
             >
-              Total Order:
+              総売上高:
             </p>
             <p> {product.TotalOrder} orders</p>
           </div>
@@ -464,7 +467,7 @@ export default function Product_detail_description({ product_id }) {
           className="product_detail_add_to_cart"
           onClick={handleAddToCart}
         >
-          Add to cart
+          カートに追加
         </button>
       </div>
 

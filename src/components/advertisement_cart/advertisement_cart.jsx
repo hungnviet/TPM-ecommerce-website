@@ -20,7 +20,7 @@ export default function AdvertisementCart({ advertisement, user_id }) {
 
       <div className="overlay">
         <button className="detail-button" onClick={showDetails}>
-          Visit this shop
+          このお店を訪問する
         </button>
       </div>
     </div>

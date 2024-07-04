@@ -76,7 +76,7 @@ export default function Page({ params }) {
         <BeatLoader color={"#36d7b7"} loading={!relatedProduct} />
       </div>
       <div className="btn_show_more_product_detail">
-        {category && <button onClick={ShowMore}>Show more</button>}
+        {category && <button onClick={ShowMore}>もっと見る</button>}
       </div>
     </div>
   );

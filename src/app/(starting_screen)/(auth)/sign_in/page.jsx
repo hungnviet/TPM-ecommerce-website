@@ -120,7 +120,7 @@ export default function SignIn() {
         </div>
         <button type="submit">Log in</button>
         <div className="forgot_password">
-          <Link href="/sign_in/forgot_password">Forgot Password</Link>
+          <Link href="/sign_in/forgot_password">パスワード変更</Link>
         </div>
       </form>
     </div>

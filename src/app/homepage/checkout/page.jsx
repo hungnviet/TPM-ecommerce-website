@@ -497,7 +497,7 @@ export default function CheckoutPage({}) {
       }
     }
 
-    toast.success("Order has been placed");
+    toast.success("注文が完了しました");
 
     route.push(`/homepage/order_managment`);
   }
@@ -627,7 +627,7 @@ export default function CheckoutPage({}) {
               )}
 
               <button onClick={() => setIsAddNewAddress(!isAddNewAddress)}>
-                {isAddNewAddress ? "close" : "Add New Address"}
+                {isAddNewAddress ? "閉じる" : "新しい住所を追加"}
               </button>
             </>
           ) : (
@@ -639,10 +639,10 @@ export default function CheckoutPage({}) {
             </>
           )}
           <button onClick={() => setIsEditing(!isEditing)}>
-            {isEditing ? "Xong" : "Thay doi"}
+            {isEditing ? "保存" : "変更"}
           </button>
           {isEditing && (
-            <button onClick={() => setIsEditing(false)}>Huy</button>
+            <button onClick={() => setIsEditing(false)}>閉じる</button>
           )}
         </div>
       </div>
@@ -727,7 +727,7 @@ export default function CheckoutPage({}) {
                           {/* Make sure it's .note */}
                         </>
                       ) : (
-                        "Chưa chọn"
+                        "選択していない"
                       )}
                     </p>
                   </div>
@@ -748,7 +748,7 @@ export default function CheckoutPage({}) {
                           </span>
                         </>
                       ) : (
-                        "Chưa chọn"
+                        "選択していない"
                       )}
                     </p>
                   </div>
@@ -769,7 +769,7 @@ export default function CheckoutPage({}) {
                           {/* Make sure it's .note */}
                         </>
                       ) : (
-                        "Chưa chọn"
+                        "選択していない"
                       )}
                     </p>
                   </div>
@@ -780,7 +780,7 @@ export default function CheckoutPage({}) {
               {showShipmentModal && (
                 <div className="modal">
                   <div className="modal-content">
-                    <h3>Chọn đơn vị vận chuyển</h3>
+                    <h3>配送を選択</h3>
                     <ul>
                       {currentShippingOptions.map((option) => (
                         <li
@@ -808,7 +808,7 @@ export default function CheckoutPage({}) {
                       ))}
                     </ul>
                     <button onClick={() => setShowShipmentModal(false)}>
-                      Đóng
+                      選択
                     </button>
                   </div>
                 </div>
@@ -816,7 +816,7 @@ export default function CheckoutPage({}) {
               {showVoucherModal && (
                 <div className="modal">
                   <div className="modal-content">
-                    <h3>Chọn Voucher</h3>
+                    <h3>プロモーションを選択</h3>
                     <ul>
                       {currentVoucher
                         .filter((option) => {
@@ -848,7 +848,7 @@ export default function CheckoutPage({}) {
                         ))}
                     </ul>
                     <button onClick={() => setshowVoucherModal(false)}>
-                      Đóng
+                      選択
                     </button>
                   </div>
                 </div>
@@ -856,7 +856,7 @@ export default function CheckoutPage({}) {
               {showPaymentModal && (
                 <div className="modal">
                   <div className="modal-content">
-                    <h3>Chọn phuong thuc thanh toan</h3>
+                    <h3>お支払い方法を選択してください</h3>
                     <ul>
                       {currentPayment.map((option) => (
                         <li
@@ -877,7 +877,7 @@ export default function CheckoutPage({}) {
                       ))}
                     </ul>
                     <button onClick={() => setshowPaymentModal(false)}>
-                      Đóng
+                      選択
                     </button>
                   </div>
                 </div>
@@ -892,7 +892,7 @@ export default function CheckoutPage({}) {
                 </div>
                 <div className="price-check-text">+</div>
                 <div className="price-check-text">
-                  <span className="price-label">輸送費:</span>
+                  <span className="price-label">配送料・手数料:</span>
                   <span className="price-value">
                     {shop.freeship === 1 ||
                     selectedVoucher[index]?.type === "Freeship"
@@ -927,7 +927,7 @@ export default function CheckoutPage({}) {
                   --------------------
                 </div>
                 <div className="price-check-text">
-                  <span className="price-label">Total:</span>
+                  <span className="price-label">ご請求額:</span>
                   <span className="price-value">
                     {calculateShopTotalPrice(shop, index)} 円
                   </span>
