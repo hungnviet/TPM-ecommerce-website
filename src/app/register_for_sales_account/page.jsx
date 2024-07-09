@@ -159,7 +159,9 @@ export default function Page() {
       //   );
       // }
       // route.push(`/seller_mode/dashboard`);
-      toast.success("We have received your request. Please wait for approval.");
+      toast.success(
+        "リクエストを受け取りました。承認されるまでお待ちください。"
+      );
     }
   }
 
