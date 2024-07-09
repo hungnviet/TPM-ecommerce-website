@@ -109,7 +109,7 @@ export default function SignUp() {
   return (
     <form className="container" onSubmit={check_submit}>
       <div className="header_container">
-        <h1 className="title">Create your account!</h1>
+        <h1 className="title">アカウントを作成！</h1>
       </div>
       <div className="form_container_sign_up">
         <input
@@ -128,9 +128,9 @@ export default function SignUp() {
             onChange={() => setCheck(!check)}
           ></input>
           <div className="term_content">
-            <p>I have read and accepted with the</p>
-            <Link href="/"> terms and privacy</Link>
-            <p> of website</p>
+            <p></p>
+            <Link href="/term"> 利用規約</Link>
+            <p> に同意のうえ、</p>
           </div>
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function SignUp() {
         <p className="err_msg_sign_up_1">{err}</p>
       </div>
       <button className="btn_next" type="submit">
-        Next
+        新規登録
       </button>
     </form>
   );

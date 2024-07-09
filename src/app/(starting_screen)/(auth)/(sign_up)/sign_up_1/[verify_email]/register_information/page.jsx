@@ -482,7 +482,7 @@ export default function RegisterInformation({ params }) {
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
-          toast.success("User information successfully updated");
+          toast.success("ユーザー情報が正常に更新されました");
           router.push("/sign_in");
         })
         .catch((error) => {
@@ -511,20 +511,20 @@ export default function RegisterInformation({ params }) {
   return (
     <div className="register_information_container">
       <ToastContainer />
-      <h1>Please inform you information for creating account</h1>
+      <h1>アカウント作成に必要な情報をお知らせください</h1>
       <form className="form_register_information" onSubmit={handleSubmit}>
         <div className="form_register_content">
           <div className="first_block_form_content">
             <div className="left_of_first">
               <div>
-                <label>First Name</label>
+                <label>ファーストネーム</label>
                 <input
                   type="text"
                   onChange={(e) => setFirstName(e.target.value)}
                 />
               </div>
               <div>
-                <label>Last Name</label>
+                <label>苗字</label>
                 <input
                   type="text"
                   onChange={(e) => setLastName(e.target.value)}
@@ -532,17 +532,17 @@ export default function RegisterInformation({ params }) {
               </div>
               <div>
                 <h4>
-                  Name : {firstName} {lastName}
+                  名前 : {firstName} {lastName}
                 </h4>
-                <h4>Address: {address}</h4>
-                <h4>Phone Number :{phoneNumber}</h4>
-                <h4>Gender: {gender}</h4>
-                <p>Please check your information correctly</p>
+                <h4>住所: {address}</h4>
+                <h4>電話番号 :{phoneNumber}</h4>
+                <h4>性別: {gender}</h4>
+                <p>情報を正しく確認してください</p>
               </div>
             </div>
             <div className="right_of_first">
               <div>
-                <label>Phone Number</label>
+                <label>電話番号</label>
                 <PhoneInput
                   country={"jp"}
                   enableSearch={true}
@@ -551,15 +551,15 @@ export default function RegisterInformation({ params }) {
                 />
                 {!isPhoneValid && phoneNumber && (
                   <p className="error">
-                    Invalid phone number. Ensure it has 9-11 digits after the
-                    country code.
+                    電話番号が無効です。国番号の後に 9～11
+                    桁の数字があることを確認してください。
                   </p>
                 )}
               </div>
               <div>
-                <label>Address</label>
+                <label>住所</label>
                 <div className="selectContainer">
-                  <p>Province</p>
+                  <p>州</p>
                   <select
                     value={provinceIndex}
                     onChange={(e) => {
@@ -589,7 +589,7 @@ export default function RegisterInformation({ params }) {
                       );
                     })}
                   </select>
-                  <p>Detail address</p>
+                  <p>詳細住所</p>
                   <input
                     type="text"
                     value={detailAdress}
@@ -603,11 +603,11 @@ export default function RegisterInformation({ params }) {
           </div>
           <div className="seconde_block_form_content">
             <div className="left_of_second">
-              <label>Email</label>
+              <label>メール</label>
               <p>{email}</p>
             </div>
             <div className="right_of_second">
-              <label>Gender</label>
+              <label>性別</label>
               <div className="option_for_gender">
                 <div>
                   <input
@@ -616,7 +616,7 @@ export default function RegisterInformation({ params }) {
                     value="Male"
                     onChange={(e) => setGender(e.target.value)}
                   ></input>
-                  <p>Male</p>
+                  <p>男</p>
                 </div>
                 <div>
                   <input
@@ -625,7 +625,7 @@ export default function RegisterInformation({ params }) {
                     value="Female"
                     onChange={(e) => setGender(e.target.value)}
                   ></input>
-                  <p>Female</p>
+                  <p>女性</p>
                 </div>
                 <div>
                   <input
@@ -634,21 +634,21 @@ export default function RegisterInformation({ params }) {
                     value="Other"
                     onChange={(e) => setGender(e.target.value)}
                   ></input>
-                  <p>Other</p>
+                  <p>他の</p>
                 </div>
               </div>
             </div>
           </div>
           <div className="third_block_form_content">
             <div className="left_of_third">
-              <label>Password</label>
+              <label>パスワード</label>
               <input
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <div className="right_of_third">
-              <label>Confirm Password</label>
+              <label>パスワードを認証する</label>
               <input
                 type="password"
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -662,10 +662,10 @@ export default function RegisterInformation({ params }) {
             className="btn_clear"
             onClick={() => console.log(phoneNumber)}
           >
-            Clear
+            クリア
           </button>
           <button className="btn_finish" type="submit">
-            Finish
+            仕上げる
           </button>
         </div>
       </form>

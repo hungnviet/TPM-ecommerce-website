@@ -46,7 +46,7 @@
   flex-direction: column;
   row-gap: 10px;
   max-height: 100px;
-  overflow: scroll;
+  overflow: hidden;
   padding-top: 5px;
   padding-bottom: 5px;
 }

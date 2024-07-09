@@ -1,0 +1,60 @@
+/* term.css */
+
+.termcontainer {
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 30px;
+  padding: 20px;
+  font-family: "Arial", sans-serif;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.termmain {
+}
+.termmain h2 {
+  font-size: 0.75rem;
+  padding-bottom: 5px;
+  font-weight: 600;
+}
+.termmain p {
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+.termmain div {
+  border-bottom: 1px solid rgb(214, 214, 214);
+}
+
+.termtitle {
+  font-size: 20px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.termh2 {
+  font-weight: 600;
+  border-bottom: 1px solid rgb(214, 214, 214);
+  line-height: 1.6;
+  font-size: 1rem;
+}
+.termtext {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgb(214, 214, 214);
+}
+
+@media (max-width: 768px) {
+  .termcontainer {
+    padding: 15px;
+  }
+
+  .termtitle {
+    font-size: 2em;
+  }
+
+  .termh2 {
+    font-size: 1.3em;
+  }
+}

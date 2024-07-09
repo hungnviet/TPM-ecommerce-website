@@ -884,15 +884,17 @@ export default function CheckoutPage({}) {
               )}
 
               <div className="price-checkout-container">
+                <p style={{ fontWeight: "bold", fontSize: "18px" }}>注文内容</p>
+
                 <div className="price-check-text">
                   <span className="price-label">商品合計金額</span>
                   <span className="price-value">
-                    {calculateOriginalShopTotalPrice(shop)} 円
+                    ¥{calculateOriginalShopTotalPrice(shop)}
                   </span>
                 </div>
                 <div className="price-check-text">+</div>
                 <div className="price-check-text">
-                  <span className="price-label">配送料・手数料:</span>
+                  <span className="price-label">配送料・手数料 :</span>
                   <span className="price-value">
                     {shop.freeship === 1 ||
                     selectedVoucher[index]?.type === "Freeship"
@@ -903,33 +905,41 @@ export default function CheckoutPage({}) {
                           ? "：注文金額が送料無料の条件を満たしています"
                           : "")
                       : selectedShipment[index]
-                      ? selectedShipment[index].price + " 円"
-                      : 0 + " 円"}
+                      ? "¥" + selectedShipment[index].price
+                      : "¥" + 0}
                   </span>
                 </div>
                 {selectedVoucher[index] && (
                   <>
                     <div className="price-check-text">-</div>
                     <div className="price-check-text">
-                      <span className="price-label">プロモーション:</span>
+                      <span className="price-label">プロモーション :</span>
                       <span className="price-value">
                         {selectedVoucher[index].type === "Freeship"
                           ? "Free shipping"
                           : (
+                              "¥" +
                               (selectedVoucher[index].discount / 100) *
-                              calculateOriginalShopTotalPrice(shop)
-                            ).toFixed(1) + " 円"}
+                                calculateOriginalShopTotalPrice(shop)
+                            ).toFixed(1)}
                       </span>
                     </div>
                   </>
                 )}
-                <div className="price-check-text separator">
-                  --------------------
-                </div>
+                <div className="price-check-text separator"></div>
                 <div className="price-check-text">
-                  <span className="price-label">ご請求額:</span>
-                  <span className="price-value">
-                    {calculateShopTotalPrice(shop, index)} 円
+                  <span className="price-final">ご請求額 :</span>
+                  <span className="price-final">
+                    ¥{calculateShopTotalPrice(shop, index)}
+                  </span>
+                </div>
+
+                <div className="check-div"></div>
+                <div className="price-check-text">
+                  <span className="price-label">獲得ポイント :</span>
+                  <span className="price-point">
+                    +{Math.round(calculateShopTotalPrice(shop, index) / 1000)}
+                    ポイント
                   </span>
                 </div>
               </div>
