@@ -337,6 +337,12 @@ export default function NavbarUser({}) {
               <Link href={`/homepage/order_managment`} onClick={handleClose}>
                 注文管理
               </Link>
+              {/*
+              check isSeller and Waiting_become_seller
+              if isSeller is true then show link to seller page
+              if Waiting_become_seller is true then show link to waiting page   /homepage/resultRegisterBecomeSeller
+              if both is false then show link to register page  /homepage/register_for_sales_account
+               */}
               {isSeller ? (
                 <button
                   className="btn_visit_shop"

@@ -945,3 +945,13 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+
+use TPM_EC;
+CREATE TABLE USER_REGISTER_BECOME_SELLER(
+    User_ID varchar(255) PRIMARY KEY NOT NULL,
+    Shop_name varchar(255) NOT NULL,
+    Shop_address varchar(255) NOT NULL,
+    Shop_image varchar(255),  -- Corrected column name
+    FOREIGN KEY (User_ID) REFERENCES USER(User_ID)  -- Corrected foreign key syntax
+);

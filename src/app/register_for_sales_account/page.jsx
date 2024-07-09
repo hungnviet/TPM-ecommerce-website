@@ -160,6 +160,9 @@ export default function Page() {
       // }
       // route.push(`/seller_mode/dashboard`);
       toast.success("We have received your request. Please wait for approval.");
+
+      /// make the request to server to add the user to the list of user register become seller
+      /// end points: /api/seller/registerStage/registerSeller
     }
   }
 

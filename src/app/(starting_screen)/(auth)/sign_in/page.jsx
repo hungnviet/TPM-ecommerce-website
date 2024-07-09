@@ -98,9 +98,11 @@ export default function SignIn() {
 
   return (
     <div className="container">
-      <p className="helo"> If you already have the account, just login!</p>
+      <p className="helo">
+        すでにアカウントをお持ちの場合は、ログインするだけです!
+      </p>
       <form className="form_container" onSubmit={check_submit}>
-        <h2>Log In</h2>
+        <h2>ログイン</h2>
         <div className="input_container">
           <input
             type="email"
@@ -118,9 +120,9 @@ export default function SignIn() {
         <div>
           <p className="err_msg_logIn">{err}</p>
         </div>
-        <button type="submit">Log in</button>
+        <button type="submit">ログイン</button>
         <div className="forgot_password">
-          <Link href="/sign_in/forgot_password">Forgot Password</Link>
+          <Link href="/sign_in/forgot_password">パスワードをお忘れですか</Link>
         </div>
       </form>
     </div>

@@ -63,23 +63,24 @@ export default function SignUp2({ params }) {
   }
   return (
     <div className="container_sign_up_2">
-      <h1>Verify your email</h1>
-      <p>Enter the code we have send you via email</p>
+      <h1>あなたの電子メールを確認します</h1>
+      <p>電子メールで送信されたコードを入力してください</p>
       <form className="form_sign_up_2" onSubmit={check_submit}>
         <input
           type="text"
-          placeholder="enter code here"
+          placeholder="ここにコードを入力してください
+"
           onChange={(e) => {
             setCode(e.target.value);
           }}
         />
-        <button type="submit">Verify</button>
+        <button type="submit">確認する</button>
       </form>
       <div>
         {errMsg && <p className="error_message_verify_code">{errMsg}</p>}
       </div>
       <button className="btn_resend_verify_email" onClick={resend_code}>
-        resend code
+        コードを再送信する
       </button>
     </div>
   );
