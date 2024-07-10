@@ -556,7 +556,7 @@ export default function CheckoutPage({}) {
                 <div className="add_new_address_container_checkout">
                   <div className="select_province_region_for_adding_address">
                     <div>
-                      <p>Regions</p>
+                      <p>地域</p>
                       {listRegion.length > 0 ? (
                         <select
                           onChange={handleRegionChange}
@@ -573,7 +573,7 @@ export default function CheckoutPage({}) {
                       )}
                     </div>
                     <div>
-                      <p>Provinces</p>
+                      <p>州</p>
                       {listProvinceByRegion.length > 0 ? (
                         <select
                           value={selectedProvinceIndex}
