@@ -949,7 +949,7 @@ export default function CheckoutPage({}) {
 
       <div className="checkout_final_step">
         <div>
-          <p>商品の総原価: </p> <p>{totalPrice} 円</p>
+          <p>商品の総原価: </p> <p>¥{totalPrice.toLocaleString()}</p>
         </div>
 
         <button onClick={handle_checkout}>注文</button>

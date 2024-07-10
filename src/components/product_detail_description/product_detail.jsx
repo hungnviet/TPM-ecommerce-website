@@ -265,11 +265,13 @@ export default function Product_detail_description({ product_id }) {
     if (response.ok) {
       const result = await response.json();
       console.log(result.message);
-      setModalMessage("Item added to cart successfully!");
+      setModalMessage("商品がカートに追加されました。");
       setShowModal(true);
     } else {
       console.error("Error:", response.statusText);
-      setModalMessage("Failed to add item to cart. Please try again.");
+      setModalMessage(
+        "商品をカートに追加できませんでした。もう一度お試しください。"
+      );
       setShowModal(true);
     }
   }
