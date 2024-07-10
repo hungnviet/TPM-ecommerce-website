@@ -64,7 +64,7 @@ export default function SignUp2({ params }) {
   return (
     <div className="container_sign_up_2">
       <h1>あなたの電子メールを確認します</h1>
-      <p>電子メールで送信されたコードを入力してください</p>
+      <p>メールで送信されたコードを入力してください</p>
       <form className="form_sign_up_2" onSubmit={check_submit}>
         <input
           type="text"
@@ -80,7 +80,7 @@ export default function SignUp2({ params }) {
         {errMsg && <p className="error_message_verify_code">{errMsg}</p>}
       </div>
       <button className="btn_resend_verify_email" onClick={resend_code}>
-        コードを再送信する
+        コードを再送信
       </button>
     </div>
   );

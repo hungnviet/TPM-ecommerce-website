@@ -59,8 +59,7 @@
 
 .table_scrollable {
   overflow-x: auto; /* Enable horizontal scrolling */
-  max-height: 60vh; /* Larger vertical space */
-  min-height: 500px; /* Minimum height to ensure visibility */
+  overflow-y: scroll;
 }
 
 .order_table {

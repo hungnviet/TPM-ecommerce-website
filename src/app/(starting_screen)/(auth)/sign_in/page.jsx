@@ -99,7 +99,7 @@ export default function SignIn() {
   return (
     <div className="container">
       <p className="helo">
-        すでにアカウントをお持ちの場合は、ログインするだけです!
+        すでにアカウントをお持ちの場合は、ログインしてください。
       </p>
       <form className="form_container" onSubmit={check_submit}>
         <h2>ログイン</h2>
@@ -122,7 +122,7 @@ export default function SignIn() {
         </div>
         <button type="submit">ログイン</button>
         <div className="forgot_password">
-          <Link href="/sign_in/forgot_password">パスワードをお忘れですか</Link>
+          <Link href="/sign_in/forgot_password">パスワード変更</Link>
         </div>
       </form>
     </div>

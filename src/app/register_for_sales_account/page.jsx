@@ -90,9 +90,9 @@ export default function Page() {
 
   async function handleCreateShop() {
     if (!isCheck) {
-      setErrMsg("Please accept the terms and conditions");
+      setErrMsg("利用規約に同意してください");
     } else if (shopName === "") {
-      setErrMsg("Please enter your shop's name");
+      setErrMsg("ショップ名を入力してください");
     } else {
       // handle with server create shop
       // navigate to shop page
@@ -159,10 +159,9 @@ export default function Page() {
       //   );
       // }
       // route.push(`/seller_mode/dashboard`);
-      toast.success("We have received your request. Please wait for approval.");
-
-      /// make the request to server to add the user to the list of user register become seller
-      /// end points: /api/seller/registerStage/registerSeller
+      toast.success(
+        "リクエストを受け取りました。承認されるまでお待ちください。"
+      );
     }
   }
 
@@ -176,23 +175,25 @@ export default function Page() {
       {!isRegister && (
         <div className="body_register_as_seller">
           <div className="content_for_register_as_seller">
-            <h2>Create your own</h2>
-            <h1>Online Shop now</h1>
+            <h2>自分で作る</h2>
+            <h1>今すぐオンラインショップへ</h1>
             <p>
-              Embark on your journey as a seller and let your unique products
-              shine on our platform
+              販売者としての旅に乗り出し、あなたのユニークな商品を
+              当社のプラットフォームで輝かせましょう
             </p>
           </div>
           <div className="btn_container_for_register_as_seller">
             <button>Back to homepage</button>
-            <button onClick={() => setIsRegister(true)}>Next</button>
+            <button onClick={() => setIsRegister(true)}>
+              ホームページに戻ります
+            </button>
           </div>
         </div>
       )}
       {isRegister && (
         <div className="Register_as_seller_body">
           <div className="register_as_seller_form">
-            <p className="header_register_as_seller">Your shop is name</p>
+            <p className="header_register_as_seller">ショップ名</p>
             <input
               type="text"
               placeholder="Enter your shop's name"
@@ -207,12 +208,12 @@ export default function Page() {
               onClick={() => setIsCheck(!isCheck)}
             />
             <div>
-              I have read and accepted the
-              <a href="#">Terms and Conditions</a>
+              私は以下の内容を読み、同意しました。
+              <a href="#">利用規約</a>
             </div>
           </div>
           <div className="input_address_seller">
-            <h3>Your shop is address</h3>
+            <h3>お店の住所</h3>
             <input
               type="text"
               placeholder="Ex: Tokyo 123 street doraemon"
@@ -221,7 +222,7 @@ export default function Page() {
             ></input>
           </div>
           <div className="choose_shop_image_container">
-            <h3> Your Shop is Profile</h3>
+            <h3> あなたのショップのプロフィール写真</h3>
             {images.length === 0 && (
               <input type="file" multiple onChange={handleImageChange} />
             )}
@@ -236,13 +237,13 @@ export default function Page() {
               onClick={() => setImages(images.filter((_, i) => i !== index))}
               className="btn_delete_image"
             >
-              Delete
+              消去
             </button>
           </div>
 
           <p>{errMsg}</p>
           <button onClick={handleCreateShop} className="btn_create_shop">
-            CREATE SHOP
+            ショップを作成する
           </button>
         </div>
       )}

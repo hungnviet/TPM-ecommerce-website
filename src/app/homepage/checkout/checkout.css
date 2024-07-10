@@ -341,7 +341,7 @@
 }
 .price-checkout-container {
   border: 1px solid #ccc;
-  padding: 20px;
+  padding: 10px;
   border-radius: 8px;
   background-color: #f9f9f9;
   width: 300px;
@@ -358,10 +358,24 @@
 }
 
 .price-label {
-  font-weight: bold;
   flex-shrink: 0;
   margin-right: 5px;
   white-space: nowrap;
+}
+.price-final {
+  font-size: 18px;
+  font-weight: bold;
+  color: #a80d0d;
+}
+.price-point {
+  font-size: 16px;
+  font-weight: bold;
+  color: #a80d0d;
+}
+.check-div {
+  border-bottom: 1px solid rgb(214, 214, 214);
+  padding-top: 10px;
+  margin-bottom: 10px;
 }
 
 .price-value {

@@ -28,8 +28,8 @@ export default function Navbar() {
       <div className="link_container"></div>
       <div className="btn_container">
         <div>
-          <button onClick={() => router.push("/sign_in")}>Sign In</button>
-          <button onClick={() => router.push("/sign_up_1")}>Sign Up</button>
+          <button onClick={() => router.push("/sign_in")}>ログイン</button>
+          <button onClick={() => router.push("/sign_up_1")}>新規登録</button>
         </div>
       </div>
     </div>

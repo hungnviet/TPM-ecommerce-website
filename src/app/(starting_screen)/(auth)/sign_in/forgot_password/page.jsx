@@ -84,12 +84,11 @@ export default function Forgot_Password() {
       {!isCheckCode && !canResetPassword && (
         <div>
           <div>
-            <h2>Forgot Password</h2>
+            <h2>パスワード変更</h2>
           </div>
           <form className="form_forget_password" onSubmit={handle_enter_email}>
             <p>
-              Please enter your email address. We will send you a code to reset
-              your password.
+              メールアドレスを入力してください。パスワードをリセットするためのコードをお送りします。
             </p>
             <input
               placeholder=" youremail@gmail.com"
@@ -98,17 +97,17 @@ export default function Forgot_Password() {
               onChange={(e) => setEmail(e.target.value)}
             ></input>
             <button type="submit" className="btn_sendCode">
-              Send Code
+              コードを送信
             </button>
             <div className="err_msg_forget_password">{err}</div>
           </form>
-          <Link href="/sign_in">Back to login</Link>
+          <Link href="/sign_in">ログインに戻る</Link>
         </div>
       )}
       {isCheckCode && (
         <div className="input_code_forget_pass">
-          <h2>input code</h2>
-          <p>Enter the code we have send you via email</p>
+          <h2>入力コード</h2>
+          <p>メールで送信されたコードを入力してください</p>
           <form className="codeformforgot" onSubmit={handle_verify_code}>
             <input
               type="text"
@@ -119,12 +118,12 @@ export default function Forgot_Password() {
             />
           </form>
           <button className="btn_resend_code_forget_password">
-            resend code
+            コードを再送信
           </button>
           <div className="reset_password">
-            <h2>Reset Your Password</h2>
+            <h2>あなたのパスワードをリセット</h2>
             <form>
-              <p>New Password</p>
+              <p>新しいパスワード</p>
               <div className="input_container_reset_password">
                 <input
                   className="reset_password form input"
@@ -134,7 +133,7 @@ export default function Forgot_Password() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              <p>Confirm Password</p>
+              <p>パスワードを認証する</p>
               <div className="input_container_reset_password">
                 <input
                   type={"password"}
@@ -153,7 +152,7 @@ export default function Forgot_Password() {
             className="btn_resend_code_forget_password"
             onClick={handle_verify_code}
           >
-            Reset password
+            パスワードを再設定する
           </button>
         </div>
       )}

@@ -97,7 +97,17 @@ export default function Page() {
                     {Math.floor(item.Total_price).toLocaleString("en-US")}円
                   </td>
                   <td>{item.Total_quantity}</td>
-                  <td>{item.Status}</td>
+                  <td>
+                    {item.Status === "Waiting confirmation"
+                      ? "確認待ち"
+                      : item.Status === "Shipping"
+                      ? "配送"
+                      : item.Status === "Packaging"
+                      ? "パッケージ"
+                      : item.Status === "Complete"
+                      ? "完了"
+                      : item.Status}
+                  </td>{" "}
                   <td>
                     {paymentMethods[item.Payment_method_id - 1]?.Method_name}
                   </td>

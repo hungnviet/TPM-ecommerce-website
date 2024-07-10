@@ -482,7 +482,7 @@ export default function RegisterInformation({ params }) {
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
-          toast.success("User information successfully updated");
+          toast.success("ユーザー情報が正常に更新されました");
           router.push("/sign_in");
         })
         .catch((error) => {
@@ -511,7 +511,7 @@ export default function RegisterInformation({ params }) {
   return (
     <div className="register_information_container">
       <ToastContainer />
-      <h1>アカウント作成のための情報をお知らせください</h1>
+      <h1>アカウント作成に必要な情報をお知らせください</h1>
       <form className="form_register_information" onSubmit={handleSubmit}>
         <div className="form_register_content">
           <div className="first_block_form_content">
@@ -532,18 +532,12 @@ export default function RegisterInformation({ params }) {
               </div>
               <div>
                 <h4>
-                  名前 ：{firstName} {lastName}
+                  名前 : {firstName} {lastName}
                 </h4>
-                <h4>
-                  住所：
-                  {address}
-                </h4>
-                <h4>電話番号 ：{phoneNumber}</h4>
-                <h4>
-                  性別：
-                  {gender}
-                </h4>
-                <p>情報を正しくご確認ください</p>
+                <h4>住所: {address}</h4>
+                <h4>電話番号 :{phoneNumber}</h4>
+                <h4>性別: {gender}</h4>
+                <p>情報を正しく確認してください</p>
               </div>
             </div>
             <div className="right_of_first">
@@ -557,13 +551,13 @@ export default function RegisterInformation({ params }) {
                 />
                 {!isPhoneValid && phoneNumber && (
                   <p className="error">
-                    無効な電話番号。国番号の後に 9 ～ 11
-                    桁があることを確認してください。
+                    電話番号が無効です。国番号の後に 9～11
+                    桁の数字があることを確認してください。
                   </p>
                 )}
               </div>
               <div>
-                <label>Address</label>
+                <label>住所</label>
                 <div className="selectContainer">
                   <p>州</p>
                   <select
@@ -609,7 +603,7 @@ export default function RegisterInformation({ params }) {
           </div>
           <div className="seconde_block_form_content">
             <div className="left_of_second">
-              <label>Eメール</label>
+              <label>メール</label>
               <p>{email}</p>
             </div>
             <div className="right_of_second">

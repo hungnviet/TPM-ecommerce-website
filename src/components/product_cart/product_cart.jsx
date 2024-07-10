@@ -124,7 +124,7 @@ export default function Product_cart({ product, userID, freeship }) {
       <ToastContainer />
       <div className="product_cart_image_container">
         <Image src={product.First_Image} fill="true" alt="product image" />
-        {freeship && <div className="free_shipping_label">Free Shipping </div>}
+        {freeship && <div className="free_shipping_label">送料無料 </div>}
       </div>
       <div className="product_cart_info_container">
         <div className="seller_in4_product_cart">
