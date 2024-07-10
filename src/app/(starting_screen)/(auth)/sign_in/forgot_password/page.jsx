@@ -105,7 +105,7 @@ export default function Forgot_Password() {
         </div>
       )}
       {isCheckCode && (
-        <div className="input_code_forget_pass">
+        <div className="input_code_forget_pass_big">
           <h2>入力コード</h2>
           <p>メールで送信されたコードを入力してください</p>
           <form className="codeformforgot" onSubmit={handle_verify_code}>
