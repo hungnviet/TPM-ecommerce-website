@@ -35,7 +35,7 @@ export default function Forgot_Password() {
   async function handle_enter_email(e) {
     e.preventDefault();
     if (email === "") {
-      setErr("Please enter the email");
+      setErr("メールアドレスを入力してください");
       return;
     } else {
       const user = new CognitoUser({ Username: email, Pool: UserPool });
@@ -54,20 +54,20 @@ export default function Forgot_Password() {
   async function handle_verify_code(e) {
     e.preventDefault();
     if (password === "" || confirmPassword === "") {
-      setErr("Please enter all the input");
+      setErr("すべて入力してください");
       return;
     } else if (password !== confirmPassword) {
-      setErr("Password does not match");
+      setErr("パスワードが一致しません");
       return;
     } else if (code === "") {
-      setErr("Please enter the code");
+      setErr("コードを入力してください");
       return;
     } else {
       const user = new CognitoUser({ Username: email, Pool: UserPool });
       user.confirmPassword(code, password, {
         onSuccess: function (result) {
           // code verified
-          alert("Password has been reset");
+          alert("パスワードがリセットされました");
           router.push("/sign_in");
         },
         onFailure: function (err) {

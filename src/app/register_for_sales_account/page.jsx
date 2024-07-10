@@ -10,6 +10,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import Image from "next/image";
+import { Router } from "next/router";
 AWS.config.update({
   accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
@@ -126,42 +127,42 @@ export default function Page() {
       const validImageUrls = imageUrls.filter((url) => url !== null);
       console.log("Image URLs:", validImageUrls);
       const shopName_encode = encodeURIComponent(shopName.replace(/\s/g, ""));
-      // const res = await fetch("/api/seller/information", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     shopName: shopName,
-      //     User_ID: user_id,
-      //     shippingCompanyList: [
-      //       "Default Shipping Company 1",
-      //       "Default Shipping Company 2",
-      //     ],
-      //     shopImg: validImageUrls[0],
-      //     shopAddress: shopAddress,
-      //   }),
-      // });
-      // if (res.ok) {
-      //   const params = {
-      //     UserPoolId: process.env.NEXT_PUBLIC_AWS_Userpool_ID, // replace with your User Pool ID
-      //     Username: user_id, // replace with the username of the user
-      //     GroupName: "seller",
-      //   };
+      const res = await fetch("/api/seller/information", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          shopName: shopName,
+          User_ID: user_id,
+          shippingCompanyList: [
+            "Default Shipping Company 1",
+            "Default Shipping Company 2",
+          ],
+          shopImg: validImageUrls[0],
+          shopAddress: shopAddress,
+        }),
+      });
+      if (res.ok) {
+        const params = {
+          UserPoolId: process.env.NEXT_PUBLIC_AWS_Userpool_ID, // replace with your User Pool ID
+          Username: user_id, // replace with the username of the user
+          GroupName: "seller",
+        };
 
-      //   cognitoidentityserviceprovider.adminAddUserToGroup(
-      //     params,
-      //     function (err, data) {
-      //       console.log(data); // successful response
-      //       if (err) console.log(err, err.stack); // an error occurred
-      //       else console.log(data); // successful response
-      //     }
-      //   );
-      // }
-      // route.push(`/seller_mode/dashboard`);
-      toast.success(
-        "リクエストを受け取りました。承認されるまでお待ちください。"
-      );
+        cognitoidentityserviceprovider.adminAddUserToGroup(
+          params,
+          function (err, data) {
+            console.log(data); // successful response
+            if (err) console.log(err, err.stack); // an error occurred
+            else console.log(data); // successful response
+          }
+        );
+      }
+      route.push(`/seller_mode/dashboard`);
+      // toast.success(
+      //   "リクエストを受け取りました。承認されるまでお待ちください。"
+      // );
     }
   }
 
@@ -183,7 +184,13 @@ export default function Page() {
             </p>
           </div>
           <div className="btn_container_for_register_as_seller">
-            <button>Back to homepage</button>
+            <button
+              onClick={() => {
+                route.push("/homepage");
+              }}
+            >
+              ホームページに戻ります
+            </button>
             <button onClick={() => setIsRegister(true)}>
               ホームページに戻ります
             </button>
@@ -196,7 +203,8 @@ export default function Page() {
             <p className="header_register_as_seller">ショップ名</p>
             <input
               type="text"
-              placeholder="Enter your shop's name"
+              placeholder="
+ショップ名を入力してください"
               value={shopName}
               onChange={(e) => setShopName(e.target.value)}
             />
@@ -216,7 +224,8 @@ export default function Page() {
             <h3>お店の住所</h3>
             <input
               type="text"
-              placeholder="Ex: Tokyo 123 street doraemon"
+              placeholder="例：東京123通り
+"
               value={shopAddress}
               onChange={(e) => setShopAddress(e.target.value)}
             ></input>
