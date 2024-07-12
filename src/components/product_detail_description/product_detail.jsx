@@ -461,7 +461,7 @@ export default function Product_detail_description({ product_id }) {
             >
               総売上高:
             </p>
-            <p> {product.TotalOrder} orders</p>
+            <p> {product.TotalOrder} 件の注文</p>
           </div>
         </div>
 
@@ -659,7 +659,7 @@ export default function Product_detail_description({ product_id }) {
       </div>
       <div className="comments_container">
         <h2>みんなの投稿</h2>
-        <h4>2505件</h4>
+        <h4>{comments.length > 0 ? comments.length + "件" : "ノーコメント"}</h4>
         {comments &&
           comments.length > 0 &&
           comments.map((comment, index) => (

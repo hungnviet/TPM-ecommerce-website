@@ -368,7 +368,7 @@ export default function CheckoutPage({}) {
         });
 
         if (!response.ok) {
-          toast.error(`Failed to update product ${product.product_id}`);
+          toast.error(`製品 ${product.product_id} の更新に失敗しました`);
         }
       }
     }
@@ -410,7 +410,7 @@ export default function CheckoutPage({}) {
   const totalPrice = calculateTotalPrice();
   async function handle_checkout() {
     if (!selectedPaymentMethod) {
-      toast.error("Vui lòng chọn phương thức thanh toán.");
+      toast.error("お支払い方法を選択してください。");
       return;
     }
 
@@ -419,9 +419,7 @@ export default function CheckoutPage({}) {
       (_, index) => selectedShipment[index]
     );
     if (!allShopsHaveShipping) {
-      toast.error(
-        "Vui lòng chọn phương thức vận chuyển cho tất cả các cửa hàng."
-      );
+      toast.error("全店舗共通の配送方法をご選択ください。");
       return;
     }
     let new_cart = { ...cart };
@@ -467,7 +465,7 @@ export default function CheckoutPage({}) {
         });
 
         if (!response.ok) {
-          toast.error("Checkout failed");
+          toast.error("チェックアウトに失敗しました");
           return;
         } else {
           await knockClient.workflows.trigger("buyproduct", {

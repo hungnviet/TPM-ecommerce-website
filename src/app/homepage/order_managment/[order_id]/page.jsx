@@ -124,7 +124,7 @@ export default function CheckoutPage({ params }) {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        alert("Bình luận thành công");
+        alert("コメント成功");
         window.location.reload();
       })
       .catch((error) => console.error(error));

@@ -42,10 +42,12 @@ export default function Product_cart({ product, userID, freeship }) {
 
     if (response.ok) {
       const result = await response.json();
-      toast.success("Item added to cart successfully.");
+      toast.success("商品がカートに正常に追加されました。");
     } else {
       console.error("Error:", response.statusText);
-      toast.error("Failed to add item to cart, please do it again.");
+      toast.error(
+        "商品をカートに追加できませんでした。もう一度やり直してください。"
+      );
     }
   }
 
